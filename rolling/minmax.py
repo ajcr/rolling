@@ -4,6 +4,11 @@ from .base import RollingObject
 
 # TODO: reduce code duplication between RollingMin and RollingMax
 
+# Note: in the code below, the buffer size can *sometimes*
+# grow beyond the size of the window. Testing suggests that for
+# random arrays it never grows much larger, but I will investigate
+# further and tighten the implementation.
+
 pair = namedtuple('pair', ['value', 'death'])
 
 
