@@ -38,6 +38,11 @@ from rolling.minmax import RollingMin, RollingMax
     ([3, 3, 3, 3, 3], 3, [3, 3, 3]),
     ([3, 3, 3, 3, 3], 2, [3, 3, 3, 3]),
     ([3, 3, 3, 3, 3], 1, [3, 3, 3, 3, 3]),
+
+    # longer array to check multiple deaths at start of buffer
+    ([0, 39, 46, 1, 78, 87, 76, 88, 64, 86],
+      5,
+     [0,  1,  1,  1, 64, 64]),
 ])
 def test_rolling_min(array, window_size, expected):
     r = RollingMin(array, window_size)
@@ -79,8 +84,15 @@ def test_rolling_min(array, window_size, expected):
     ([3, 3, 3, 3, 3], 3, [3, 3, 3]),
     ([3, 3, 3, 3, 3], 2, [3, 3, 3, 3]),
     ([3, 3, 3, 3, 3], 1, [3, 3, 3, 3, 3]),
+
+    # longer array to check multiple deaths at start of buffer
+    ([69, 66, 12, 80, 52, 47, 9, 77, 15, 92, 13, 7, 66, 45, 70, 5, 87],
+      7,
+     [80, 80, 80, 92, 92, 92, 92, 92, 92, 92, 87]),
+    ([69, 66, 12, 80, 52, 47, 9, 77, 15, 92, 13, 7, 66, 45, 70, 5, 87],
+      5,
+     [80, 80, 80, 80, 77, 92, 92, 92, 92, 92, 70, 70, 87]),
 ])
 def test_rolling_max(array, window_size, expected):
     r = RollingMax(array, window_size)
     assert list(r) == expected
-

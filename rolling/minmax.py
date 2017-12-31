@@ -18,17 +18,17 @@ class RollingMin(RollingObject):
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
 
-        self._buffer = deque([], maxlen=window_size)
+        self._buffer = deque([])
         self._i = 0
 
         # update buffer using the initial window values (there's no
-        # need to check if the minimum reaches its death yet)
+        # need to check if the minimum reaches its death here)
         for _ in range(window_size - 1):
             self._update()
 
     def _check_death(self):
-        # remove the minimum value if it dies on the current iteration
-        if self._buffer and self._buffer[0].death == self._i:
+        # remove minimum values that died by the current iteration
+        while self._buffer and self._buffer[0].death <= self._i:
             self._buffer.popleft()
 
     def _update(self):
@@ -73,17 +73,18 @@ class RollingMax(RollingObject):
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
 
-        self._buffer = deque([], maxlen=window_size)
+        self._buffer = deque([])
         self._i = 0
 
         # update buffer using the initial window values (there's no
-        # need to check if the maximum reaches its death yet)
+        # need to check if the maximum reaches its death here)
         for _ in range(window_size - 1):
             self._update()
 
     def _check_death(self):
-        # remove the maximum value if it dies on the current iteration
-        if self._buffer and self._buffer[0].death == self._i:
+        # remove maximum values that have died by the current iteration
+        while self._buffer and self._buffer[0].death <= self._i:
+            #print('%s dies' % str(self._buffer[0]))
             self._buffer.popleft()
 
     def _update(self):
@@ -115,5 +116,3 @@ class RollingMax(RollingObject):
         self._check_death()
         self._update()
         return self._buffer[0].value
-
-
