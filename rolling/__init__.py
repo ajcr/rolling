@@ -1,11 +1,12 @@
 from .apply import RollingApply
 from .arithmetic import RollingSum
-from .logical import RollingAll, RollingAny
+from .logical import RollingAll, RollingAny, RollingCount
 from .minmax import RollingMin, RollingMax
 
 _rolling_methods = {'Sum': RollingSum,
                     'Any': RollingAny,
                     'All': RollingAll,
+                    'Count': RollingCount,
                     'Min': RollingMin,
                     'Max': RollingMax}
 
