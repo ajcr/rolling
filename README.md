@@ -56,10 +56,10 @@ The *rolling* module implements efficient ways of updating a rolling window for 
 
 Suppose the size of the window is **k**. Then the update time and overall space complexity for each algorithm is as follows:
 
-| Operation                | Time     | Space |
+| Operation                | Update Time | Space |
 | ------------------------ |:--------:|:-----:|
 | Sum                      | O(1)     | O(k)  |
-| Mean*                     | O(1)     | O(k)  |
+| Mean                     | O(1)     | O(k)  |
 | Median*                   | O(log k) | O(k)  |
 | Var (Variance)*           | O(1)     | O(k)     |
 | Std (Standard Deviation)* | O(1)     | O(k)     |
