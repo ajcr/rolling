@@ -1,3 +1,6 @@
+from collections import deque
+from itertools import islice
+
 from .base import RollingObject
 
 
@@ -46,3 +49,28 @@ class RollingAny(RollingObject):
     def __next__(self):
         self._update()
         return self._last_true > 0
+
+
+class RollingCount(RollingObject):
+    """Count the number of true values in the window.
+
+    The cost of updating the window is constant, but
+    O(k) space is used to maintain a queue.
+    """
+
+    def __init__(self, iterable, window_size):
+        super().__init__(iterable, window_size)
+
+        head = islice(self._iterator, window_size - 1)
+        self._buffer = deque(map(bool, head), maxlen=window_size)
+        self._buffer.appendleft(False)
+        self._count = sum(self._buffer)
+
+    def _update(self):
+        value = bool(next(self._iterator))
+        self._count += value - self._buffer.popleft()
+        self._buffer.append(value)
+
+    def __next__(self):
+        self._update()
+        return self._count

@@ -65,6 +65,7 @@ Suppose the size of the window is **k**. Then the update time and overall space 
 | Std (Standard Deviation)* | O(1)     | O(k)     |
 | Any                      | O(1)     | O(1)  |
 | All                      | O(1)     | O(1)  |
+| Count                    | O(1)     | O(k)  |
 | Min                      | O(1)     | O(k)  |
 | Max                      | O(1)     | O(k)  |
 
