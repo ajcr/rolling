@@ -58,6 +58,7 @@ class RollingVar(RollingObject):
 
         self._buffer.append(new)
 
+    # implemented for completeness - not used and untested
     def _remove_old(self):
         old = self._buffer.popleft()
 
