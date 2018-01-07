@@ -61,7 +61,7 @@ Suppose the size of the window is **k**. Then the update time and overall space 
 | Sum                      | O(1)     | O(k)  |
 | Mean                     | O(1)     | O(k)  |
 | Median*                   | O(log k) | O(k)  |
-| Var (Variance)*           | O(1)     | O(k)     |
+| Var (Variance)           | O(1)     | O(k)     |
 | Std (Standard Deviation)* | O(1)     | O(k)     |
 | Any                      | O(1)     | O(1)  |
 | All                      | O(1)     | O(1)  |
@@ -77,13 +77,13 @@ Some rolling algorithms are relatively easy to discover.
 
 After some thought, **Sum** can be computed by keeping track of the two values entering and leaving the window in each iteration, and adding and subtracting these values from the total. **All** just requires tracking whether the count of consecutive 'true' values is greater-than-or-equal-to the size of the window.
 
-However, other rolling algorithms are ingenious and I learned a lot by reading about them. Here are the resources that I used.
+However, other rolling algorithms are ingenious and I learned a lot by reading about them. Here are the main resources that I used:
 
 - **Max** and **Min** are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in *pandas* and *bottleneck*. My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk ['The Secret Life Of Rolling Pandas'](https://www.youtube.com/watch?v=XM_r5La-1tA).
 
 - **Median** uses the indexable skiplist approach presented by Raymond Hettinger (cf. [here](http://code.activestate.com/recipes/577073/)).
 
-- **Var** and **Std** use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). 
+- **Var** and **Std** use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). I referred to the rolling variance implementation in [pandas](https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx#L635-L784) as well as an older edit of the Wikipedia page [Algorithms for calculating variance](https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179).
 
 ## Discussion and Future Work
 
