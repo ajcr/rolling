@@ -24,11 +24,20 @@ def rolling(iterable, window_size, func='Sum'):
     window_size : integer
     func : callable or str, optional
         the operation to be applied to each window (default 'Sum')
+            - 'Sum', sum of values
+            - 'Any', true if any value if true, else false
+            - 'All', true if all values are true, else false
+            - 'Count', count of true values
+            - 'Min', minimum value
+            - 'Max', maximum value
+            - 'Mean', mean value
+            - 'Var', variance of values
+            - 'Std', standard deviation of values
 
     Returns
     -------
 
-    RollingObject instance
+    RollingObject subclass instance
         RollingApply if a callable was given, else a class
         instance implementing an efficient version of the
         required operation.
