@@ -1,4 +1,5 @@
 from collections import deque
+from math import sqrt
 
 from .base import RollingObject
 from .arithmetic import RollingSum
@@ -85,3 +86,20 @@ class RollingVar(RollingObject):
         self._update()
         return self._m2 / self._i
 
+
+class RollingStd(RollingVar):
+    """Compute the standard deviation of a rolling window.
+
+    Uses Welford's algorithm to update the sample
+    standard deviation (k-1 degrees of freedom) and mean
+    each time the window is moved forward.
+
+    The cost of updating the value is O(1), and
+    O(k) space is required.
+
+    See https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179
+    """
+
+    def __next__(self):
+        self._update()
+        return sqrt(self._m2 / self._i)

@@ -2,7 +2,7 @@ from .apply import RollingApply
 from .arithmetic import RollingSum
 from .logical import RollingAll, RollingAny, RollingCount
 from .minmax import RollingMin, RollingMax
-from .stats import RollingMean, RollingVar
+from .stats import RollingMean, RollingVar, RollingStd
 
 _rolling_methods = {'Sum': RollingSum,
                     'Any': RollingAny,
@@ -11,7 +11,8 @@ _rolling_methods = {'Sum': RollingSum,
                     'Min': RollingMin,
                     'Max': RollingMax,
                     'Mean': RollingMean,
-                    'Var': RollingVar}
+                    'Var': RollingVar,
+                    'Std': RollingStd}
 
 def rolling(iterable, window_size, func='Sum'):
     """Create a rolling iterator over an iterable object.

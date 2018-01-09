@@ -1,6 +1,6 @@
 import pytest
 
-from rolling.stats import RollingMean, RollingVar
+from rolling.stats import RollingMean, RollingVar, RollingStd
 
 @pytest.mark.parametrize('array,window_size,expected', [
     ([3, 0, 1, 7, 2], 5, [13/5]),
@@ -45,3 +45,24 @@ def test_rolling_var(array, window_size, expected):
     assert pytest.approx(list(r)) == expected
 
 
+@pytest.mark.parametrize('array', [
+    [10, 49, 87, 39, 91, 57, 53, 46, 4, 57, 3, 99, 28, 61, 44, 31, 97, 70, 88, 59]
+])
+@pytest.mark.parametrize('window_size,expected', [
+    (4,
+    [31.80539786472311, 26.350205565295564, 24.839484696748443, 22.06052281036573,
+     20.02290355234891, 24.426761280748348, 24.426761280748348, 28.077274321652617,
+     46.30604712129939, 41.23408784003837, 41.61229786172993, 30.474032661705056,
+     15.033296378372908, 28.605069480775605, 29.24038303442689, 29.24038303442689,
+     17.175564037317667]),
+    (7,
+    [27.823422815010684, 20.43456455546407, 29.599710423293963, 25.947749695989327,
+     31.389261129974283, 33.4457627752612, 33.58996448771142, 34.18019476664394,
+     34.15510838178425, 30.432595307381476, 36.04824809163672, 29.148225462608313,
+     27.002645373052935, 23.17839716714888]),
+    (17,
+    [30.44450109722318, 28.913410281695363, 30.02756086938641, 28.98085067561601]),
+])
+def test_rolling_std(array, window_size, expected):
+    r = RollingStd(array, window_size)
+    assert pytest.approx(list(r)) == expected
