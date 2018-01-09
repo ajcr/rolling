@@ -1,8 +1,10 @@
 from collections import deque
+from itertools import islice
 from math import sqrt
 
 from .base import RollingObject
 from .arithmetic import RollingSum
+from .structures.skiplist import IndexableSkiplist
 
 
 class RollingMean(RollingSum):
@@ -107,3 +109,52 @@ class RollingStd(RollingVar):
     def __next__(self):
         self._update()
         return sqrt(self._m2 / self._i)
+
+
+class RollingMedian(RollingObject):
+
+    _func_name = 'Median'
+
+    def __init__(self, iterable, window_size):
+        super().__init__(iterable, window_size)
+        if window_size <= 1:
+            raise ValueError('Window size must be greater than 1')
+
+        self._buffer = deque(maxlen=window_size)
+        self._skiplist = IndexableSkiplist(window_size)
+
+        # update buffer and skiplist with initial values
+        for value in islice(self._iterator, window_size - 1):
+            self._buffer.append(value)
+            self._skiplist.insert(value)
+
+        # insert a dummy value (the last element seen) so that
+        # the window is full and iterator works as expected
+        self._buffer.appendleft(value)
+        self._skiplist.insert(value)
+
+        self._median_idx = window_size // 2
+
+        if window_size % 2 == 1:
+            self._median_func = self._median_odd
+        else:
+            self._median_func = self._median_even
+
+    def _update(self):
+        new = next(self._iterator)
+        old = self._buffer[0]
+        self._skiplist.remove(old)
+        self._skiplist.insert(new)
+        self._buffer.append(new)
+
+    def _median_odd(self):
+        i = self._median_idx
+        return self._skiplist[i]
+
+    def _median_even(self):
+        i = self._median_idx
+        return (self._skiplist[i] + self._skiplist[i-1]) / 2
+
+    def __next__(self):
+        self._update()
+        return self._median_func()

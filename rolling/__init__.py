@@ -3,7 +3,7 @@ from .arithmetic import RollingSum
 from .base import RollingObject
 from .logical import RollingAll, RollingAny, RollingCount
 from .minmax import RollingMin, RollingMax
-from .stats import RollingMean, RollingVar, RollingStd
+from .stats import RollingMean, RollingVar, RollingStd, RollingMedian
 
 _rolling_methods = {cls._func_name: cls for cls in RollingObject.__subclasses__()
                         if hasattr(cls, '_func_name')}
@@ -25,6 +25,7 @@ def rolling(iterable, window_size, func='Sum'):
             - 'Min', minimum value
             - 'Max', maximum value
             - 'Mean', mean value
+            - 'Median', median value
             - 'Var', variance of values
             - 'Std', standard deviation of values
 

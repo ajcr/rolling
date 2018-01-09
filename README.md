@@ -14,16 +14,14 @@ For many operations there exist algorithms that compute the new value for a wind
 | ------------------------ |:--------:|:-----:|-----------------------------|
 | Sum                      | O(1)     | O(k)  | Sum of window values |
 | Mean                     | O(1)     | O(k)  | Arithmetic mean of window |
-| Median*                   | O(log k) | O(k)  | Uses an indexable skiplist |
-| Var           | O(1)     | O(k)     | Rolling variance, uses Welford's algorithm |
-| Std | O(1)     | O(k)     | Rolling standard deviation, uses Welford's algorithm |
+| Median                   | O(log k) | O(k)  | Uses an indexable skiplist proposed by R. Hettinger |
+| Var                      | O(1)     | O(k)  | Rolling variance, uses Welford's algorithm |
+| Std                      | O(1)     | O(k)  | Rolling standard deviation, uses Welford's algorithm |
 | Any                      | O(1)     | O(1)  | True if any value is true, else false |
 | All                      | O(1)     | O(1)  | True if all values are true, else false |
 | Count                    | O(1)     | O(k)  | Number of true values in the window |
 | Min                      | O(1)     | O(k)  | Uses 'Ascending Minima' algorithm | 
 | Max                      | O(1)     | O(k)  | Uses 'Descending Maxima' algorithm |
-
-\* *implementation coming soon*
 
 See the References section below for more details about the algorithms. 
 
