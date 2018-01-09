@@ -2,6 +2,40 @@
 
 A collection of efficient rolling/sliding window algorithms for Python.
 
+## Overview
+
+Suppose the size of the window is **k**. The time taken to apply a builtin function (e.g. `sum()`) to a window scales linearly, i.e. O(k), and can be unacceptably slow for large windows.
+
+For many operations there exist algorithms that compute the new window value in constant time. The algorithms implemented in this module are summarised below:
+
+| Operation                | Update Time | Space required | Comments |
+| ------------------------ |:--------:|:-----:|-----------------------------|
+| Sum                      | O(1)     | O(k)  | - |
+| Mean                     | O(1)     | O(k)  | - |
+| Median*                   | O(log k) | O(k)  | Uses an indexable skiplist |
+| Var           | O(1)     | O(k)     | Rolling variance. Uses Welford's algorithm |
+| Std* | O(1)     | O(k)     | Standard deviation. See comment for Var above. |
+| Any                      | O(1)     | O(1)  | True if any value is true, else false |
+| All                      | O(1)     | O(1)  | True if all values are true, else false |
+| Count                    | O(1)     | O(k)  | Number of true values in the window |
+| Min                      | O(1)     | O(k)  | Uses 'Ascending Minima' algorithm | 
+| Max                      | O(1)     | O(k)  | Uses 'Descending Maxima' algorithm |
+
+\* *implementation coming soon*
+
+See the References section below for more details about the algorithms. 
+
+## Installation
+
+There are no library dependencies for running this module.
+
+```
+git clone https://github.com/ajcr/rolling.git
+cd rolling/
+pip install .
+```
+If you want to run the tests you'll need to install pytest; just run `pytest` from the base directory.
+
 ## Quickstart
 
 Import the `rolling()` function:
@@ -34,62 +68,11 @@ As well as the built-in efficient algorithms, any callable Python object can be 
 [(1, 5, 2), (5, 2, 0), (2, 0, 3)]
 ```
 
-## Installation
-
-There are no library dependencies for running this module.
-
-Currently, the simplest way to install is to clone the repo, change into the new directory, and then use pip:
-
-```
-git clone https://github.com/ajcr/rolling.git
-cd rolling/
-pip install . # to develop, use `pip install -e .`
-```
-
-pytest is used for testing. Tests are in the `tests/` directory. To execute all tests, just run `pytest` from the base directory.
-
-## Overview of the Algorithms
-
-### Algorithm complexity
-
-The *rolling* module implements efficient ways of updating a rolling window for a number of common operations.
-
-Suppose the size of the window is **k**. Then the update time and overall space complexity for each algorithm is as follows:
-
-| Operation                | Update Time | Space |
-| ------------------------ |:--------:|:-----:|
-| Sum                      | O(1)     | O(k)  |
-| Mean                     | O(1)     | O(k)  |
-| Median*                   | O(log k) | O(k)  |
-| Var (Variance)           | O(1)     | O(k)     |
-| Std (Standard Deviation)* | O(1)     | O(k)     |
-| Any                      | O(1)     | O(1)  |
-| All                      | O(1)     | O(1)  |
-| Count                    | O(1)     | O(k)  |
-| Min                      | O(1)     | O(k)  |
-| Max                      | O(1)     | O(k)  |
-
-\* *not yet implemented*
-
-### References and resources
-
-Some rolling algorithms are relatively easy to discover. 
-
-After some thought, **Sum** can be computed by keeping track of the two values entering and leaving the window in each iteration, and adding and subtracting these values from the total. **All** just requires tracking whether the count of consecutive 'true' values is greater-than-or-equal-to the size of the window.
-
-However, other rolling algorithms are ingenious and I learned a lot by reading about them. Here are the main resources that I used:
-
-- **Max** and **Min** are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in *pandas* and *bottleneck*. My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk ['The Secret Life Of Rolling Pandas'](https://www.youtube.com/watch?v=XM_r5La-1tA).
-
-- **Median** uses the indexable skiplist approach presented by Raymond Hettinger (cf. [here](http://code.activestate.com/recipes/577073/)).
-
-- **Var** and **Std** use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). I referred to the rolling variance implementation in [pandas](https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx#L635-L784) as well as an older edit of the Wikipedia page [Algorithms for calculating variance](https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179).
-
-## Discussion and Future Work
+## Discussion and future work
 
 The algorithms implemented by this module are chosen to be efficient in the sense that the cost of computing each new return value scales well with the size of window.
 
-In theory this is great. In practice you might find that it is quicker *not* to use the supplied 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function) rather than using `rolling(array, k, 'Min')`.
+In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function) rather than using `rolling(array, k, 'Min')`.
 
 With this in mind, in future it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
 
@@ -97,4 +80,17 @@ Other work which would extend the usefulness of this module includes:
 
 - Allowing operations on variable-length windows.
 - Alternative algorithms that trade time complexity for a reduced memory footprint.
-- Additional reduction operations for windows (e.g. longest increasing sequence), and weighted window algorithms.
+- Additional reduction operations for windows (e.g. longest increasing subsequence), and weighted window algorithms.
+
+## References and resources
+
+Some rolling algorithms are widely known (e.g. 'Sum' and 'Mean') and I am not sure which source to cite. 
+
+Other rolling algorithms are very cleverly designed and I learned a lot by reading about them and seeing other peoples' implementations. Here are the main resources that I used:
+
+- **Max** and **Min** are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in [pandas](http://pandas.pydata.org/) and [bottleneck](https://github.com/kwgoodman/bottleneck). My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk ['The Secret Life Of Rolling Pandas'](https://www.youtube.com/watch?v=XM_r5La-1tA).
+
+- **Median** uses the indexable skiplist approach presented by Raymond Hettinger [here](http://code.activestate.com/recipes/577073/).
+
+- **Var** and **Std** use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). I referred to the rolling variance implementation in [pandas](https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx#L635-L784) as well as an older edit of the Wikipedia page [Algorithms for calculating variance](https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179).
+
