@@ -13,8 +13,8 @@ For many operations there exist algorithms that compute the new window value in 
 | Sum                      | O(1)     | O(k)  | - |
 | Mean                     | O(1)     | O(k)  | - |
 | Median*                   | O(log k) | O(k)  | Uses an indexable skiplist |
-| Var           | O(1)     | O(k)     | Rolling variance. Uses Welford's algorithm |
-| Std* | O(1)     | O(k)     | Standard deviation. See comment for Var above. |
+| Var           | O(1)     | O(k)     | Rolling variance, uses Welford's algorithm |
+| Std* | O(1)     | O(k)     | Standard deviation, uses Welford's algorithm |
 | Any                      | O(1)     | O(1)  | True if any value is true, else false |
 | All                      | O(1)     | O(1)  | True if all values are true, else false |
 | Count                    | O(1)     | O(k)  | Number of true values in the window |
