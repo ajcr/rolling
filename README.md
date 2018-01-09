@@ -4,11 +4,13 @@ A collection of efficient rolling/sliding window algorithms for Python.
 
 ## Overview
 
-Suppose the size of the window is **k**. The time taken to apply a builtin function (e.g. `sum()`) to a window scales linearly, i.e. O(k), and can be unacceptably slow for large windows.
+This module provides implementations of useful rolling-window operations, including sum, mean, and max. These operations can be applied over any iterable Python object, finite or infinite (lists, generators, files, and so on). 
 
-For many operations there exist algorithms that compute the new window value in constant time. The algorithms implemented in this module are summarised below:
+Suppose the size of the window is **k**. The time taken to apply a builtin Python function such as `sum()` to the window scales linearly as the size increases, that is **O(k)**, as the full window must be iterated over with each roll forward. This can be unacceptably slow for larger windows.
 
-| Operation                | Update Time | Space required | Comments |
+For many operations there exist algorithms that compute the new value for a window in constant time, **O(1)**. The rolling window algorithms implemented in this module are summarised below:
+
+| Operation                | Update Time | Space Required | Comments |
 | ------------------------ |:--------:|:-----:|-----------------------------|
 | Sum                      | O(1)     | O(k)  | - |
 | Mean                     | O(1)     | O(k)  | - |
@@ -34,7 +36,7 @@ git clone https://github.com/ajcr/rolling.git
 cd rolling/
 pip install .
 ```
-If you want to run the tests you'll need to install pytest; just run `pytest` from the base directory.
+If you want to run the tests you'll need to install pytest; once done, just run `pytest` from the base directory.
 
 ## Quickstart
 
