@@ -13,9 +13,11 @@ class RollingObject(metaclass=abc.ABCMeta):
         self._iterator = iter(iterable)
 
     def __repr__(self):
-        return "RollingObject(func='{}', window_size={})".format(
-                (getattr(self, 'func', None) or self.__class__).__name__,
-                self.window_size)
+        if hasattr(self, '_func_name'):
+            name = self._func_name
+        else:
+            name = self._func.__name__
+        return "Rolling(func='{}', window_size={})".format(name, self.window_size)
 
     def __iter__(self):
         return self
