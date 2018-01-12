@@ -41,6 +41,8 @@ class RollingSum(RollingObject):
     >>> r_sum = rolling(seq, window_size=3, func='Sum')
 
     """
+    _func_name = 'Sum'
+
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
         head = islice(self._iterator, window_size - 1)
@@ -56,7 +58,6 @@ class RollingSum(RollingObject):
     def __next__(self):
         self._update()
         return self._sum
-
 
 
 # N.B. not currently part of the public API

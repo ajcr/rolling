@@ -11,6 +11,8 @@ class RollingMean(RollingSum):
     The cost of updating the mean is O(1), and the
     O(k) space is required.
     """
+    _func_name = 'Mean'
+
     def __next__(self):
         self._update()
         return self._sum / self.window_size
@@ -28,6 +30,7 @@ class RollingVar(RollingObject):
 
     See https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179
     """
+    _func_name = 'Var'
 
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
@@ -99,6 +102,7 @@ class RollingStd(RollingVar):
 
     See https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179
     """
+    _func_name = 'Std'
 
     def __next__(self):
         self._update()

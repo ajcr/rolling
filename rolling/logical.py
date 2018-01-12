@@ -10,6 +10,8 @@ class RollingAll(RollingObject):
     The cost of updating the window is constant, as is the
     space used by the algorithm.
     """
+    _func_name = 'All'
+
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
         self._consecutive_true = 0
@@ -33,6 +35,7 @@ class RollingAny(RollingObject):
     The cost of updating the window is constant, as is the
     space used by the algorithm.
     """
+    _func_name = 'Any'
 
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
@@ -57,6 +60,7 @@ class RollingCount(RollingObject):
     The cost of updating the window is constant, but
     O(k) space is used to maintain a queue.
     """
+    _func_name = 'Count'
 
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)

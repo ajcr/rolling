@@ -20,6 +20,8 @@ class RollingMin(RollingObject):
 
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
     """
+    _func_name = 'Min'
+
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
 
@@ -75,6 +77,8 @@ class RollingMax(RollingObject):
 
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
     """
+    _func_name = 'Max'
+
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
 

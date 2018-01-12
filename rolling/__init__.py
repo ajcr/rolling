@@ -1,18 +1,12 @@
 from .apply import RollingApply
 from .arithmetic import RollingSum
+from .base import RollingObject
 from .logical import RollingAll, RollingAny, RollingCount
 from .minmax import RollingMin, RollingMax
 from .stats import RollingMean, RollingVar, RollingStd
 
-_rolling_methods = {'Sum': RollingSum,
-                    'Any': RollingAny,
-                    'All': RollingAll,
-                    'Count': RollingCount,
-                    'Min': RollingMin,
-                    'Max': RollingMax,
-                    'Mean': RollingMean,
-                    'Var': RollingVar,
-                    'Std': RollingStd}
+_rolling_methods = {cls._func_name: cls for cls in RollingObject.__subclasses__()
+                        if hasattr(cls, '_func_name')}
 
 def rolling(iterable, window_size, func='Sum'):
     """Create a rolling iterator over an iterable object.
