@@ -4,13 +4,7 @@ from .base import RollingObject
 
 # TODO: reduce code duplication between RollingMin and RollingMax
 
-# Note: in the code below, the buffer size can *sometimes*
-# grow beyond the size of the window. Testing suggests that for
-# random arrays it never grows much larger, but I will investigate
-# further and tighten the implementation.
-
 pair = namedtuple('pair', ['value', 'death'])
-
 
 class RollingMin(RollingObject):
     """Compute the minimum value in the rolling window.
@@ -24,47 +18,29 @@ class RollingMin(RollingObject):
 
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
+        self._iterator = enumerate(self._iterator)
 
-        self._buffer = deque([])
-        self._i = 0
+        self._buffer = deque()
 
-        # update buffer using the initial window values (there's no
-        # need to check if the minimum reaches its death here)
         for _ in range(window_size - 1):
             self._update()
 
-    def _check_death(self):
-        # remove minimum values that died by the current iteration
-        while self._buffer and self._buffer[0].death <= self._i:
-            self._buffer.popleft()
-
     def _update(self):
-        new_pair = pair(next(self._iterator), self._i + self.window_size)
+        buffer = self._buffer
+        i, value = next(self._iterator)
+        new_pair = pair(value, i + self.window_size)
 
-        # value is the new minimum - overwrite the old minimum or
-        # just append the value if the buffer is currently empty
-        if not self._buffer or new_pair.value <= self._buffer[0].value:
-            try:
-                self._buffer[0] = new_pair
-            except IndexError:
-                self._buffer.append(new_pair)
+        # remove everything greater to or equal to the new value
+        while buffer and buffer[-1].value >= value:
+            buffer.pop()
 
-        # value is not yet the minimum - work backwards from the
-        # end of the array to find where to place it
-        else:
-            x = len(self._buffer) - 1
-            while self._buffer[x].value >= new_pair.value:
-                x -= 1
-            try:
-                self._buffer[x + 1] = new_pair
-            except IndexError:
-                self._buffer.append(new_pair)
+        buffer.append(new_pair)
 
-        # finally increment the counter
-        self._i += 1
+        # remove minimal values that died on or before this iteration
+        while buffer[0].death <= i:
+            buffer.popleft()
 
     def __next__(self):
-        self._check_death()
         self._update()
         return self._buffer[0].value
 
@@ -81,47 +57,28 @@ class RollingMax(RollingObject):
 
     def __init__(self, iterable, window_size):
         super().__init__(iterable, window_size)
+        self._iterator = enumerate(self._iterator)
 
-        self._buffer = deque([])
-        self._i = 0
+        self._buffer = deque()
 
-        # update buffer using the initial window values (there's no
-        # need to check if the maximum reaches its death here)
         for _ in range(window_size - 1):
             self._update()
 
-    def _check_death(self):
-        # remove maximum values that have died by the current iteration
-        while self._buffer and self._buffer[0].death <= self._i:
-            #print('%s dies' % str(self._buffer[0]))
-            self._buffer.popleft()
-
     def _update(self):
-        new_pair = pair(next(self._iterator), self._i + self.window_size)
+        buffer = self._buffer
+        i, value = next(self._iterator)
+        new_pair = pair(value, i + self.window_size)
 
-        # value is the new maximum - overwrite the old maximum or
-        # just append the value if the buffer is currently empty
-        if not self._buffer or new_pair.value >= self._buffer[0].value:
-            try:
-                self._buffer[0] = new_pair
-            except IndexError:
-                self._buffer.append(new_pair)
+        # remove everything greater to or equal to the new value
+        while buffer and buffer[-1].value <= value:
+            buffer.pop()
 
-        # value is not yet the maximum - work backwards from the
-        # end of the array to find where to place it
-        else:
-            x = len(self._buffer) - 1
-            while self._buffer[x].value <= new_pair.value:
-                x -= 1
-            try:
-                self._buffer[x + 1] = new_pair
-            except IndexError:
-                self._buffer.append(new_pair)
+        buffer.append(new_pair)
 
-        # finally increment the counter
-        self._i += 1
+        # remove minimal values that died on or before this iteration
+        while buffer[0].death <= i:
+            buffer.popleft()
 
     def __next__(self):
-        self._check_death()
         self._update()
         return self._buffer[0].value
