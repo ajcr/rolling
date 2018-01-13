@@ -12,8 +12,8 @@ For many operations there exist algorithms that compute the new value for a wind
 
 | Operation                | Update Time | Space Required | Comments |
 | ------------------------ |:--------:|:-----:|-----------------------------|
-| Sum                      | O(1)     | O(k)  | - |
-| Mean                     | O(1)     | O(k)  | - |
+| Sum                      | O(1)     | O(k)  | Sum of window values |
+| Mean                     | O(1)     | O(k)  | Arithmetic mean of window |
 | Median*                   | O(log k) | O(k)  | Uses an indexable skiplist |
 | Var           | O(1)     | O(k)     | Rolling variance, uses Welford's algorithm |
 | Std | O(1)     | O(k)     | Rolling standard deviation, uses Welford's algorithm |
