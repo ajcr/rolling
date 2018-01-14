@@ -37,7 +37,7 @@ class RollingSum(RollingObject):
     This object can also be instantiated using the
     `rolling()` function by passing 'Sum':
 
-    >>> from rolling
+    >>> from rolling import rolling
     >>> r_sum = rolling(seq, window_size=3, func='Sum')
 
     """
