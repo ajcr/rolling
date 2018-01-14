@@ -5,7 +5,13 @@ from .logical import RollingAll, RollingAny, RollingCount
 from .minmax import RollingMin, RollingMax
 from .stats import RollingMean, RollingVar, RollingStd, RollingMedian
 
-_rolling_methods = {cls._func_name: cls for cls in RollingObject.__subclasses__()
+def _get_subclasses(cls):
+    # https://stackoverflow.com/a/33607093/3923281
+    for subclass in cls.__subclasses__():
+        yield from _get_subclasses(subclass)
+        yield subclass
+
+_rolling_methods = {cls._func_name: cls for cls in _get_subclasses(RollingObject)
                         if hasattr(cls, '_func_name')}
 
 def rolling(iterable, window_size, func='Sum'):
