@@ -1,8 +1,8 @@
 import pytest
 
-from rolling.minmax import RollingMin, RollingMax
+from rolling.minmax import RollingMin, RollingMax, RollingMin2
 
-@pytest.mark.parametrize('array,window_size,expected', [
+min_test_data = [
     ([3, 0, 1, 7, 2], 5, [0]),
     ([3, 0, 1, 7, 2], 4, [0, 0]),
     ([3, 0, 1, 7, 2], 3, [0, 0, 1]),
@@ -43,9 +43,16 @@ from rolling.minmax import RollingMin, RollingMax
     ([0, 39, 46, 1, 78, 87, 76, 88, 64, 86],
       5,
      [0,  1,  1,  1, 64, 64]),
-])
+]
+
+@pytest.mark.parametrize('array,window_size,expected', min_test_data)
 def test_rolling_min(array, window_size, expected):
     r = RollingMin(array, window_size)
+    assert list(r) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', min_test_data)
+def test_rolling_min2(array, window_size, expected):
+    r = RollingMin2(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [

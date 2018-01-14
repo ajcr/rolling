@@ -2,7 +2,7 @@ from .apply import RollingApply
 from .arithmetic import RollingSum
 from .base import RollingObject
 from .logical import RollingAll, RollingAny, RollingCount
-from .minmax import RollingMin, RollingMax
+from .minmax import RollingMin, RollingMax, RollingMin2
 from .stats import RollingMean, RollingVar, RollingStd, RollingMedian
 
 def _get_subclasses(cls):
@@ -28,8 +28,9 @@ def rolling(iterable, window_size, func='Sum'):
             - 'Any', true if any value if true, else false
             - 'All', true if all values are true, else false
             - 'Count', count of true values
-            - 'Min', minimum value
-            - 'Max', maximum value
+            - 'Min', minimum value, ascending minima algorithm
+            - 'Min', minimum value, heap-based algorithm
+            - 'Max', maximum value, descending maxima algorithm
             - 'Mean', mean value
             - 'Median', median value
             - 'Var', variance of values

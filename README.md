@@ -21,6 +21,7 @@ For many operations there are algorithms that compute the value for each window 
 | All                      | O(1)     | O(1)  | True if all values in the window are True, else False |
 | Count                    | O(1)     | O(k)  | Counts the number of True values in the window |
 | Min                      | O(1)     | O(k)  | Uses the 'Ascending Minima' algorithm | 
+| Min2                     | O(1)     | O(k)* | Uses heap to track minimum. Memory use is linear with k over random data | 
 | Max                      | O(1)     | O(k)  | Uses the 'Descending Maxima' algorithm |
 
 See the References section below for more details about the algorithms. 
