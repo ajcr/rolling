@@ -112,7 +112,35 @@ class RollingStd(RollingVar):
 
 
 class RollingMedian(RollingObject):
+    """Iterator object that computes the median
+    of a rolling window over a Python iterable.
 
+    The cost of updating median in the rolling
+    window is O(log k) and the memory used is O(k)
+    where k is the size of the window.
+
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+
+    Notes
+    -----
+
+    This object can also be instantiated using the
+    `rolling()` function by passing 'Median':
+
+    >>> from rolling import rolling
+    >>> r_median = rolling(seq, window_size=3, func='Median')
+
+    To track the median, an indexable skiplist is
+    used. This approach was taken from work done
+    by Raymond Hettinger (see for example [1]).
+
+    [1] http://code.activestate.com/recipes/576930/
+    """
     _func_name = 'Median'
 
     def __init__(self, iterable, window_size):
