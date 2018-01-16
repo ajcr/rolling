@@ -47,14 +47,6 @@ def _make_update_method(op):
 _docstring = """Iterator object that computes the {operation}
 of a rolling window over a Python iterable.
 
-Uses the {algorithm_name} algorithm described in [1]
-to compute each value in O(1) time and O(k) space.
-
-
-The cost of updating the {operation} of each new
-window is O(1). The memory used is O(k)
-where k is the size of the window.
-
 Parameters
 ----------
 
@@ -62,8 +54,18 @@ iterable : any iterable object
 window_size : integer, the size of the rolling
     window moving over the iterable
 
+Complexity
+----------
+
+Update time:  O(1)
+Memory usage: O(k)
+
+where k is the size of the rolling window
+
 Notes
 -----
+
+This method uses the algorithms outlined in [1].
 
 [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
 """

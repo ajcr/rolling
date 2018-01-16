@@ -5,10 +5,45 @@ from .base import RollingObject
 
 
 class RollingAll(RollingObject):
-    """Compute whether all values in the window are true.
+    """Iterator object that computes whether all
+    values in a rolling window over a Python iterable
+    evaluate to True.
 
-    The cost of updating the window is constant, as is the
-    space used by the algorithm.
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(1)
+
+    Examples
+    --------
+
+    >>> seq = (8, 0, 1, 3, 6, 5)
+    >>> r_all = RollingAll(seq, 3)
+    >>> next(r_all)
+    False
+    >>> next(r_all)
+    False
+    >>> r_all = RollingSum(seq, 4)
+    >>> list(r_all)
+    [False, False, True]
+
+    Notes
+    -----
+
+    This object can also be instantiated using the
+    `rolling()` function by passing 'All':
+
+    >>> from rolling import rolling
+    >>> r_all = rolling(seq, window_size=3, func='All')
+
     """
     _func_name = 'All'
 
@@ -30,10 +65,45 @@ class RollingAll(RollingObject):
 
 
 class RollingAny(RollingObject):
-    """Compute whether any value in the window is true.
+    """Iterator object that computes whether any
+    values in a rolling window over a Python iterable
+    evaluate to True.
 
-    The cost of updating the window is constant, as is the
-    space used by the algorithm.
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(1)
+
+    Examples
+    --------
+
+    >>> seq = (1, 0, 0, 0, 6, 5)
+    >>> r_any = RollingAny(seq, 3)
+    >>> next(r_any)
+    True
+    >>> next(r_any)
+    False
+    >>> r_any = RollingAny(seq, 4)
+    >>> list(r_any)
+    [True, True, True]
+
+    Notes
+    -----
+
+    This object can also be instantiated using the
+    `rolling()` function by passing 'Any':
+
+    >>> from rolling import rolling
+    >>> r_any = rolling(seq, window_size=3, func='Any')
+
     """
     _func_name = 'Any'
 
@@ -55,10 +125,47 @@ class RollingAny(RollingObject):
 
 
 class RollingCount(RollingObject):
-    """Count the number of true values in the window.
+    """Iterator object that counts the number of
+    values in a rolling window over a Python iterable
+    which evaluate to True.
 
-    The cost of updating the window is constant, but
-    O(k) space is used to maintain a queue.
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
+
+    Examples
+    --------
+
+    >>> seq = (1, 0, 0, 0, 6, 5)
+    >>> r_count = RollingCount(seq, 3)
+    >>> next(r_count)
+    1
+    >>> next(r_count)
+    0
+    >>> r_count = RollingCount(seq, 4)
+    >>> list(r_count)
+    [1, 1, 2]
+
+    Notes
+    -----
+
+    This object can also be instantiated using the
+    `rolling()` function by passing 'Count':
+
+    >>> from rolling import rolling
+    >>> r_count = rolling(seq, window_size=3, func='Count')
+
     """
     _func_name = 'Count'
 

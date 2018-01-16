@@ -8,10 +8,23 @@ from .structures.skiplist import IndexableSkiplist
 
 
 class RollingMean(RollingSum):
-    """Compute the mean value of a rolling window.
+    """Iterator object that computes the mean
+    of a rolling window over a Python iterable.
 
-    The cost of updating the mean is O(1), and the
-    O(k) space is required.
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
     """
     _func_name = 'Mean'
 
@@ -21,16 +34,28 @@ class RollingMean(RollingSum):
 
 
 class RollingVar(RollingObject):
-    """Compute the variance of a rolling window.
+    """Iterator object that computes the sample variance
+    of a rolling window over a Python iterable.
 
-    Uses Welford's algorithm to update the sample
-    variance (k-1 degrees of freedom) and mean each
-    time the window is moved forward.
+    Parameters
+    ----------
 
-    The cost of updating the value is O(1), and the
-    O(k) space is required.
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
 
-    See https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
+
+    Notes
+    -----
+
+    Welford's algorithm is used to compute the variance.
     """
     _func_name = 'Var'
 
@@ -93,16 +118,29 @@ class RollingVar(RollingObject):
 
 
 class RollingStd(RollingVar):
-    """Compute the standard deviation of a rolling window.
+    """Iterator object that computes the sample standard
+    deviation of a rolling window over a Python iterable.
 
-    Uses Welford's algorithm to update the sample
-    standard deviation (k-1 degrees of freedom) and mean
-    each time the window is moved forward.
+    Parameters
+    ----------
 
-    The cost of updating the value is O(1), and
-    O(k) space is required.
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
 
-    See https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
+
+    Notes
+    -----
+
+    Welford's algorithm is used to compute the variance,
+    of which the standard deviation is the square root.
     """
     _func_name = 'Std'
 
@@ -112,12 +150,8 @@ class RollingStd(RollingVar):
 
 
 class RollingMedian(RollingObject):
-    """Iterator object that computes the median
+    """Iterator object that computes the median value
     of a rolling window over a Python iterable.
-
-    The cost of updating median in the rolling
-    window is O(log k) and the memory used is O(k)
-    where k is the size of the window.
 
     Parameters
     ----------
@@ -126,18 +160,19 @@ class RollingMedian(RollingObject):
     window_size : integer, the size of the rolling
         window moving over the iterable
 
+    Complexity
+    ----------
+
+    Update time:  O(log k)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
+
     Notes
     -----
 
-    This object can also be instantiated using the
-    `rolling()` function by passing 'Median':
-
-    >>> from rolling import rolling
-    >>> r_median = rolling(seq, window_size=3, func='Median')
-
-    To track the median, an indexable skiplist is
-    used. This approach was taken from work done
-    by Raymond Hettinger (see for example [1]).
+    An indexable skiplist is used to track the median
+    as the window moves (using an idea of R. Hettinger [1]).
 
     [1] http://code.activestate.com/recipes/576930/
     """

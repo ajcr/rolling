@@ -8,16 +8,20 @@ class RollingSum(RollingObject):
     """Iterator object that computes the sum
     of a rolling window over a Python iterable.
 
-    The cost of updating the sum of each new
-    window is O(1). The memory used is O(k)
-    where k is the size of the window.
-
     Parameters
     ----------
 
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
+
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
 
     Examples
     --------
@@ -29,6 +33,7 @@ class RollingSum(RollingObject):
     >>> next(r_sum)
     5
     >>> r_sum = RollingSum(seq, 4)
+    >>> list(r_sum)
     [13, 11, 15]
 
     Notes
