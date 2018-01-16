@@ -8,20 +8,20 @@ This module provides implementations of useful rolling-window operations, includ
 
 Suppose the size of the window is **k**. The time taken to apply a builtin Python function such as `sum()` to the window scales linearly as the size increases, that is **O(k)**, as the full window must be iterated over with each roll forward. This can be unacceptably slow for larger windows.
 
-For many operations there exist algorithms that compute the new value for a window in constant time, **O(1)**. The rolling window algorithms implemented in this module are summarised below:
+For many operations there are algorithms that compute the value for each window in constant time, **O(1)**. The rolling window algorithms implemented so far in this module are summarised below:
 
-| Operation                | Update Time | Space Required | Comments |
+| Operation                | Update | Memory | Comments |
 | ------------------------ |:--------:|:-----:|-----------------------------|
 | Sum                      | O(1)     | O(k)  | Sum of window values |
 | Mean                     | O(1)     | O(k)  | Arithmetic mean of window |
-| Median                   | O(log k) | O(k)  | Uses an indexable skiplist proposed by R. Hettinger |
+| Median                   | O(log k) | O(k)  | Uses an indexable skiplist approach (proposed by R. Hettinger) |
 | Var                      | O(1)     | O(k)  | Rolling variance, uses Welford's algorithm |
 | Std                      | O(1)     | O(k)  | Rolling standard deviation, uses Welford's algorithm |
-| Any                      | O(1)     | O(1)  | True if any value is true, else false |
-| All                      | O(1)     | O(1)  | True if all values are true, else false |
-| Count                    | O(1)     | O(k)  | Number of true values in the window |
-| Min                      | O(1)     | O(k)  | Uses 'Ascending Minima' algorithm | 
-| Max                      | O(1)     | O(k)  | Uses 'Descending Maxima' algorithm |
+| Any                      | O(1)     | O(1)  | True if any value in the window is True, else False |
+| All                      | O(1)     | O(1)  | True if all values in the window are True, else False |
+| Count                    | O(1)     | O(k)  | Counts the number of True values in the window |
+| Min                      | O(1)     | O(k)  | Uses the 'Ascending Minima' algorithm | 
+| Max                      | O(1)     | O(k)  | Uses the 'Descending Maxima' algorithm |
 
 See the References section below for more details about the algorithms. 
 
