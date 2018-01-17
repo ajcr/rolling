@@ -65,10 +65,10 @@ class RollingVar(RollingObject):
         if window_size <= 1:
             raise ValueError('Window size must be greater than 1')
 
-        self._buffer = deque([], maxlen=window_size)
+        self._buffer = deque(maxlen=window_size)
 
         self._i = 0 # degrees of freedom
-        self._mean = 0.0 # mean
+        self._mean = 0.0 # mean of values
         self._m2 = 0.0  # sum of squared values less the mean
 
         for i in range(1, window_size):
@@ -81,6 +81,7 @@ class RollingVar(RollingObject):
         self._buffer.appendleft(self._mean)
 
     def _add_new(self):
+        "Adds a new value to the window"
         new = next(self._iterator)
 
         delta = new - self._mean
@@ -89,25 +90,24 @@ class RollingVar(RollingObject):
 
         self._buffer.append(new)
 
-    # implemented for completeness - not used and untested
+    # NOTE: implemented for completeness - not used and untested
     def _remove_old(self):
+        "Removes a value from the window"
         old = self._buffer.popleft()
 
         delta = old - self._mean
-        self._mean -= delta / (self._i - 1)
+        self._mean -= delta / self._i
         self._m2 -= delta * (old - self._mean)
 
     def _update(self):
+        "Adds a new value and removes an old value, maintaining window size"
         new = next(self._iterator)
         old = self._buffer.popleft()
 
         delta = new - old
         delta_old = old - self._mean
-
         self._mean += delta / self.window_size
-
         delta_new = new - self._mean
-
         self._m2 += delta * (delta_old + delta_new)
 
         self._buffer.append(new)
