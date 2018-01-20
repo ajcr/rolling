@@ -29,7 +29,7 @@ def rolling(iterable, window_size, func='Sum'):
             - 'All', true if all values are true, else false
             - 'Count', count of true values
             - 'Min', minimum value, ascending minima algorithm
-            - 'Min', minimum value, heap-based algorithm
+            - 'Min2', minimum value, heap-based algorithm
             - 'Max', maximum value, descending maxima algorithm
             - 'Mean', mean value
             - 'Median', median value
