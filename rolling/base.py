@@ -4,11 +4,18 @@ import abc
 class RollingObject(metaclass=abc.ABCMeta):
     """Baseclass for rolling iterator objects.
 
-    All child classes must implement the following:
-        -
-        -
+    All child classes must implement the following methods
+    with the following call signatures:
+
+        - _init_fixed(self, iterable, window_size, **kwargs)
+        - _init_variable(self, iterable, window_size, **kwargs)
+        - _next_fixed(self)
+        - _next_variable(self)
+        - current_value(self) [this is a property]
+
     """
-    def __new__(cls, iterable, *args, window_type='fixed', **kwargs):
+    def __new__(cls, *args, **kwargs):
+        window_type = kwargs.get('window_type', 'fixed')
         if window_type == 'fixed':
             cls.__init__ = cls._init_fixed
             cls.__next__ = cls._next_fixed
@@ -20,19 +27,48 @@ class RollingObject(metaclass=abc.ABCMeta):
         cls.window_type = window_type
         return super().__new__(cls)
 
-    def __init__(self, iterable, window_size, *args, **kwargs):
+    def __init__(self, iterable, window_size, **kwargs):
         self.window_size = self._validate_window_size(window_size)
         self._iterator = iter(iterable)
+        if kwargs.get('window_type') == 'variable':
+            self._obs = 0
+            self._filled = False
 
     def __repr__(self):
         if hasattr(self, '_func_name'):
             name = self._func_name
         else:
             name = self._func.__name__
-        return "Rolling(func='{}', window_size={})".format(name, self.window_size)
+        return "Rolling(func='{}', window_size={}, window_type={})".format(
+                    name, self.window_size, self.window_type)
 
     def __iter__(self):
         return self
+
+    def _next_fixed(self):
+        self._update()
+        return self.current_value
+
+    def _next_variable(self):
+        # while the window size is not reached, add new values
+        if not self._filled and self._obs < self.window_size:
+            self._add_new()
+            self._obs += 1
+            if self._obs == self.window_size:
+                self._filled = True
+            return self.current_value
+        # once the window size is reached, update window until the iterator finishes
+        try:
+            self._update()
+            return self.current_value
+        except StopIteration:
+            # if iterator finishes, remove the oldest values one by one
+            if self._obs == 1:
+                raise
+            else:
+                self._remove_old()
+                self._obs -= 1
+                return self.current_value
 
     @abc.abstractproperty
     def current_value(self):
