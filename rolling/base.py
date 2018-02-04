@@ -9,9 +9,10 @@ class RollingObject(metaclass=abc.ABCMeta):
 
         - _init_fixed(self, iterable, window_size, **kwargs)
         - _init_variable(self, iterable, window_size, **kwargs)
-        - _next_fixed(self)
-        - _next_variable(self)
-        - current_value(self) [this is a property]
+        - _update(self)
+        - _add_new(self)
+        - _remove_old(self)
+        - current_value(self) [this is a @property]
 
     """
     def __new__(cls, *args, **kwargs):
