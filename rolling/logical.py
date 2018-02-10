@@ -47,21 +47,44 @@ class RollingAll(RollingObject):
     """
     _func_name = 'All'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        self._consecutive_true = 0
-        for _ in range(window_size - 1):
-            self._update()
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        head = islice(self._iterator, window_size - 1)
+        self._i = -1
+        self._last_false = -1
+        self._obs = window_size
+        for val in head:
+            self._i += 1
+            if not val:
+                self._last_false = self._i
+        self._all = self._i - self._last_false >= self._obs
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._i = -1
+        self._last_false = -1
+        self._all = True
 
     def _update(self):
-        if next(self._iterator):
-            self._consecutive_true += 1
-        else:
-            self._consecutive_true = 0
+        val = next(self._iterator)
+        self._i += 1
+        if not val:
+            self._last_false = self._i
+        self._all = self._i - self._last_false >= self._obs
 
-    def __next__(self):
-        self._update()
-        return self._consecutive_true >= self.window_size
+    def _add_new(self):
+        val = next(self._iterator)
+        self._i += 1
+        if not val:
+            self._last_false = self._i
+        self._all = self._i - self._last_false >= self._obs
+
+    def _remove_old(self):
+        self._all = self._i - self._last_false >= self._obs - 1 # why -1?
+
+    @property
+    def current_value(self):
+        return self._all
 
 
 class RollingAny(RollingObject):
