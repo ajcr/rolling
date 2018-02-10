@@ -133,34 +133,27 @@ class RollingAny(RollingObject):
             self._i += 1
             if val:
                 self._last_true = self._i
-        self._any = self._i - self._last_true <= self._obs
 
     def _init_variable(self, iterable, window_size, **kwargs):
         super().__init__(iterable, window_size, **kwargs)
         self._i = -1
         self._last_true = -1
-        self._any = False
-
-    def _update(self):
-        val = next(self._iterator)
-        self._i += 1
-        if val:
-            self._last_true = self._i
-        self._any = self._i - self._last_true <= self._obs
 
     def _add_new(self):
-        val = next(self._iterator)
         self._i += 1
+        val = next(self._iterator)
         if val:
             self._last_true = self._i
-        self._any = self._i - self._last_true <= self._obs
+
+    _update = _add_new
 
     def _remove_old(self):
-        self._any = self._i - self._last_true <= self._obs - 1 # why -1?
+        # no operation required
+        pass
 
     @property
     def current_value(self):
-        return self._any
+        return self._i - self._last_true < self._obs
 
 
 class RollingCount(RollingObject):
