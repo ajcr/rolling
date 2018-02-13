@@ -30,3 +30,7 @@ class RollingApply(RollingObject):
 
     def _update(self):
         self._buffer.append(next(self._iterator))
+
+    @property
+    def _obs(self):
+        return len(self._buffer)

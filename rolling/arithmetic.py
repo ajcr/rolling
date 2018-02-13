@@ -76,3 +76,7 @@ class RollingSum(RollingObject):
     @property
     def current_value(self):
         return self._sum
+
+    @property
+    def _obs(self):
+        return len(self._buffer)

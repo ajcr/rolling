@@ -32,7 +32,6 @@ class RollingObject(metaclass=abc.ABCMeta):
         self.window_size = self._validate_window_size(window_size)
         self._iterator = iter(iterable)
         if kwargs.get('window_type') == 'variable':
-            self._obs = 0
             self._filled = False
 
     def __repr__(self):
@@ -54,7 +53,6 @@ class RollingObject(metaclass=abc.ABCMeta):
         # while the window size is not reached, add new values
         if not self._filled and self._obs < self.window_size:
             self._add_new()
-            self._obs += 1
             if self._obs == self.window_size:
                 self._filled = True
             return self.current_value
@@ -63,12 +61,11 @@ class RollingObject(metaclass=abc.ABCMeta):
             self._update()
             return self.current_value
         except StopIteration:
-            # if iterator finishes, remove the oldest values one by one
+            # if the iterator finishes, remove the oldest values one by one
             if self._obs == 1:
                 raise
             else:
                 self._remove_old()
-                self._obs -= 1
                 return self.current_value
 
     @abc.abstractproperty
