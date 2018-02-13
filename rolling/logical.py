@@ -50,34 +50,48 @@ class RollingAll(RollingObject):
     def _init_fixed(self, iterable, window_size, **kwargs):
         super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
-        self._i = -1
+        self._i = 0
         self._last_false = -1
-        self._obs = window_size
         for val in head:
             self._i += 1
             if not val:
                 self._last_false = self._i
+        self._obs = window_size
+        # all([]) is True
+        self._all = True
 
     def _init_variable(self, iterable, window_size, **kwargs):
         super().__init__(iterable, window_size, **kwargs)
-        self._i = -1
+        self._i = 0
+        self._obs = 0
         self._last_false = -1
+        self._all = True # all([]) is True
 
     def _add_new(self):
-        self._i += 1
         val = next(self._iterator)
+        self._i += 1
+        self._obs += 1
+        if not val:
+            self._last_false = self._i - 1
+        self._all = self._i - self._obs > self._last_false
+
+    def _update(self):
+        val = next(self._iterator)
+        self._i += 1
         if not val:
             self._last_false = self._i
-
-    _update = _add_new
+        #self._all = self._i - self._last_false > self._obs
+        self._all = self._i - self._obs >= self._last_false
 
     def _remove_old(self):
-        # no operation required
-        pass
+        self._obs -= 1
+        self._all = self._i - self._obs > self._last_false
 
     @property
     def current_value(self):
-        return self._i - self._last_false >= self._obs
+        #return self._i - self._last_false > self._obs
+        #return self._obs + self._last_false < self._i
+        return self._all
 
 
 class RollingAny(RollingObject):
