@@ -1,92 +1,15 @@
 from collections import deque, namedtuple
 import heapq
 from itertools import islice
-from operator import ge, le
-
 
 from .base import RollingObject
 
 pair = namedtuple('pair', ['value', 'death'])
 
+# todo: reduce code duplication in the classes below
 
-class _RollingMM(RollingObject):
-    """Internal class not for instantiation.
-
-    Contains methods common to the Min and Max
-    classes below. These classes need only
-    implement an _update() method.
-    """
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        self._iterator = enumerate(self._iterator)
-        self._buffer = deque()
-        for _ in range(window_size - 1):
-            self._update()
-
-    def __next__(self):
-        self._update()
-        return self._buffer[0].value
-
-
-def _make_update_method(op):
-    """Helper function to make the _update() method for
-    the Min and Max classes, which differ only by op"""
-    def _update(self):
-        buffer = self._buffer
-        i, value = next(self._iterator)
-        new_pair = pair(value, i + self.window_size)
-
-        while buffer and op(buffer[-1].value, value):
-            buffer.pop()
-
-        buffer.append(new_pair)
-
-        while buffer[0].death <= i:
-            buffer.popleft()
-
-    return _update
-
-
-_docstring = """Iterator object that computes the {operation}
-of a rolling window over a Python iterable.
-
-Parameters
-----------
-
-iterable : any iterable object
-window_size : integer, the size of the rolling
-    window moving over the iterable
-
-Complexity
-----------
-
-Update time:  O(1)
-Memory usage: O(k)
-
-where k is the size of the rolling window
-
-Notes
------
-
-This method uses the algorithms outlined in [1].
-
-[1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
-"""
-
-_mindoc = _docstring.format(operation='minimum', algorithm_name='Ascending Minima')
-_maxdoc = _docstring.format(operation='maximum', algorithm_name='Descending Maxima')
-
-RollingMin = type('RollingMin', (_RollingMM,), {'_func_name': 'Min',
-                    '_update': _make_update_method(ge),
-                    '__doc__': _mindoc})
-
-RollingMax = type('RollingMax', (_RollingMM,), {'_func_name': 'Max',
-                    '_update': _make_update_method(le),
-                    '__doc__': _maxdoc})
-
-
-class RollingMin2(RollingObject):
-    """Iterator object that computes the minimum value
+class RollingMin(RollingObject):
+    """Iterator object that computes the minimum
     of a rolling window over a Python iterable.
 
     Parameters
@@ -100,38 +23,247 @@ class RollingMin2(RollingObject):
     ----------
 
     Update time:  O(1)
-    Memory usage: O(k) (if the iterable is unordered)
+    Memory usage: O(k)
 
     where k is the size of the rolling window
 
     Notes
     -----
 
-    This method uses heap to keep track of the minimum
-    value in the rolling window.
+    This method uses the algorithms outlined in [1].
 
-    Items that expire are lazily deleted, which can mean
-    that the heap can grow to be larger than the specified
-    window size, k.
+    [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
     """
-    _func_name = 'Min2'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        self._iterator = enumerate(self._iterator)
+    # Note: _obs must be tracked separately, we cannot just use
+    # the size of the buffer as the algorithm may overwrite existing
+    # values with a new value, rather than appending the value
 
-        self._heap = [(value, i + window_size) for i, value in islice(self._iterator, window_size - 1)]
-        heapq.heapify(self._heap)
+    _func_name = 'Min'
+
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        head = islice(self._iterator, window_size - 1)
+        self._i = -1
+        self._obs = -1
+        self._buffer = deque()
+        for value in head:
+            self._i += 1
+            self._obs += 1
+            new_pair = pair(value, self._i + self.window_size)
+            while self._buffer and self._buffer[-1].value >= value:
+                self._buffer.pop()
+            self._buffer.append(new_pair)
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._buffer = deque()
+        self._i = -1
+        self._obs = -1
 
     def _update(self):
-        i, value = next(self._iterator)
-        new_pair = (value, i + self.window_size)
+        value = next(self._iterator)
+        self._i += 1
+        new_pair = pair(value, self._i + self.window_size)
+        while self._buffer and self._buffer[-1].value >= value:
+            self._buffer.pop()
+        self._buffer.append(new_pair)
+        while self._buffer[0].death <= self._i:
+            self._buffer.popleft()
 
-        heapq.heappush(self._heap, new_pair)
+    def _add_new(self):
+        value = next(self._iterator)
+        self._i += 1
+        self._obs += 1
+        new_pair = pair(value, self._i + self.window_size)
+        while self._buffer and self._buffer[-1].value >= value:
+            self._buffer.pop()
+        self._buffer.append(new_pair)
 
-        while self._heap[0][1] <= i:
-            heapq.heappop(self._heap)
+    def _remove_old(self):
+        self._i += 1
+        self._obs -= 1
+        while self._buffer[0].death <= self._i:
+            self._buffer.popleft()
 
-    def __next__(self):
-        self._update()
-        return self._heap[0][0]
+    @property
+    def current_value(self):
+        return self._buffer[0].value
+
+
+class RollingMax(RollingObject):
+    """Iterator object that computes the maximum
+    of a rolling window over a Python iterable.
+
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+
+    Complexity
+    ----------
+
+    Update time:  O(1)
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
+
+    Notes
+    -----
+
+    This method uses the algorithms outlined in [1].
+
+    [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
+    """
+
+    # Note: _obs must be tracked separately, we cannot just use
+    # the size of the buffer as the algorithm may overwrite existing
+    # values with a new value, rather than appending the value
+
+    _func_name = 'Max'
+
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        head = islice(self._iterator, window_size - 1)
+        self._i = -1
+        self._obs = -1
+        self._buffer = deque()
+        for value in head:
+            self._i += 1
+            self._obs += 1
+            new_pair = pair(value, self._i + self.window_size)
+            while self._buffer and self._buffer[-1].value <= value:
+                self._buffer.pop()
+            self._buffer.append(new_pair)
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._buffer = deque()
+        self._i = -1
+        self._obs = -1
+
+    def _update(self):
+        value = next(self._iterator)
+        self._i += 1
+        new_pair = pair(value, self._i + self.window_size)
+        while self._buffer and self._buffer[-1].value <= value:
+            self._buffer.pop()
+        self._buffer.append(new_pair)
+        while self._buffer[0].death <= self._i:
+            self._buffer.popleft()
+
+    def _add_new(self):
+        value = next(self._iterator)
+        self._i += 1
+        self._obs += 1
+        new_pair = pair(value, self._i + self.window_size)
+        while self._buffer and self._buffer[-1].value <= value:
+            self._buffer.pop()
+        self._buffer.append(new_pair)
+
+    def _remove_old(self):
+        self._i += 1
+        self._obs -= 1
+        while self._buffer[0].death <= self._i:
+            self._buffer.popleft()
+
+    @property
+    def current_value(self):
+        return self._buffer[0].value
+
+
+#class RollingMin2(RollingObject):
+#    """Iterator object that computes the minimum value
+#    of a rolling window over a Python iterable.
+#
+#    Parameters
+#    ----------
+#
+#    iterable : any iterable object
+#    window_size : integer, the size of the rolling
+#        window moving over the iterable
+#
+#    Complexity
+#    ----------
+#
+#    Update time:  O(1)
+#    Memory usage: O(k) (if the iterable is unordered)
+#
+#    where k is the size of the rolling window
+#
+#    Notes
+#    -----
+#
+#    This method uses heap to keep track of the minimum
+#    value in the rolling window.
+#
+#    Items that expire are lazily deleted, which can mean
+#    that the heap can grow to be larger than the specified
+#    window size, k.
+#    """
+#    _func_name = 'Min2'
+#
+#    def __init__(self, iterable, window_size):
+#        super().__init__(iterable, window_size)
+#
+#        self._heap = [(value, i + window_size) for i, value in islice(self._iterator, window_size - 1)]
+#        heapq.heapify(self._heap)
+#
+#    def _update(self):
+#        i, value = next(self._iterator)
+#        new_pair = (value, i + self.window_size)
+#
+#        heapq.heappush(self._heap, new_pair)
+#
+#        while self._heap[0][1] <= i:
+#            heapq.heappop(self._heap)
+#
+#    def __next__(self):
+#        self._update()
+#        return self._heap[0][0]
+#
+#    def _init_fixed(self, iterable, window_size, **kwargs):
+#        super().__init__(iterable, window_size, **kwargs)
+#        head = islice(self._iterator, window_size - 1)
+#        self._heap = [(value, i + window_size) for i, value in enumerate(head)]
+#        heapq.heapify(self._heap)
+#        self._i = len(self._heap)
+#        self._obs = len(self._help)
+#
+#    def _init_variable(self, iterable, window_size, **kwargs):
+#        super().__init__(iterable, window_size, **kwargs)
+#        self._heap = []
+#        self._i = -1
+#        self._obs = -1
+#
+#    def _update(self):
+#        value = next(self._iterator)
+#        self._i += 1
+#        new_pair = pair(value, self._i + self.window_size)
+#
+#        heapq.heappush(self._heap, new_pair)
+#
+#        self._buffer.append(new_pair)
+#        while self._buffer[0].death <= self._i:
+#            self._buffer.popleft()
+#
+#    def _add_new(self):
+#        value = next(self._iterator)
+#        self._i += 1
+#        self._obs += 1
+#        new_pair = pair(value, self._i + self.window_size)
+#        while self._buffer and self._buffer[-1].value <= value:
+#            self._buffer.pop()
+#        self._buffer.append(new_pair)
+#
+#    def _remove_old(self):
+#        self._i += 1
+#        self._obs -= 1
+#        while self._buffer[0].death <= self._i:
+#            self._buffer.popleft()
+#
+#    @property
+#    def current_value(self):
+#        return self._buffer[0].value
