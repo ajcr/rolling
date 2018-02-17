@@ -79,6 +79,35 @@ def test_rolling_any(array, window_size, expected):
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
+    ([0, 0, 0, 1, 1], 5, [False, False, False, True, True, True, True, True, True]),
+    ([0, 0, 0, 1, 1], 4, [False, False, False, True, True, True, True, True]),
+    ([0, 0, 0, 1, 1], 3, [False, False, False, True, True, True, True]),
+    ([0, 0, 0, 1, 1], 2, [False, False, False, True, True, True]),
+    ([0, 0, 0, 1, 1], 1, [False, False, False, True, True]),
+
+    ([1, 1, 1, 1, 1], 5, [True, True, True, True, True, True, True, True, True]),
+    ([1, 1, 1, 1, 1], 4, [True, True, True, True, True, True, True, True]),
+    ([1, 1, 1, 1, 1], 3, [True, True, True, True, True, True, True]),
+    ([1, 1, 1, 1, 1], 2, [True, True, True, True, True, True]),
+    ([1, 1, 1, 1, 1], 1, [True, True, True, True, True]),
+
+    ([0, 1, 0, 0, 0], 5, [False, True, True, True, True, True, False, False, False]),
+    ([0, 1, 0, 0, 0], 4, [False, True, True, True, True, False, False, False]),
+    ([0, 1, 0, 0, 0], 3, [False, True, True, True, False, False, False]),
+    ([0, 1, 0, 0, 0], 2, [False, True, True, False, False, False]),
+    ([0, 1, 0, 0, 0], 1, [False, True, False, False, False]),
+
+    ([1, 0, 0, 1, 0, 0], 5, [True, True, True, True, True, True, True, True, False, False]),
+    ([1, 0, 0, 1, 0, 0], 4, [True, True, True, True, True, True, True, False, False]),
+    ([1, 0, 0, 1, 0, 0], 3, [True, True, True, True, True, True, False, False]),
+    ([1, 0, 0, 1, 0, 0], 2, [True, True, False, True, True, False, False]),
+    ([1, 0, 0, 1, 0, 0], 1, [True, False, False, True, False, False]),
+])
+def test_rolling_any_variable(array, window_size, expected):
+    r = RollingAny(array, window_size, window_type='variable')
+    assert list(r) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', [
     ([0, 1, 1, 1, 0], 5, [3]),
     ([0, 1, 1, 1, 0], 4, [3, 3]),
     ([0, 1, 1, 1, 0], 3, [2, 3, 2]),

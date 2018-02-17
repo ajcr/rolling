@@ -131,34 +131,39 @@ class RollingAny(RollingObject):
     def _init_fixed(self, iterable, window_size, **kwargs):
         super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
-        self._i = -1
+        self._i = 0
         self._last_true = -1
-        self._obs = window_size
         for val in head:
             self._i += 1
             if val:
                 self._last_true = self._i
+        self._obs = window_size
 
     def _init_variable(self, iterable, window_size, **kwargs):
         super().__init__(iterable, window_size, **kwargs)
         self._i = -1
-        self._last_true = -1
+        self._obs = 0
+        self._last_true = -window_size - 1
 
     def _add_new(self):
-        self._i += 1
         val = next(self._iterator)
+        self._i += 1
+        self._obs += 1
         if val:
             self._last_true = self._i
 
-    _update = _add_new
+    def _update(self):
+        val = next(self._iterator)
+        self._i += 1
+        if val:
+            self._last_true = self._i
 
     def _remove_old(self):
-        # no operation required
-        pass
+        self._obs -= 1
 
     @property
     def current_value(self):
-        return self._i - self._last_true < self._obs
+        return self._i - self._obs < self._last_true
 
 
 class RollingCount(RollingObject):
