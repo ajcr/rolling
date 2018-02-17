@@ -28,9 +28,9 @@ class RollingMean(RollingSum):
     """
     _func_name = 'Mean'
 
-    def __next__(self):
-        self._update()
-        return self._sum / self.window_size
+    @property
+    def current_value(self):
+        return self._sum / self._obs
 
 
 class RollingVar(RollingObject):
@@ -59,20 +59,16 @@ class RollingVar(RollingObject):
     """
     _func_name = 'Var'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
         if window_size <= 1:
             raise ValueError('Window size must be greater than 1')
 
         self._buffer = deque(maxlen=window_size)
-
-        self._i = 0 # degrees of freedom
         self._mean = 0.0 # mean of values
         self._m2 = 0.0  # sum of squared values less the mean
 
         for i in range(1, window_size):
-            self._i += 1
             self._add_new()
 
         # insert mean at the start of the buffer so that the
@@ -80,42 +76,51 @@ class RollingVar(RollingObject):
         # note: self._i is now (window_size - 1)
         self._buffer.appendleft(self._mean)
 
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        if window_size <= 1:
+            raise ValueError('Window size must be greater than 1')
+
+        self._buffer = deque(maxlen=window_size)
+        self._mean = 0.0 # mean of values
+        self._m2 = 0.0  # sum of squared values less the mean
+
     def _add_new(self):
-        "Adds a new value to the window"
         new = next(self._iterator)
-
-        delta = new - self._mean
-        self._mean += delta / self._i
-        self._m2 += delta * (new - self._mean)
-
         self._buffer.append(new)
 
-    # NOTE: implemented for completeness - not used and untested
+        delta = new - self._mean
+        self._mean += delta / self._obs
+        self._m2 += delta * (new - self._mean)
+
     def _remove_old(self):
-        "Removes a value from the window"
         old = self._buffer.popleft()
 
         delta = old - self._mean
-        self._mean -= delta / self._i
+        self._mean -= delta / self._obs
         self._m2 -= delta * (old - self._mean)
 
     def _update(self):
-        "Adds a new value and removes an old value, maintaining window size"
         new = next(self._iterator)
-        old = self._buffer.popleft()
+        old = self._buffer[0]
+        self._buffer.append(new)
 
         delta = new - old
         delta_old = old - self._mean
-        self._mean += delta / self.window_size
+        self._mean += delta / self._obs
         delta_new = new - self._mean
         self._m2 += delta * (delta_old + delta_new)
 
-        self._buffer.append(new)
+    @property
+    def current_value(self):
+        if self._obs == 1:
+            return float('nan')
+        else:
+            return self._m2 / (self._obs - 1)
 
-    def __next__(self):
-        self._update()
-        return self._m2 / self._i
-
+    @property
+    def _obs(self):
+        return len(self._buffer)
 
 class RollingStd(RollingVar):
     """Iterator object that computes the sample standard
@@ -144,9 +149,13 @@ class RollingStd(RollingVar):
     """
     _func_name = 'Std'
 
-    def __next__(self):
-        self._update()
-        return sqrt(self._m2 / self._i)
+    @property
+    def current_value(self):
+        if self._obs == 1:
+            return float('nan')
+        else:
+            return sqrt(self._m2 / (self._obs - 1))
+
 
 
 class RollingMedian(RollingObject):
