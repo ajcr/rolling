@@ -215,19 +215,35 @@ class RollingCount(RollingObject):
     """
     _func_name = 'Count'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(map(bool, head), maxlen=window_size)
         self._buffer.appendleft(False)
         self._count = sum(self._buffer)
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._buffer = deque(maxlen=window_size)
+        self._count = 0
 
     def _update(self):
         value = bool(next(self._iterator))
         self._count += value - self._buffer.popleft()
         self._buffer.append(value)
 
-    def __next__(self):
-        self._update()
+    def _add_new(self):
+        value = bool(next(self._iterator))
+        self._count += value
+        self._buffer.append(value)
+
+    def _remove_old(self):
+        self._count -= self._buffer.popleft()
+
+    @property
+    def current_value(self):
         return self._count
+
+    @property
+    def _obs(self):
+        return len(self._buffer)
