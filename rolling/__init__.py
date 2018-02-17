@@ -14,7 +14,7 @@ def _get_subclasses(cls):
 _rolling_methods = {cls._func_name: cls for cls in _get_subclasses(RollingObject)
                         if hasattr(cls, '_func_name')}
 
-def rolling(iterable, window_size, func='Sum'):
+def rolling(iterable, window_size, func='Sum', window_type='fixed'):
     """Create a rolling iterator over an iterable object.
 
     Parameters
@@ -35,6 +35,10 @@ def rolling(iterable, window_size, func='Sum'):
             - 'Median', median value
             - 'Var', variance of values
             - 'Std', standard deviation of values
+    window_type : str [default 'fixed']
+        indicates whether the window size is constant ('fixed')
+        or if fewer values are permitted in the window as it rolls
+        on and off the iterable ('variable')
 
     Returns
     -------
@@ -45,10 +49,10 @@ def rolling(iterable, window_size, func='Sum'):
         required operation.
     """
     if callable(func):
-        return RollingApply(iterable, window_size, func)
+        return RollingApply(iterable, window_size, func, window_type=window_type)
     elif isinstance(func, str):
         try:
-            return _rolling_methods[func](iterable, window_size)
+            return _rolling_methods[func](iterable, window_size, window_type=window_type)
         except KeyError:
             raise ValueError('Unknown rolling operation')
     else:
