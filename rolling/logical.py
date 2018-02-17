@@ -47,21 +47,42 @@ class RollingAll(RollingObject):
     """
     _func_name = 'All'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        self._consecutive_true = 0
-        for _ in range(window_size - 1):
-            self._update()
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        head = islice(self._iterator, window_size - 1)
+        self._i = 0
+        self._last_false = -1
+        for val in head:
+            self._i += 1
+            if not val:
+                self._last_false = self._i
+        self._obs = window_size
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._i = -1
+        self._obs = 0
+        self._last_false = -window_size - 1
+
+    def _add_new(self):
+        val = next(self._iterator)
+        self._i += 1
+        self._obs += 1
+        if not val:
+            self._last_false = self._i
 
     def _update(self):
-        if next(self._iterator):
-            self._consecutive_true += 1
-        else:
-            self._consecutive_true = 0
+        val = next(self._iterator)
+        self._i += 1
+        if not val:
+            self._last_false = self._i
 
-    def __next__(self):
-        self._update()
-        return self._consecutive_true >= self.window_size
+    def _remove_old(self):
+        self._obs -= 1
+
+    @property
+    def current_value(self):
+        return self._i - self._obs >= self._last_false
 
 
 class RollingAny(RollingObject):
@@ -107,21 +128,42 @@ class RollingAny(RollingObject):
     """
     _func_name = 'Any'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        self._last_true = 0
-        for _ in range(window_size - 1):
-            self._update()
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        head = islice(self._iterator, window_size - 1)
+        self._i = 0
+        self._last_true = -1
+        for val in head:
+            self._i += 1
+            if val:
+                self._last_true = self._i
+        self._obs = window_size
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._i = -1
+        self._obs = 0
+        self._last_true = -window_size - 1
+
+    def _add_new(self):
+        val = next(self._iterator)
+        self._i += 1
+        self._obs += 1
+        if val:
+            self._last_true = self._i
 
     def _update(self):
-        if next(self._iterator):
-            self._last_true = self.window_size
-        else:
-            self._last_true -= 1
+        val = next(self._iterator)
+        self._i += 1
+        if val:
+            self._last_true = self._i
 
-    def __next__(self):
-        self._update()
-        return self._last_true > 0
+    def _remove_old(self):
+        self._obs -= 1
+
+    @property
+    def current_value(self):
+        return self._i - self._obs < self._last_true
 
 
 class RollingCount(RollingObject):
@@ -169,19 +211,35 @@ class RollingCount(RollingObject):
     """
     _func_name = 'Count'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(map(bool, head), maxlen=window_size)
         self._buffer.appendleft(False)
         self._count = sum(self._buffer)
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._buffer = deque(maxlen=window_size)
+        self._count = 0
 
     def _update(self):
         value = bool(next(self._iterator))
         self._count += value - self._buffer.popleft()
         self._buffer.append(value)
 
-    def __next__(self):
-        self._update()
+    def _add_new(self):
+        value = bool(next(self._iterator))
+        self._count += value
+        self._buffer.append(value)
+
+    def _remove_old(self):
+        self._count -= self._buffer.popleft()
+
+    @property
+    def current_value(self):
         return self._count
+
+    @property
+    def _obs(self):
+        return len(self._buffer)
