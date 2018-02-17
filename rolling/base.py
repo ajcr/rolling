@@ -14,6 +14,9 @@ class RollingObject(metaclass=abc.ABCMeta):
         - _remove_old(self)
         - current_value(self) [this is a @property]
 
+    Note: variable-length instances must also have a self._obs
+    attribute to indicate the current size of the variable-length
+    window.
     """
     def __new__(cls, *args, **kwargs):
         window_type = kwargs.get('window_type', 'fixed')
