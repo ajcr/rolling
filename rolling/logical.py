@@ -57,8 +57,7 @@ class RollingAll(RollingObject):
             if not val:
                 self._last_false = self._i
         self._obs = window_size
-        # all([]) is True
-        self._all = True
+        self._all = True # all([]) is True
 
     def _init_variable(self, iterable, window_size, **kwargs):
         super().__init__(iterable, window_size, **kwargs)
