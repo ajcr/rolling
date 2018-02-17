@@ -191,11 +191,8 @@ class RollingMedian(RollingObject):
     """
     _func_name = 'Median'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        if window_size <= 1:
-            raise ValueError('Window size must be greater than 1')
-
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)
 
@@ -209,12 +206,10 @@ class RollingMedian(RollingObject):
         self._buffer.appendleft(value)
         self._skiplist.insert(value)
 
-        self._median_idx = window_size // 2
-
-        if window_size % 2 == 1:
-            self._median_func = self._median_odd
-        else:
-            self._median_func = self._median_even
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._buffer = deque(maxlen=window_size)
+        self._skiplist = IndexableSkiplist(window_size)
 
     def _update(self):
         new = next(self._iterator)
@@ -223,14 +218,24 @@ class RollingMedian(RollingObject):
         self._skiplist.insert(new)
         self._buffer.append(new)
 
-    def _median_odd(self):
-        i = self._median_idx
-        return self._skiplist[i]
+    def _add_new(self):
+        new = next(self._iterator)
+        self._skiplist.insert(new)
+        self._buffer.append(new)
 
-    def _median_even(self):
-        i = self._median_idx
-        return (self._skiplist[i] + self._skiplist[i-1]) / 2
+    def _remove_old(self):
+        old = self._buffer[0]
+        self._skiplist.remove(old)
+        self._buffer.popleft()
 
-    def __next__(self):
-        self._update()
-        return self._median_func()
+    @property
+    def current_value(self):
+        if self._obs % 2 == 1:
+            return self._skiplist[self._obs // 2]
+        else:
+            i = self._obs // 2
+            return (self._skiplist[i] + self._skiplist[i-1]) / 2
+
+    @property
+    def _obs(self):
+        return len(self._buffer)

@@ -116,3 +116,14 @@ def test_rolling_std(array, window_size, expected):
 def test_rolling_median(array, window_size, expected):
     r = RollingMedian(array, window_size)
     assert pytest.approx(list(r)) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 5, [3, 1.5, 1, 2.0, 2, 1.5, 2, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 4, [3, 1.5, 1, 2.0, 1.5, 2, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 3, [3, 1.5, 1, 1, 2, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 2, [3, 1.5, 0.5, 4.0, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
+])
+def test_rolling_median_variable(array, window_size, expected):
+    r = RollingMedian(array, window_size, window_type='variable')
+    assert pytest.approx(list(r)) == expected
