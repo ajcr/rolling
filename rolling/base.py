@@ -39,7 +39,7 @@ class RollingObject(metaclass=abc.ABCMeta):
             name = self._func_name
         else:
             name = self._func.__name__
-        return "Rolling(func='{}', window_size={}, window_type={})".format(
+        return "Rolling(func='{}', window_size={}, window_type='{}')".format(
                     name, self.window_size, self.window_type)
 
     def __iter__(self):
