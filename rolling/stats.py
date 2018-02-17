@@ -68,8 +68,12 @@ class RollingVar(RollingObject):
         self._mean = 0.0 # mean of values
         self._m2 = 0.0  # sum of squared values less the mean
 
-        for i in range(1, window_size):
-            self._add_new()
+        head = islice(self._iterator, window_size - 1)
+        for value in head:
+            self._buffer.append(value)
+            delta = value - self._mean
+            self._mean += delta / self._obs
+            self._m2 += delta * (value - self._mean)
 
         # insert mean at the start of the buffer so that the
         # the first call to update returns the correct value
