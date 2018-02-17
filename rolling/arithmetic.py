@@ -48,43 +48,35 @@ class RollingSum(RollingObject):
     """
     _func_name = 'Sum'
 
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
+    def _init_fixed(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
         self._buffer.appendleft(0)
         self._sum = sum(self._buffer)
+
+    def _init_variable(self, iterable, window_size, **kwargs):
+        super().__init__(iterable, window_size, **kwargs)
+        self._buffer = deque(maxlen=window_size)
+        self._sum = 0
 
     def _update(self):
         value = next(self._iterator)
         self._sum += value - self._buffer.popleft()
         self._buffer.append(value)
 
-    def __next__(self):
-        self._update()
+    def _add_new(self):
+        value = next(self._iterator)
+        self._sum += value
+        self._buffer.append(value)
+
+    def _remove_old(self):
+        self._sum -= self._buffer.popleft()
+
+    @property
+    def current_value(self):
         return self._sum
 
-
-# N.B. not currently part of the public API
-class RollingNunique(RollingObject):
-
-    def __init__(self, iterable, window_size):
-        super().__init__(iterable, window_size)
-        head = islice(self._iterator, window_size - 1)
-        self._buffer = deque(head, maxlen=window_size)
-        self._counter = Counter(self._buffer)
-        self._nunique = len(self._counter)
-
-    def _update(self):
-        n = next(self._iterator)
-        out = self._buffer.popleft()
-        self._counter[out] -= 1
-        if self._counter[out] == 0:
-            del self._counter[out]
-
-    def __next__(self):
-        self._update()
-        return len(self._counter)
-
-
-
+    @property
+    def _obs(self):
+        return len(self._buffer)
