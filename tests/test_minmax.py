@@ -2,6 +2,8 @@ import pytest
 
 from rolling.minmax import RollingMin, RollingMax, RollingMin2
 
+# todo: remove duplication of test data
+
 min_test_data = [
     ([3, 0, 1, 7, 2], 5, [0]),
     ([3, 0, 1, 7, 2], 4, [0, 0]),
@@ -102,4 +104,55 @@ def test_rolling_min2(array, window_size, expected):
 ])
 def test_rolling_max(array, window_size, expected):
     r = RollingMax(array, window_size)
+    assert list(r) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 5, [3, 0, 0, 0, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 4, [3, 0, 0, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 3, [3, 0, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 2, [3, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
+
+    ([-8, 1, 7, -8, -9], 5, [-8, -8, -8, -8, -9, -9, -9, -9, -9]),
+    ([-8, 1, 7, -8, -9], 4, [-8, -8, -8, -8, -9, -9, -9, -9]),
+    ([-8, 1, 7, -8, -9], 3, [-8, -8, -8, -8, -9, -9, -9]),
+    ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
+    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+])
+def test_rolling_min_variable(array, window_size, expected):
+    r = RollingMin(array, window_size, window_type='variable')
+    assert list(r) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 5, [3, 0, 0, 0, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 4, [3, 0, 0, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 3, [3, 0, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 2, [3, 0, 0, 1, 2, 2]),
+    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
+
+    ([-8, 1, 7, -8, -9], 5, [-8, -8, -8, -8, -9, -9, -9, -9, -9]),
+    ([-8, 1, 7, -8, -9], 4, [-8, -8, -8, -8, -9, -9, -9, -9]),
+    ([-8, 1, 7, -8, -9], 3, [-8, -8, -8, -8, -9, -9, -9]),
+    ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
+    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+])
+def test_rolling_min2_variable(array, window_size, expected):
+    r = RollingMin2(array, window_size, window_type='variable')
+    assert list(r) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 5, [3, 3, 3, 7, 7, 7, 7, 7, 2]),
+    ([3, 0, 1, 7, 2], 4, [3, 3, 3, 7, 7, 7, 7, 2]),
+    ([3, 0, 1, 7, 2], 3, [3, 3, 3, 7, 7, 7, 2]),
+    ([3, 0, 1, 7, 2], 2, [3, 3, 1, 7, 7, 2]),
+    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
+
+    ([-8, 1, 7, -8, -9], 5, [-8, 1, 7, 7, 7, 7, 7, -8, -9]),
+    ([-8, 1, 7, -8, -9], 4, [-8, 1, 7, 7, 7, 7, -8, -9]),
+    ([-8, 1, 7, -8, -9], 3, [-8, 1, 7, 7, 7, -8, -9]),
+    ([-8, 1, 7, -8, -9], 2, [-8, 1, 7, 7, -8, -9]),
+    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+])
+def test_rolling_max_variable(array, window_size, expected):
+    r = RollingMax(array, window_size, window_type='variable')
     assert list(r) == expected
