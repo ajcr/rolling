@@ -2,6 +2,8 @@
 
 A collection of efficient rolling/sliding window algorithms for Python.
 
+Both fixed-length and variable-length windows are supported.
+
 ## Overview
 
 This module provides implementations of useful rolling-window operations, including sum, mean, and max. These operations can be applied over any iterable Python object, finite or infinite (lists, generators, files, and so on). 
@@ -28,7 +30,7 @@ See the References section below for more details about the algorithms.
 
 ## Installation
 
-There are no library dependencies for running this module.
+There are no external library dependencies for running this module.
 
 ```
 git clone https://github.com/ajcr/rolling.git
@@ -53,7 +55,7 @@ The `rolling()` function creates an [iterator object](https://docs.python.org/3/
 >>> r_all = rolling(counts, window_size=3, func='All') # rolling all
 >>> r_max = rolling(counts, window_size=3, func='Max') # rolling max
 ```
-The result of iterating over each rolling object is shown below:
+The result of iterating over each rolling object is shown below. Note that the window type is fixed by default:
 ```python
 >>> list(r_sum)
 [8, 7, 5]
@@ -69,6 +71,19 @@ As well as the built-in efficient algorithms, any callable Python object can be 
 [(1, 5, 2), (5, 2, 0), (2, 0, 3)]
 ```
 
+Variable-length windows can be specified using the `window_type` argument. For instance:
+```python
+>>> r_list = rolling(counts, window_size=3, func=list, window_type='variable')
+>>> list(r_list)
+[[1],
+ [1, 5],
+ [1, 5, 2],
+ [5, 2, 0],
+ [2, 0, 3],
+ [0, 3],
+ [3]]
+```
+
 ## Discussion and future work
 
 The algorithms implemented by this module are chosen to be efficient in the sense that the cost of computing each new return value scales well with the size of window.
@@ -79,7 +94,6 @@ With this in mind, in future it might be worth implementing some of the algorith
 
 Other work which would extend the usefulness of this module includes:
 
-- Allowing operations on variable-length windows.
 - Alternative algorithms that trade time complexity for a reduced memory footprint.
 - Additional reduction operations for windows (e.g. longest increasing subsequence), and weighted window algorithms.
 
