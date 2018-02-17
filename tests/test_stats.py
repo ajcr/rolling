@@ -44,6 +44,36 @@ def test_rolling_var(array, window_size, expected):
     r = RollingVar(array, window_size)
     assert pytest.approx(list(r)) == expected
 
+@pytest.mark.parametrize('array', [
+    [82, 80, 14, 73,  9, 19, 60, 31,  4, 87, 38, 36, 38, 58, 20]
+])
+@pytest.mark.parametrize('window_size,expected', [
+    (4,
+    [float('nan'), 2, 1497.3333333333333, 1049.5833333333333,
+     1420.6666666666667, 886.9166666666666, 963.5833333333334, 487.5833333333333,
+     563.0, 1288.3333333333333, 1196.6666666666667, 1172.9166666666667,
+     617.5833333333334, 107.66666666666667, 242.66666666666666, 361.3333333333333,
+     722, float('nan')]),
+    (7,
+    [float('nan'), 2, 1497.3333333333333, 1049.5833333333333,
+     1354.3, 1260.5666666666666, 1077.8095238095239, 873.8095238095239,
+     707.3333333333334, 1079.2857142857142, 874.2857142857143, 740.5714285714286,
+     663.6666666666666, 652.2380952380953, 708.8095238095237, 545.7666666666667,
+     182, 242.66666666666666, 361.3333333333333, 722,
+     float('nan')]),
+    (11,
+    [float('nan'), 2, 1497.3333333333333, 1049.5833333333333,
+     1354.3, 1260.5666666666666, 1077.8095238095239, 960.5714285714286,
+     1036.5, 1129.8777777777777, 1022.5636363636364, 876.2,
+     708.9636363636364, 680.9636363636364, 599.0545454545455, 574.1,
+     589.75, 618, 708.8095238095237, 545.7666666666667,
+     182, 242.66666666666666, 361.3333333333333, 722,
+     float('nan')]),
+])
+def test_rolling_var_variable(array, window_size, expected):
+    r = RollingVar(array, window_size, window_type='variable')
+    assert pytest.approx(list(r), nan_ok=True) == expected
+
 
 @pytest.mark.parametrize('array', [
     [10, 49, 87, 39, 91, 57, 53, 46, 4, 57, 3, 99, 28, 61, 44, 31, 97, 70, 88, 59]
@@ -85,4 +115,15 @@ def test_rolling_std(array, window_size, expected):
 ])
 def test_rolling_median(array, window_size, expected):
     r = RollingMedian(array, window_size)
+    assert pytest.approx(list(r)) == expected
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 5, [3, 1.5, 1, 2.0, 2, 1.5, 2, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 4, [3, 1.5, 1, 2.0, 1.5, 2, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 3, [3, 1.5, 1, 1, 2, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 2, [3, 1.5, 0.5, 4.0, 4.5, 2]),
+    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
+])
+def test_rolling_median_variable(array, window_size, expected):
+    r = RollingMedian(array, window_size, window_type='variable')
     assert pytest.approx(list(r)) == expected
