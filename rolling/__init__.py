@@ -22,21 +22,21 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed'):
 
     iterable : any iterable object
     window_size : integer
-    func : callable or str, optional
+    func : callable or str, default 'Sum'
         the operation to be applied to each window (default 'Sum')
             - 'Sum', sum of values
-            - 'Any', true if any value if true, else false
+            - 'Any', true if any value is true, else false
             - 'All', true if all values are true, else false
             - 'Count', count of true values
-            - 'Min', minimum value, ascending minima algorithm
-            - 'Min2', minimum value, heap-based algorithm
-            - 'Max', maximum value, descending maxima algorithm
+            - 'Min', minimum value
+            - 'Min2', minimum value, uses heap not deque to track values
+            - 'Max', maximum value
             - 'Mean', mean value
             - 'Median', median value
             - 'Var', variance of values
             - 'Std', standard deviation of values
-    window_type : str [default 'fixed']
-        indicates whether the window size is constant ('fixed')
+    window_type : str, default 'fixed'
+        determines whether the window size is constant ('fixed')
         or if fewer values are permitted in the window as it rolls
         on and off the iterable ('variable')
 
@@ -49,10 +49,10 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed'):
         required operation.
     """
     if callable(func):
-        return RollingApply(iterable, window_size, func, window_type=window_type)
+        return RollingApply(iterable, window_size, func, window_type=window_type, **kwargs)
     elif isinstance(func, str):
         try:
-            return _rolling_methods[func](iterable, window_size, window_type=window_type)
+            return _rolling_methods[func](iterable, window_size, window_type=window_type, **kwargs)
         except KeyError:
             raise ValueError('Unknown rolling operation')
     else:
