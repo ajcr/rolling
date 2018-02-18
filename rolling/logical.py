@@ -48,7 +48,6 @@ class RollingAll(RollingObject):
     _func_name = 'All'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._i = 0
         self._last_false = -1
@@ -59,7 +58,6 @@ class RollingAll(RollingObject):
         self._obs = window_size
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._i = -1
         self._obs = 0
         self._last_false = -window_size - 1
@@ -129,7 +127,6 @@ class RollingAny(RollingObject):
     _func_name = 'Any'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._i = 0
         self._last_true = -1
@@ -140,7 +137,6 @@ class RollingAny(RollingObject):
         self._obs = window_size
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._i = -1
         self._obs = 0
         self._last_true = -window_size - 1
@@ -212,14 +208,12 @@ class RollingCount(RollingObject):
     _func_name = 'Count'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(map(bool, head), maxlen=window_size)
         self._buffer.appendleft(False)
         self._count = sum(self._buffer)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque(maxlen=window_size)
         self._count = 0
 

@@ -42,7 +42,6 @@ class RollingMin(RollingObject):
     _func_name = 'Min'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._i = -1
         self._obs = 0
@@ -56,7 +55,6 @@ class RollingMin(RollingObject):
             self._buffer.append(new_pair)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque()
         self._i = -1
         self._obs = 0
@@ -125,7 +123,6 @@ class RollingMax(RollingObject):
     _func_name = 'Max'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._i = -1
         self._obs = 0
@@ -139,7 +136,6 @@ class RollingMax(RollingObject):
             self._buffer.append(new_pair)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque()
         self._i = -1
         self._obs = 0
@@ -206,7 +202,6 @@ class RollingMin2(RollingObject):
     _func_name = 'Min2'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._heap = [pair(value, i + window_size) for i, value in enumerate(head)]
         heapq.heapify(self._heap)
@@ -214,7 +209,6 @@ class RollingMin2(RollingObject):
         self._obs = len(self._heap)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._heap = []
         self._i = -1
         self._obs = 0

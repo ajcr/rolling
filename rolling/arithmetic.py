@@ -49,14 +49,12 @@ class RollingSum(RollingObject):
     _func_name = 'Sum'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
         self._buffer.appendleft(0)
         self._sum = sum(self._buffer)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque(maxlen=window_size)
         self._sum = 0
 

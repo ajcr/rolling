@@ -60,7 +60,6 @@ class RollingVar(RollingObject):
     _func_name = 'Var'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         if window_size <= 1:
             raise ValueError('Window size must be greater than 1')
 
@@ -81,7 +80,6 @@ class RollingVar(RollingObject):
         self._buffer.appendleft(self._mean)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         if window_size <= 1:
             raise ValueError('Window size must be greater than 1')
 
@@ -192,7 +190,6 @@ class RollingMedian(RollingObject):
     _func_name = 'Median'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)
 
@@ -207,7 +204,6 @@ class RollingMedian(RollingObject):
         self._skiplist.insert(value)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        super().__init__(iterable, window_size, **kwargs)
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)
 

@@ -4,7 +4,7 @@ import abc
 class RollingObject(metaclass=abc.ABCMeta):
     """Baseclass for rolling iterator objects.
 
-    All child classes must implement the following methods
+    All subclasses must implement the following methods
     with the following call signatures:
 
         - _init_fixed(self, iterable, window_size, **kwargs)
@@ -18,7 +18,7 @@ class RollingObject(metaclass=abc.ABCMeta):
     attribute to indicate the current size of the variable-length
     window.
     """
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, iterable, window_size, **kwargs):
         window_type = kwargs.get('window_type', 'fixed')
         if window_type == 'fixed':
             cls.__init__ = cls._init_fixed
@@ -28,14 +28,14 @@ class RollingObject(metaclass=abc.ABCMeta):
             cls.__next__ = cls._next_variable
         else:
             raise ValueError("Unknown window_type '{}'".format(window_type))
-        cls.window_type = window_type
-        return super().__new__(cls)
 
-    def __init__(self, iterable, window_size, **kwargs):
+        self = super().__new__(cls)
+        self.window_type = window_type
         self.window_size = self._validate_window_size(window_size)
         self._iterator = iter(iterable)
-        if kwargs.get('window_type') == 'variable':
+        if self.window_type == 'variable':
             self._filled = False
+        return self
 
     def __repr__(self):
         if hasattr(self, '_func_name'):
@@ -93,7 +93,7 @@ class RollingObject(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def _add_new(self):
-        'take a new value from the iterator and it to the window'
+        'take a new value from the iterator and add it to the window'
         pass
 
     @abc.abstractmethod
