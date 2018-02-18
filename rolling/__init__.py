@@ -14,7 +14,7 @@ def _get_subclasses(cls):
 _rolling_methods = {cls._func_name: cls for cls in _get_subclasses(RollingObject)
                         if hasattr(cls, '_func_name')}
 
-def rolling(iterable, window_size, func='Sum', window_type='fixed'):
+def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
     """Create a rolling iterator over an iterable object.
 
     Parameters
