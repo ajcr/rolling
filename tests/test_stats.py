@@ -74,6 +74,35 @@ def test_rolling_var_variable(array, window_size, expected):
     r = RollingVar(array, window_size, window_type='variable')
     assert pytest.approx(list(r), nan_ok=True) == expected
 
+@pytest.mark.parametrize('array', [
+    [82, 80, 14, 73,  9, 19, 60, 31,  4, 87, 38, 36, 38, 58, 20]
+])
+@pytest.mark.parametrize('ddof,expected', [
+    (0,
+    [0.0, 1.0, 998.22222222222217, 787.1875,
+     1083.4400000000001, 1050.4722222222224, 854.91666666666663, 575.88888888888903,
+     657.55555555555566, 873.0, 738.47222222222229, 660.55555555555554,
+     600.66666666666663, 629.91666666666663, 454.80555555555549, 145.59999999999999,
+     182.0, 240.88888888888891, 361.0, 0.0]),
+    (2,
+    [float('nan'), float('nan'), 2994.6666666666665, 1574.375,
+     1805.7333333333336, 1575.7083333333335, 1282.375, 863.83333333333348,
+     986.33333333333348, 1309.5, 1107.7083333333335, 990.83333333333337,
+     901.0, 944.875, 682.20833333333326, 242.66666666666666,
+     364.0, 722.66666666666674, float('nan'), float('nan')]),
+    (4,
+    [float('nan'), float('nan'), float('nan'), float('nan'),
+     5417.2000000000007, 3151.416666666667, 2564.75, 1727.666666666667,
+     1972.666666666667, 2619.0, 2215.416666666667, 1981.6666666666667,
+     1802.0, 1889.75, 1364.4166666666665, 728.0,
+     float('nan'), float('nan'), float('nan'), float('nan')]),
+])
+def test_rolling_var_variable_with_ddof(array, ddof, expected):
+    r = RollingVar(array, 6, ddof=ddof, window_type='variable')
+    # Note: using an absolute tolerance of 1e-11 here rather than 1e-12
+    # because for ddof=0 testcase, RollingVar comutes the last value as
+    # 5.229594535194337e-12 and not 0.0 (as np.var and statistics.pvariance give)
+    assert pytest.approx(list(r), nan_ok=True, abs=1e-11) == expected
 
 @pytest.mark.parametrize('array', [
     [10, 49, 87, 39, 91, 57, 53, 46, 4, 57, 3, 99, 28, 61, 44, 31, 97, 70, 88, 59]

@@ -43,6 +43,8 @@ class RollingVar(RollingObject):
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
+    ddof : int, default 1, the divisor used in calculation
+        is N-ddof where N is the number of observations
 
     Complexity
     ----------
@@ -56,13 +58,20 @@ class RollingVar(RollingObject):
     -----
 
     Welford's algorithm is used to compute the variance.
+
+    Note that ddof must be less than window_size, otherwise
+    a value error is raised during initialisation.
+
+    Otherwise, if N-ddof is less than 0 (for variable-size
+    windows), the variance is computed as NaN.
     """
     _func_name = 'Var'
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
-        if window_size <= 1:
-            raise ValueError('Window size must be greater than 1')
+    def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
+        if window_size - ddof <= 0:
+            raise ValueError('window_size must be greater or equal to than ddof')
 
+        self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
         self._mean = 0.0 # mean of values
         self._m2 = 0.0  # sum of squared values less the mean
@@ -78,10 +87,11 @@ class RollingVar(RollingObject):
         # the first call to update returns the correct value
         self._buffer.appendleft(self._mean)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
-        if window_size <= 1:
-            raise ValueError('Window size must be greater than 1')
+    def _init_variable(self, iterable, window_size, ddof=1, **kwargs):
+        if window_size - ddof <= 0:
+            raise ValueError('window_size must be greater or equal to than ddof')
 
+        self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
         self._mean = 0.0 # mean of values
         self._m2 = 0.0  # sum of squared values less the mean
@@ -114,10 +124,10 @@ class RollingVar(RollingObject):
 
     @property
     def current_value(self):
-        if self._obs == 1:
+        if self._obs - self.ddof <= 0:
             return float('nan')
         else:
-            return self._m2 / (self._obs - 1)
+            return self._m2 / (self._obs - self.ddof)
 
     @property
     def _obs(self):
@@ -133,6 +143,8 @@ class RollingStd(RollingVar):
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
+    ddof : int, default 1, the divisor used in calculation
+        is N-ddof where N is the number of observations
 
     Complexity
     ----------
@@ -147,16 +159,21 @@ class RollingStd(RollingVar):
 
     Welford's algorithm is used to compute the variance,
     of which the standard deviation is the square root.
+
+    Note that ddof must be less than window_size, otherwise
+    a value error is raised during initialisation.
+
+    Otherwise, if N-ddof is less than 0 (for variable-size
+    windows), the variance is computed as NaN.
     """
     _func_name = 'Std'
 
     @property
     def current_value(self):
-        if self._obs == 1:
+        if self._obs - self.ddof <= 0:
             return float('nan')
         else:
-            return sqrt(self._m2 / (self._obs - 1))
-
+            return sqrt(self._m2 / (self._obs - self.ddof))
 
 
 class RollingMedian(RollingObject):
