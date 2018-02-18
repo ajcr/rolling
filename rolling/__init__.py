@@ -57,4 +57,4 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
         except KeyError:
             raise ValueError('Unknown rolling operation: \'{}\''.format(func))
     else:
-        raise TypeError('func must be callable or str, not {}'.format(type(func)))
+        raise TypeError('func must be callable or str, not {}'.format(type(func).__name__))
