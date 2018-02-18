@@ -76,7 +76,6 @@ class RollingVar(RollingObject):
 
         # insert mean at the start of the buffer so that the
         # the first call to update returns the correct value
-        # note: self._i is now (window_size - 1)
         self._buffer.appendleft(self._mean)
 
     def _init_variable(self, iterable, window_size, **kwargs):
