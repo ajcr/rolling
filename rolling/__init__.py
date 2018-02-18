@@ -15,7 +15,8 @@ _rolling_methods = {cls._func_name: cls for cls in _get_subclasses(RollingObject
                         if hasattr(cls, '_func_name')}
 
 def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
-    """Create a rolling iterator over an iterable object.
+    """Create a rolling iterator over an iterable object to
+    perform the specified function.
 
     Parameters
     ----------
@@ -54,6 +55,6 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
         try:
             return _rolling_methods[func](iterable, window_size, window_type=window_type, **kwargs)
         except KeyError:
-            raise ValueError('Unknown rolling operation')
+            raise ValueError('Unknown rolling operation: \'{}\''.format(func))
     else:
         raise TypeError('func must be callable or str, not {}'.format(type(func)))
