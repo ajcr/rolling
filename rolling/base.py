@@ -49,10 +49,12 @@ class RollingObject(metaclass=abc.ABCMeta):
         return self
 
     def _next_fixed(self):
+        'return the next value for fixed-length windows'
         self._update()
         return self.current_value
 
     def _next_variable(self):
+        'return the next value for variable-length windows'
         # while the window size is not reached, add new values
         if not self._filled and self._obs < self.window_size:
             self._add_new()
@@ -103,7 +105,7 @@ class RollingObject(metaclass=abc.ABCMeta):
 
     @staticmethod
     def _validate_window_size(k):
-        "Check the passed value is a positive integer"
+        'check if k is a positive integer'
         if not isinstance(k, int):
             raise TypeError('window_size must be integer type, got {}'.format(type(k).__name__))
         if k <= 0:
