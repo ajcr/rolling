@@ -53,13 +53,13 @@ def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwarg
     -------
 
     RollingObject subclass instance
-        RollingApply if a callable was given, else a class
-        instance implementing an efficient version of the
+        Apply instance if a callable was given as the operation, else
+        a class instance implementing an efficient version of the
         required operation.
     """
     if callable(operation):
-        return Apply(iterable, window_size, func=func, window_type=window_type, **kwargs)
-    elif isinstance(func, str):
+        return Apply(iterable, window_size, operation=operation, window_type=window_type, **kwargs)
+    elif isinstance(operation, str):
         try:
             return _rolling_methods[operation](iterable, window_size, window_type=window_type, **kwargs)
         except KeyError:
