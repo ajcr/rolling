@@ -38,12 +38,8 @@ class RollingObject(metaclass=abc.ABCMeta):
         return self
 
     def __repr__(self):
-        if hasattr(self, '_func_name'):
-            name = self._func_name
-        else:
-            name = self._func.__name__
         return "Rolling(func='{}', window_size={}, window_type='{}')".format(
-                    name, self.window_size, self.window_type)
+                    self.__class__.__name__, self.window_size, self.window_type)
 
     def __iter__(self):
         return self

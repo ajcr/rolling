@@ -4,7 +4,7 @@ from itertools import islice
 from .base import RollingObject
 
 
-class RollingAll(RollingObject):
+class All(RollingObject):
     """Iterator object that computes whether all
     values in a rolling window over a Python iterable
     evaluate to True.
@@ -45,8 +45,6 @@ class RollingAll(RollingObject):
     >>> r_all = rolling(seq, window_size=3, func='All')
 
     """
-    _func_name = 'All'
-
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._i = 0
@@ -83,7 +81,7 @@ class RollingAll(RollingObject):
         return self._i - self._obs >= self._last_false
 
 
-class RollingAny(RollingObject):
+class Any(RollingObject):
     """Iterator object that computes whether any
     values in a rolling window over a Python iterable
     evaluate to True.
@@ -124,8 +122,6 @@ class RollingAny(RollingObject):
     >>> r_any = rolling(seq, window_size=3, func='Any')
 
     """
-    _func_name = 'Any'
-
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._i = 0
@@ -162,7 +158,7 @@ class RollingAny(RollingObject):
         return self._i - self._obs < self._last_true
 
 
-class RollingCount(RollingObject):
+class Count(RollingObject):
     """Iterator object that counts the number of
     values in a rolling window over a Python iterable
     which evaluate to True.
@@ -205,8 +201,6 @@ class RollingCount(RollingObject):
     >>> r_count = rolling(seq, window_size=3, func='Count')
 
     """
-    _func_name = 'Count'
-
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(map(bool, head), maxlen=window_size)

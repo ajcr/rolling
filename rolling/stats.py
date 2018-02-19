@@ -3,11 +3,11 @@ from itertools import islice
 from math import sqrt
 
 from .base import RollingObject
-from .arithmetic import RollingSum
+from .arithmetic import Sum
 from .structures.skiplist import IndexableSkiplist
 
 
-class RollingMean(RollingSum):
+class Mean(Sum):
     """Iterator object that computes the mean
     of a rolling window over a Python iterable.
 
@@ -26,14 +26,12 @@ class RollingMean(RollingSum):
 
     where k is the size of the rolling window
     """
-    _func_name = 'Mean'
-
     @property
     def current_value(self):
         return self._sum / self._obs
 
 
-class RollingVar(RollingObject):
+class Var(RollingObject):
     """Iterator object that computes the sample variance
     of a rolling window over a Python iterable.
 
@@ -65,8 +63,6 @@ class RollingVar(RollingObject):
     Otherwise, if N-ddof is less than 0 (for variable-size
     windows), the variance is computed as NaN.
     """
-    _func_name = 'Var'
-
     def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
         if window_size - ddof <= 0:
             raise ValueError('window_size must be greater or equal to than ddof')
@@ -133,7 +129,7 @@ class RollingVar(RollingObject):
     def _obs(self):
         return len(self._buffer)
 
-class RollingStd(RollingVar):
+class Std(Var):
     """Iterator object that computes the sample standard
     deviation of a rolling window over a Python iterable.
 
@@ -166,8 +162,6 @@ class RollingStd(RollingVar):
     Otherwise, if N-ddof is less than 0 (for variable-size
     windows), the variance is computed as NaN.
     """
-    _func_name = 'Std'
-
     @property
     def current_value(self):
         if self._obs - self.ddof <= 0:
@@ -176,7 +170,7 @@ class RollingStd(RollingVar):
             return sqrt(self._m2 / (self._obs - self.ddof))
 
 
-class RollingMedian(RollingObject):
+class Median(RollingObject):
     """Iterator object that computes the median value
     of a rolling window over a Python iterable.
 
@@ -203,8 +197,6 @@ class RollingMedian(RollingObject):
 
     [1] http://code.activestate.com/recipes/576930/
     """
-    _func_name = 'Median'
-
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)

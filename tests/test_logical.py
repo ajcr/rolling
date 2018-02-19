@@ -1,6 +1,6 @@
 import pytest
 
-from rolling.logical import RollingAll, RollingAny, RollingCount
+from rolling.logical import All, Any, Count
 
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -23,7 +23,7 @@ from rolling.logical import RollingAll, RollingAny, RollingCount
     ([1, 1, 1, 1, 1], 1, [True, True, True, True, True]),
 ])
 def test_rolling_all(array, window_size, expected):
-    r = RollingAll(array, window_size)
+    r = All(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -46,7 +46,7 @@ def test_rolling_all(array, window_size, expected):
     ([1, 1, 1, 1, 1], 1, [True, True, True, True, True]),
 ])
 def test_rolling_all_variable(array, window_size, expected):
-    r = RollingAll(array, window_size, window_type='variable')
+    r = All(array, window_size, window_type='variable')
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -75,7 +75,7 @@ def test_rolling_all_variable(array, window_size, expected):
     ([0, 1, 0, 0, 0], 1, [False, True, False, False, False]),
 ])
 def test_rolling_any(array, window_size, expected):
-    r = RollingAny(array, window_size)
+    r = Any(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -104,7 +104,7 @@ def test_rolling_any(array, window_size, expected):
     ([1, 0, 0, 1, 0, 0], 1, [True, False, False, True, False, False]),
 ])
 def test_rolling_any_variable(array, window_size, expected):
-    r = RollingAny(array, window_size, window_type='variable')
+    r = Any(array, window_size, window_type='variable')
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -133,5 +133,5 @@ def test_rolling_any_variable(array, window_size, expected):
     ([0, 1, 0, 0, 0], 1, [0, 1, 0, 0, 0]),
 ])
 def test_rolling_count(array, window_size, expected):
-    r = RollingCount(array, window_size)
+    r = Count(array, window_size)
     assert list(r) == expected

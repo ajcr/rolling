@@ -8,7 +8,7 @@ pair = namedtuple('pair', ['value', 'death'])
 
 # todo: reduce code duplication in the classes below
 
-class RollingMin(RollingObject):
+class Min(RollingObject):
     """Iterator object that computes the minimum
     of a rolling window over a Python iterable.
 
@@ -38,8 +38,6 @@ class RollingMin(RollingObject):
     # Note: _obs must be tracked separately, we cannot just use
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
-
-    _func_name = 'Min'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
@@ -89,7 +87,7 @@ class RollingMin(RollingObject):
         return self._buffer[0].value
 
 
-class RollingMax(RollingObject):
+class Max(RollingObject):
     """Iterator object that computes the maximum
     of a rolling window over a Python iterable.
 
@@ -119,8 +117,6 @@ class RollingMax(RollingObject):
     # Note: _obs must be tracked separately, we cannot just use
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
-
-    _func_name = 'Max'
 
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
@@ -170,7 +166,7 @@ class RollingMax(RollingObject):
         return self._buffer[0].value
 
 
-class RollingMin2(RollingObject):
+class Min2(RollingObject):
     """Iterator object that computes the minimum value
     of a rolling window over a Python iterable.
 
@@ -199,8 +195,6 @@ class RollingMin2(RollingObject):
     that the heap can grow to be larger than the specified
     window size, k.
     """
-    _func_name = 'Min2'
-
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._heap = [pair(value, i + window_size) for i, value in enumerate(head)]

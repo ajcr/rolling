@@ -4,8 +4,8 @@ from itertools import islice
 from .base import RollingObject
 
 
-class RollingApply(RollingObject):
-    """Apply a specified function to the rolling window"""
+class Apply(RollingObject):
+    """Apply a specific function to a rolling window"""
 
     def _init_fixed(self, iterable, window_size, func=sum, **kwargs):
         head = islice(self._iterator, window_size - 1)
@@ -32,3 +32,7 @@ class RollingApply(RollingObject):
     @property
     def _obs(self):
         return len(self._buffer)
+
+    def __repr__(self):
+        return "Rolling(func='{}', window_size={}, window_type='{}')".format(
+                    self._func.__name__, self.window_size, self.window_type)

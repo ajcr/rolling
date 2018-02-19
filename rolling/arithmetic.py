@@ -4,7 +4,7 @@ from itertools import islice
 from .base import RollingObject
 
 
-class RollingSum(RollingObject):
+class Sum(RollingObject):
     """Iterator object that computes the sum
     of a rolling window over a Python iterable.
 
@@ -46,8 +46,6 @@ class RollingSum(RollingObject):
     >>> r_sum = rolling(seq, window_size=3, func='Sum')
 
     """
-    _func_name = 'Sum'
-
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)

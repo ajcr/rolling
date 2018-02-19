@@ -1,6 +1,6 @@
 import pytest
 
-from rolling.stats import RollingMean, RollingVar, RollingStd, RollingMedian
+from rolling.stats import Mean, Var, Std, Median
 
 @pytest.mark.parametrize('array,window_size,expected', [
     ([3, 0, 1, 7, 2], 5, [13/5]),
@@ -16,7 +16,7 @@ from rolling.stats import RollingMean, RollingVar, RollingStd, RollingMedian
     ([3, -8, 1, 7, -2], 1, [3, -8, 1, 7, -2]),
 ])
 def test_rolling_mean(array, window_size, expected):
-    r = RollingMean(array, window_size)
+    r = Mean(array, window_size)
     assert pytest.approx(list(r)) == expected
 
 @pytest.mark.parametrize('array', [
@@ -41,7 +41,7 @@ def test_rolling_mean(array, window_size, expected):
      846.6605263157895, 687.4105263157895, 648.8]),
 ])
 def test_rolling_var(array, window_size, expected):
-    r = RollingVar(array, window_size)
+    r = Var(array, window_size)
     assert pytest.approx(list(r)) == expected
 
 @pytest.mark.parametrize('array', [
@@ -71,7 +71,7 @@ def test_rolling_var(array, window_size, expected):
      float('nan')]),
 ])
 def test_rolling_var_variable(array, window_size, expected):
-    r = RollingVar(array, window_size, window_type='variable')
+    r = Var(array, window_size, window_type='variable')
     assert pytest.approx(list(r), nan_ok=True) == expected
 
 @pytest.mark.parametrize('array', [
@@ -98,9 +98,9 @@ def test_rolling_var_variable(array, window_size, expected):
      float('nan'), float('nan'), float('nan'), float('nan')]),
 ])
 def test_rolling_var_variable_with_ddof(array, ddof, expected):
-    r = RollingVar(array, 6, ddof=ddof, window_type='variable')
+    r = Var(array, 6, ddof=ddof, window_type='variable')
     # Note: using an absolute tolerance of 1e-11 here rather than 1e-12
-    # because for ddof=0 testcase, RollingVar comutes the last value as
+    # because for ddof=0 testcase, Var comutes the last value as
     # 5.229594535194337e-12 and not 0.0 (as np.var and statistics.pvariance give)
     assert pytest.approx(list(r), nan_ok=True, abs=1e-11) == expected
 
@@ -123,7 +123,7 @@ def test_rolling_var_variable_with_ddof(array, ddof, expected):
     [30.44450109722318, 28.913410281695363, 30.02756086938641, 28.98085067561601]),
 ])
 def test_rolling_std(array, window_size, expected):
-    r = RollingStd(array, window_size)
+    r = Std(array, window_size)
     assert pytest.approx(list(r)) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -143,7 +143,7 @@ def test_rolling_std(array, window_size, expected):
      [1, 1, 1]),
 ])
 def test_rolling_median(array, window_size, expected):
-    r = RollingMedian(array, window_size)
+    r = Median(array, window_size)
     assert pytest.approx(list(r)) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -154,5 +154,5 @@ def test_rolling_median(array, window_size, expected):
     ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
 ])
 def test_rolling_median_variable(array, window_size, expected):
-    r = RollingMedian(array, window_size, window_type='variable')
+    r = Median(array, window_size, window_type='variable')
     assert pytest.approx(list(r)) == expected

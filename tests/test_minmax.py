@@ -1,6 +1,6 @@
 import pytest
 
-from rolling.minmax import RollingMin, RollingMax, RollingMin2
+from rolling.minmax import Min, Max, Min2
 
 # todo: remove duplication of test data
 
@@ -49,12 +49,12 @@ min_test_data = [
 
 @pytest.mark.parametrize('array,window_size,expected', min_test_data)
 def test_rolling_min(array, window_size, expected):
-    r = RollingMin(array, window_size)
+    r = Min(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', min_test_data)
 def test_rolling_min2(array, window_size, expected):
-    r = RollingMin2(array, window_size)
+    r = Min2(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -103,7 +103,7 @@ def test_rolling_min2(array, window_size, expected):
      [80, 80, 80, 80, 77, 92, 92, 92, 92, 92, 70, 70, 87]),
 ])
 def test_rolling_max(array, window_size, expected):
-    r = RollingMax(array, window_size)
+    r = Max(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -120,7 +120,7 @@ def test_rolling_max(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
 ])
 def test_rolling_min_variable(array, window_size, expected):
-    r = RollingMin(array, window_size, window_type='variable')
+    r = Min(array, window_size, window_type='variable')
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -137,7 +137,7 @@ def test_rolling_min_variable(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
 ])
 def test_rolling_min2_variable(array, window_size, expected):
-    r = RollingMin2(array, window_size, window_type='variable')
+    r = Min2(array, window_size, window_type='variable')
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -154,5 +154,5 @@ def test_rolling_min2_variable(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
 ])
 def test_rolling_max_variable(array, window_size, expected):
-    r = RollingMax(array, window_size, window_type='variable')
+    r = Max(array, window_size, window_type='variable')
     assert list(r) == expected

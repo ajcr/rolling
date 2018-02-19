@@ -1,9 +1,9 @@
-from .apply import RollingApply
-from .arithmetic import RollingSum
+from .apply import Apply
+from .arithmetic import Sum
 from .base import RollingObject
-from .logical import RollingAll, RollingAny, RollingCount
-from .minmax import RollingMin, RollingMax, RollingMin2
-from .stats import RollingMean, RollingVar, RollingStd, RollingMedian
+from .logical import All, Any, Count
+from .minmax import Min, Max, Min2
+from .stats import Mean, Var, Std, Median
 
 def _get_subclasses(cls):
     # https://stackoverflow.com/a/33607093/3923281
@@ -11,8 +11,7 @@ def _get_subclasses(cls):
         yield from _get_subclasses(subclass)
         yield subclass
 
-_rolling_methods = {cls._func_name: cls for cls in _get_subclasses(RollingObject)
-                        if hasattr(cls, '_func_name')}
+_rolling_methods = {cls.__name__: cls for cls in _get_subclasses(RollingObject)}
 
 def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
     """Create a rolling iterator over an iterable object to
@@ -50,7 +49,7 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
         required operation.
     """
     if callable(func):
-        return RollingApply(iterable, window_size, func, window_type=window_type, **kwargs)
+        return Apply(iterable, window_size, func=func, window_type=window_type, **kwargs)
     elif isinstance(func, str):
         try:
             return _rolling_methods[func](iterable, window_size, window_type=window_type, **kwargs)
