@@ -51,9 +51,9 @@ Now suppose we have this list:
 ```
 The `rolling()` function creates an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over the list (or any other iterable) with a specified window size and reduction operation:
 ```python
->>> r_sum = rolling(counts, window_size=3, func='Sum') # rolling sum
->>> r_all = rolling(counts, window_size=3, func='All') # rolling all
->>> r_max = rolling(counts, window_size=3, func='Max') # rolling max
+>>> r_sum = rolling(counts, window_size=3, operation='Sum') # rolling sum
+>>> r_all = rolling(counts, window_size=3, operation='All') # rolling all
+>>> r_max = rolling(counts, window_size=3, operation='Max') # rolling max
 ```
 The result of iterating over each rolling object using `list()` is shown below. Note that the window type is fixed by default, meaning that only windows of the specified size (3) are used:
 ```python
@@ -68,14 +68,14 @@ The result of iterating over each rolling object using `list()` is shown below. 
 ```
 As well as the built-in efficient algorithms, any callable Python object can be applied to the rolling window when using the `rolling()` function:
 ```python
->>> r_list = rolling(counts, window_size=3, func=tuple)
+>>> r_list = rolling(counts, window_size=3, operation=tuple)
 >>> list(r_list)
 [(1, 5, 2), (5, 2, 0), (2, 0, 3)]
 ```
 
 Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluation at the beginning and end of the iterable. For instance:
 ```python
->>> r_list = rolling(counts, window_size=3, func=list, window_type='variable')
+>>> r_list = rolling(counts, window_size=3, operation=list, window_type='variable')
 >>> list(r_list)
 [[1],
  [1, 5],

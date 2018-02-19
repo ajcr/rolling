@@ -13,7 +13,7 @@ def _get_subclasses(cls):
 
 _rolling_methods = {cls.__name__: cls for cls in _get_subclasses(RollingObject)}
 
-def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
+def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwargs):
     """Create a rolling iterator over an iterable object to
     perform the specified function.
 
@@ -21,9 +21,13 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
     ----------
 
     iterable : any iterable object
+
     window_size : integer
-    func : callable or str, default 'Sum'
+
+    operation : callable or str, default 'Sum'
         the operation to be applied to each window (default 'Sum')
+        passing one of the following strings returns a RollingObject
+        subclass instance implementing the operation efficiently:
             - 'Sum', sum of values
             - 'Any', true if any value is true, else false
             - 'All', true if all values are true, else false
@@ -35,6 +39,11 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
             - 'Median', median value
             - 'Var', variance of values
             - 'Std', standard deviation of values
+
+        if a callable object is passed instead of a string, an instance
+        of the Apply class will be returned using that callable as the
+        window operation
+
     window_type : str, default 'fixed'
         determines whether the window size is constant ('fixed')
         or if fewer values are permitted in the window as it rolls
@@ -48,12 +57,12 @@ def rolling(iterable, window_size, func='Sum', window_type='fixed', **kwargs):
         instance implementing an efficient version of the
         required operation.
     """
-    if callable(func):
+    if callable(operation):
         return Apply(iterable, window_size, func=func, window_type=window_type, **kwargs)
     elif isinstance(func, str):
         try:
-            return _rolling_methods[func](iterable, window_size, window_type=window_type, **kwargs)
+            return _rolling_methods[operation](iterable, window_size, window_type=window_type, **kwargs)
         except KeyError:
-            raise ValueError('Unknown rolling operation: \'{}\''.format(func))
+            raise ValueError('Unknown rolling operation: \'{}\''.format(operation))
     else:
-        raise TypeError('func must be callable or str, not {}'.format(type(func).__name__))
+        raise TypeError('operation must be callable or str, not {}'.format(type(operation).__name__))

@@ -38,7 +38,7 @@ class RollingObject(metaclass=abc.ABCMeta):
         return self
 
     def __repr__(self):
-        return "Rolling(func='{}', window_size={}, window_type='{}')".format(
+        return "Rolling(operation='{}', window_size={}, window_type='{}')".format(
                     self.__class__.__name__, self.window_size, self.window_type)
 
     def __iter__(self):

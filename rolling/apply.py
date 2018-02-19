@@ -34,5 +34,5 @@ class Apply(RollingObject):
         return len(self._buffer)
 
     def __repr__(self):
-        return "Rolling(func='{}', window_size={}, window_type='{}')".format(
+        return "Rolling(operation='{}', window_size={}, window_type='{}')".format(
                     self._func.__name__, self.window_size, self.window_type)
