@@ -129,6 +129,7 @@ class Var(RollingObject):
     def _obs(self):
         return len(self._buffer)
 
+
 class Std(Var):
     """Iterator object that computes the sample standard
     deviation of a rolling window over a Python iterable.
