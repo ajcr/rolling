@@ -64,8 +64,8 @@ class Var(RollingObject):
     windows), the variance is computed as NaN.
     """
     def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
-        if window_size - ddof <= 0:
-            raise ValueError('window_size must be greater or equal to than ddof')
+        if window_size <= ddof:
+            raise ValueError('window_size must be greater than or equal to ddof')
 
         self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
@@ -84,8 +84,8 @@ class Var(RollingObject):
         self._buffer.appendleft(self._mean)
 
     def _init_variable(self, iterable, window_size, ddof=1, **kwargs):
-        if window_size - ddof <= 0:
-            raise ValueError('window_size must be greater or equal to than ddof')
+        if window_size <= ddof:
+            raise ValueError('window_size must be greater than or equal to ddof')
 
         self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
@@ -120,7 +120,7 @@ class Var(RollingObject):
 
     @property
     def current_value(self):
-        if self._obs - self.ddof <= 0:
+        if self._obs <= self.ddof:
             return float('nan')
         else:
             return self._m2 / (self._obs - self.ddof)
@@ -164,7 +164,7 @@ class Std(Var):
     """
     @property
     def current_value(self):
-        if self._obs - self.ddof <= 0:
+        if self._obs <= self.ddof:
             return float('nan')
         else:
             return sqrt(self._m2 / (self._obs - self.ddof))
