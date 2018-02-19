@@ -25,13 +25,14 @@ class All(RollingObject):
     Examples
     --------
 
+    >>> import rolling
     >>> seq = (8, 0, 1, 3, 6, 5)
-    >>> r_all = RollingAll(seq, 3)
+    >>> r_all = rolling.All(seq, 3)
     >>> next(r_all)
     False
     >>> next(r_all)
     False
-    >>> r_all = RollingSum(seq, 4)
+    >>> r_all = rolling.All(seq, 4)
     >>> list(r_all)
     [False, False, True]
 
@@ -42,7 +43,7 @@ class All(RollingObject):
     `rolling()` function by passing 'All':
 
     >>> from rolling import rolling
-    >>> r_all = rolling(seq, window_size=3, func='All')
+    >>> r_all = rolling(seq, window_size=3, operation='All')
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
@@ -102,13 +103,14 @@ class Any(RollingObject):
     Examples
     --------
 
+    >>> import rolling
     >>> seq = (1, 0, 0, 0, 6, 5)
-    >>> r_any = RollingAny(seq, 3)
+    >>> r_any = rolling.Any(seq, 3)
     >>> next(r_any)
     True
     >>> next(r_any)
     False
-    >>> r_any = RollingAny(seq, 4)
+    >>> r_any = rolling.Any(seq, 4)
     >>> list(r_any)
     [True, True, True]
 
@@ -119,7 +121,7 @@ class Any(RollingObject):
     `rolling()` function by passing 'Any':
 
     >>> from rolling import rolling
-    >>> r_any = rolling(seq, window_size=3, func='Any')
+    >>> r_any = rolling(seq, window_size=3, operation='Any')
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
@@ -181,13 +183,14 @@ class Count(RollingObject):
     Examples
     --------
 
+    >>> import rolling
     >>> seq = (1, 0, 0, 0, 6, 5)
-    >>> r_count = RollingCount(seq, 3)
+    >>> r_count = rolling.Count(seq, 3)
     >>> next(r_count)
     1
     >>> next(r_count)
     0
-    >>> r_count = RollingCount(seq, 4)
+    >>> r_count = rolling.Count(seq, 4)
     >>> list(r_count)
     [1, 1, 2]
 
@@ -198,7 +201,7 @@ class Count(RollingObject):
     `rolling()` function by passing 'Count':
 
     >>> from rolling import rolling
-    >>> r_count = rolling(seq, window_size=3, func='Count')
+    >>> r_count = rolling(seq, window_size=3, operation='Count')
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):

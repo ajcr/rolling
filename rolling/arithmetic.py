@@ -26,13 +26,14 @@ class Sum(RollingObject):
     Examples
     --------
 
+    >>> import rolling
     >>> seq = (8, 1, 1, 3, 6, 5)
-    >>> r_sum = RollingSum(seq, 3)
+    >>> r_sum = rolling.Sum(seq, 3)
     >>> next(r_sum)
     10
     >>> next(r_sum)
     5
-    >>> r_sum = RollingSum(seq, 4)
+    >>> r_sum = rolling.Sum(seq, 4)
     >>> list(r_sum)
     [13, 11, 15]
 
@@ -43,7 +44,7 @@ class Sum(RollingObject):
     `rolling()` function by passing 'Sum':
 
     >>> from rolling import rolling
-    >>> r_sum = rolling(seq, window_size=3, func='Sum')
+    >>> r_sum = rolling(seq, window_size=3, operation='Sum')
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
