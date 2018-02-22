@@ -166,7 +166,7 @@ class Max(RollingObject):
         return self._buffer[0].value
 
 
-class Min2(RollingObject):
+class MinHeap(RollingObject):
     """Iterator object that computes the minimum value
     of a rolling window over a Python iterable.
 

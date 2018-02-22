@@ -1,6 +1,6 @@
 import pytest
 
-from rolling.minmax import Min, Max, Min2
+from rolling.minmax import Min, Max, MinHeap
 
 # todo: remove duplication of test data
 
@@ -53,8 +53,8 @@ def test_rolling_min(array, window_size, expected):
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', min_test_data)
-def test_rolling_min2(array, window_size, expected):
-    r = Min2(array, window_size)
+def test_rolling_minheap(array, window_size, expected):
+    r = MinHeap(array, window_size)
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
@@ -136,8 +136,8 @@ def test_rolling_min_variable(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
 ])
-def test_rolling_min2_variable(array, window_size, expected):
-    r = Min2(array, window_size, window_type='variable')
+def test_rolling_minheap_variable(array, window_size, expected):
+    r = MinHeap(array, window_size, window_type='variable')
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [

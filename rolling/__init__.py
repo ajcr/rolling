@@ -2,7 +2,7 @@ from .apply import Apply
 from .arithmetic import Sum
 from .base import RollingObject
 from .logical import All, Any
-from .minmax import Min, Max, Min2
+from .minmax import Min, Max, MinHeap
 from .stats import Mean, Var, Std, Median
 
 def _get_subclasses(cls):
@@ -32,7 +32,7 @@ def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwarg
             - 'Any', true if any value is true, else false
             - 'All', true if all values are true, else false
             - 'Min', minimum value
-            - 'Min2', minimum value, uses heap not deque to track values
+            - 'MinHeap', minimum value, uses heap not deque to track values
             - 'Max', maximum value
             - 'Mean', mean value
             - 'Median', median value

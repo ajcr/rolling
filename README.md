@@ -22,7 +22,7 @@ However for many operations, there are algorithms that compute the value for eac
 | Any                      | O(1)     | O(1)   | True if any value in the window is True, else False |
 | All                      | O(1)     | O(1)   | True if all values in the window are True, else False |
 | Min                      | O(1)     | O(k)   | Uses the 'Ascending Minima' algorithm |
-| Min2                     | O(1)     | O(k)*  | Uses heap to track minimum. Memory scales linearly with k over unordered data |
+| MinHeap                  | O(1)     | O(k)   | Uses heap to track ascending minima. Memory is linear with k for unordered data |
 | Max                      | O(1)     | O(k)   | Uses the 'Descending Maxima' algorithm |
 
 See the References section below for more details about the algorithms and links to other resources.
