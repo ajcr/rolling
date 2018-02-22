@@ -18,8 +18,7 @@ class RollingObject(metaclass=abc.ABCMeta):
     attribute to indicate the current size of the variable-length
     window.
     """
-    def __new__(cls, iterable, window_size, **kwargs):
-        window_type = kwargs.get('window_type', 'fixed')
+    def __new__(cls, iterable, window_size, window_type='fixed', **kwargs):
         if window_type == 'fixed':
             cls.__init__ = cls._init_fixed
             cls.__next__ = cls._next_fixed
