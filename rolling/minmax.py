@@ -30,7 +30,8 @@ class Min(RollingObject):
     Notes
     -----
 
-    This method uses the algorithms outlined in [1].
+    This method uses the algorithms outlined in [1] to
+    maintain a deque of ascending minima.
 
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
     """
@@ -40,11 +41,10 @@ class Min(RollingObject):
     # values with a new value, rather than appending the value
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        head = islice(self._iterator, window_size - 1)
         self._i = -1
         self._obs = 0
         self._buffer = deque()
-        for value in head:
+        for value in islice(self._iterator, window_size - 1):
             self._i += 1
             self._obs += 1
             new_pair = pair(value, self._i + self.window_size)
@@ -53,17 +53,19 @@ class Min(RollingObject):
             self._buffer.append(new_pair)
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        self._buffer = deque()
         self._i = -1
         self._obs = 0
+        self._buffer = deque()
 
     def _update(self):
         value = next(self._iterator)
         self._i += 1
         new_pair = pair(value, self._i + self.window_size)
+        # remove larger values from the end of the buffer
         while self._buffer and self._buffer[-1].value >= value:
             self._buffer.pop()
         self._buffer.append(new_pair)
+        # remove any minima that die on this iteration
         while self._buffer[0].death <= self._i:
             self._buffer.popleft()
 
@@ -72,6 +74,7 @@ class Min(RollingObject):
         self._i += 1
         self._obs += 1
         new_pair = pair(value, self._i + self.window_size)
+        # remove larger values from the end of the buffer
         while self._buffer and self._buffer[-1].value >= value:
             self._buffer.pop()
         self._buffer.append(new_pair)
@@ -79,6 +82,7 @@ class Min(RollingObject):
     def _remove_old(self):
         self._i += 1
         self._obs -= 1
+        # remove any minima that die on this iteration
         while self._buffer[0].death <= self._i:
             self._buffer.popleft()
 
@@ -109,7 +113,8 @@ class Max(RollingObject):
     Notes
     -----
 
-    This method uses the algorithms outlined in [1].
+    This method uses the algorithms outlined in [1] to
+    maintain a deque of descending maxima.
 
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
     """
@@ -119,11 +124,10 @@ class Max(RollingObject):
     # values with a new value, rather than appending the value
 
     def _init_fixed(self, iterable, window_size, **kwargs):
-        head = islice(self._iterator, window_size - 1)
         self._i = -1
         self._obs = 0
         self._buffer = deque()
-        for value in head:
+        for value in islice(self._iterator, window_size - 1):
             self._i += 1
             self._obs += 1
             new_pair = pair(value, self._i + self.window_size)
@@ -140,9 +144,11 @@ class Max(RollingObject):
         value = next(self._iterator)
         self._i += 1
         new_pair = pair(value, self._i + self.window_size)
+        # remove smaller values from the end of the buffer
         while self._buffer and self._buffer[-1].value <= value:
             self._buffer.pop()
         self._buffer.append(new_pair)
+        # remove any maxima that die on this iteration
         while self._buffer[0].death <= self._i:
             self._buffer.popleft()
 
@@ -151,6 +157,7 @@ class Max(RollingObject):
         self._i += 1
         self._obs += 1
         new_pair = pair(value, self._i + self.window_size)
+        # remove smaller values from the end of the buffer
         while self._buffer and self._buffer[-1].value <= value:
             self._buffer.pop()
         self._buffer.append(new_pair)
@@ -158,6 +165,7 @@ class Max(RollingObject):
     def _remove_old(self):
         self._i += 1
         self._obs -= 1
+        # remove any maxima that die on this iteration
         while self._buffer[0].death <= self._i:
             self._buffer.popleft()
 
@@ -189,11 +197,12 @@ class MinHeap(RollingObject):
     -----
 
     This method uses a heap to keep track of the minimum
-    value in the rolling window.
+    values in the rolling window (as opposed to a deque
+    used by the Min class).
 
     Items that expire are lazily deleted, which can mean
     that the heap can grow to be larger than the specified
-    window size, k.
+    window size, k, in cases where data is ordered.
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
@@ -212,6 +221,7 @@ class MinHeap(RollingObject):
         self._i += 1
         new_pair = pair(value, self._i + self.window_size)
         heapq.heappush(self._heap, new_pair)
+        # remove any minima that die on this iteration
         while self._heap[0].death <= self._i:
             heapq.heappop(self._heap)
 
@@ -225,6 +235,7 @@ class MinHeap(RollingObject):
     def _remove_old(self):
         self._i += 1
         self._obs -= 1
+        # remove any minima that die on this iteration
         while self._heap[0].death <= self._i:
             heapq.heappop(self._heap)
 
