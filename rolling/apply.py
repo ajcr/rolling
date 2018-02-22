@@ -5,7 +5,51 @@ from .base import RollingObject
 
 
 class Apply(RollingObject):
-    """Apply a specific function to a rolling window"""
+    """Iterator object that applies a function
+    to a rolling window over a Python iterable.
+
+    Parameters
+    ----------
+
+    iterable : any iterable object
+    window_size : integer, the size of the rolling
+        window moving over the iterable
+    operation : callable, default sum()
+        a function, or class implementing a __call__
+        method, to be applied to each window
+
+    Complexity
+    ----------
+
+    Update time:  dependent on operation
+    Memory usage: O(k)
+
+    where k is the size of the rolling window
+
+    Examples
+    --------
+
+    >>> import rolling
+    >>> seq = (8, 1, 1, 3, 6, 5)
+    >>> r_sum = rolling.Apply(seq, 3)
+    >>> next(r_sum)
+    10
+    >>> next(r_sum)
+    5
+    >>> r_sum = rolling.Apply(seq, 4)
+    >>> list(r_sum)
+    [13, 11, 15]
+
+    Notes
+    -----
+
+    This object can also be instantiated using the
+    `rolling()` function by passing the callable:
+
+    >>> from rolling import rolling
+    >>> r_tuples = rolling(seq, window_size=3, operation=tuples)
+
+    """
 
     def _init_fixed(self, iterable, window_size, operation=sum, **kwargs):
         head = islice(self._iterator, window_size - 1)
