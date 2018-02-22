@@ -32,7 +32,7 @@ class Mean(Sum):
 
 
 class Var(RollingObject):
-    """Iterator object that computes the sample variance
+    """Iterator object that computes the variance
     of a rolling window over a Python iterable.
 
     Parameters
@@ -42,7 +42,7 @@ class Var(RollingObject):
     window_size : integer, the size of the rolling
         window moving over the iterable
     ddof : int, default 1, the divisor used in calculation
-        is N-ddof where N is the number of observations
+        is (N - ddof) where N is the number of observations
 
     Complexity
     ----------
@@ -60,24 +60,23 @@ class Var(RollingObject):
     Note that ddof must be less than window_size, otherwise
     a value error is raised during initialisation.
 
-    Otherwise, if N-ddof is less than 0 (for variable-size
+    Otherwise, if (N - ddof) is less than 0 (for variable-size
     windows), the variance is computed as NaN.
     """
     def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
         if window_size <= ddof:
-            raise ValueError('window_size must be greater than or equal to ddof')
+            raise ValueError('window_size must be greater than ddof')
 
         self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
         self._mean = 0.0 # mean of values
-        self._m2 = 0.0  # sum of squared values less the mean
+        self._sslm = 0.0 # sum of squared values less the mean
 
-        head = islice(self._iterator, window_size - 1)
-        for value in head:
+        for value in islice(self._iterator, window_size - 1):
             self._buffer.append(value)
             delta = value - self._mean
             self._mean += delta / self._obs
-            self._m2 += delta * (value - self._mean)
+            self._sslm += delta * (value - self._mean)
 
         # insert mean at the start of the buffer so that the
         # the first call to update returns the correct value
@@ -85,12 +84,12 @@ class Var(RollingObject):
 
     def _init_variable(self, iterable, window_size, ddof=1, **kwargs):
         if window_size <= ddof:
-            raise ValueError('window_size must be greater than or equal to ddof')
+            raise ValueError('window_size must be greater than ddof')
 
         self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
         self._mean = 0.0 # mean of values
-        self._m2 = 0.0  # sum of squared values less the mean
+        self._sslm = 0.0 # sum of squared values less the mean
 
     def _add_new(self):
         new = next(self._iterator)
@@ -98,14 +97,14 @@ class Var(RollingObject):
 
         delta = new - self._mean
         self._mean += delta / self._obs
-        self._m2 += delta * (new - self._mean)
+        self._sslm += delta * (new - self._mean)
 
     def _remove_old(self):
         old = self._buffer.popleft()
 
         delta = old - self._mean
         self._mean -= delta / self._obs
-        self._m2 -= delta * (old - self._mean)
+        self._sslm -= delta * (old - self._mean)
 
     def _update(self):
         new = next(self._iterator)
@@ -116,14 +115,14 @@ class Var(RollingObject):
         delta_old = old - self._mean
         self._mean += delta / self._obs
         delta_new = new - self._mean
-        self._m2 += delta * (delta_old + delta_new)
+        self._sslm += delta * (delta_old + delta_new)
 
     @property
     def current_value(self):
         if self._obs <= self.ddof:
             return float('nan')
         else:
-            return self._m2 / (self._obs - self.ddof)
+            return self._sslm / (self._obs - self.ddof)
 
     @property
     def _obs(self):
@@ -131,8 +130,8 @@ class Var(RollingObject):
 
 
 class Std(Var):
-    """Iterator object that computes the sample standard
-    deviation of a rolling window over a Python iterable.
+    """Iterator object that computes the standard deviation
+    of a rolling window over a Python iterable.
 
     Parameters
     ----------
@@ -141,7 +140,7 @@ class Std(Var):
     window_size : integer, the size of the rolling
         window moving over the iterable
     ddof : int, default 1, the divisor used in calculation
-        is N-ddof where N is the number of observations
+        is (N - ddof) where N is the number of observations
 
     Complexity
     ----------
@@ -168,7 +167,7 @@ class Std(Var):
         if self._obs <= self.ddof:
             return float('nan')
         else:
-            return sqrt(self._m2 / (self._obs - self.ddof))
+            return sqrt(self._sslm / (self._obs - self.ddof))
 
 
 class Median(RollingObject):
@@ -218,7 +217,7 @@ class Median(RollingObject):
 
     def _update(self):
         new = next(self._iterator)
-        old = self._buffer[0]
+        old = self._buffer.popleft()
         self._skiplist.remove(old)
         self._skiplist.insert(new)
         self._buffer.append(new)
@@ -229,9 +228,8 @@ class Median(RollingObject):
         self._buffer.append(new)
 
     def _remove_old(self):
-        old = self._buffer[0]
+        old = self._buffer.popleft()
         self._skiplist.remove(old)
-        self._buffer.popleft()
 
     @property
     def current_value(self):
