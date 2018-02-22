@@ -70,7 +70,7 @@ class Apply(RollingObject):
     def _remove_old(self):
         self._buffer.popleft()
 
-    def _update(self):
+    def _update_window(self):
         self._buffer.append(next(self._iterator))
 
     @property

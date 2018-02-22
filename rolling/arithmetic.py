@@ -57,7 +57,7 @@ class Sum(RollingObject):
         self._buffer = deque(maxlen=window_size)
         self._sum = 0
 
-    def _update(self):
+    def _update_window(self):
         value = next(self._iterator)
         self._sum += value - self._buffer.popleft()
         self._buffer.append(value)

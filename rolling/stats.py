@@ -106,7 +106,7 @@ class Var(RollingObject):
         self._mean -= delta / self._obs
         self._sslm -= delta * (old - self._mean)
 
-    def _update(self):
+    def _update_window(self):
         new = next(self._iterator)
         old = self._buffer[0]
         self._buffer.append(new)
@@ -215,7 +215,7 @@ class Median(RollingObject):
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)
 
-    def _update(self):
+    def _update_window(self):
         new = next(self._iterator)
         old = self._buffer.popleft()
         self._skiplist.remove(old)

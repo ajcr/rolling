@@ -67,7 +67,7 @@ class All(RollingObject):
         if not val:
             self._last_false = self._i
 
-    def _update(self):
+    def _update_window(self):
         val = next(self._iterator)
         self._i += 1
         if not val:
@@ -144,7 +144,7 @@ class Any(RollingObject):
         if val:
             self._last_true = self._i
 
-    def _update(self):
+    def _update_window(self):
         val = next(self._iterator)
         self._i += 1
         if val:

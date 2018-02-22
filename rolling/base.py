@@ -4,18 +4,25 @@ import abc
 class RollingObject(metaclass=abc.ABCMeta):
     """Baseclass for rolling iterator objects.
 
-    All subclasses must implement the following methods
+    The __new__ method sets the appropriate magic
+    methods upon class creation.
+
+    Most of the iteration logic is handled in this
+    class: subclasses implement methods manipulating
+    atrributes as iteration progresses.
+
+    All subclasses *must* implement the following methods
     with the following call signatures:
 
-        - _init_fixed(self, iterable, window_size, **kwargs)
-        - _init_variable(self, iterable, window_size, **kwargs)
-        - _update(self)
-        - _add_new(self)
-        - _remove_old(self)
-        - current_value(self) [this is a @property]
+        _init_fixed(self, iterable, window_size, **kwargs)
+        _init_variable(self, iterable, window_size, **kwargs)
+        _update_window(self)
+        _add_new(self)
+        _remove_old(self)
+        current_value(self) [this is a @property]
 
     Note: variable-length instances must also have a self._obs
-    attribute to indicate the current size of the variable-length
+    attribute to return the current size of the variable-length
     window.
     """
     def __new__(cls, iterable, window_size, window_type='fixed', **kwargs):
@@ -33,6 +40,7 @@ class RollingObject(metaclass=abc.ABCMeta):
         self.window_size = self._validate_window_size(window_size)
         self._iterator = iter(iterable)
         if self.window_type == 'variable':
+            # indicates whether window_size has been reached
             self._filled = False
         return self
 
@@ -45,7 +53,7 @@ class RollingObject(metaclass=abc.ABCMeta):
 
     def _next_fixed(self):
         'return the next value for fixed-length windows'
-        self._update()
+        self._update_window()
         return self.current_value
 
     def _next_variable(self):
@@ -58,7 +66,7 @@ class RollingObject(metaclass=abc.ABCMeta):
             return self.current_value
         # once the window size is reached, update window until the iterator finishes
         try:
-            self._update()
+            self._update_window()
             return self.current_value
         except StopIteration:
             # if the iterator finishes, remove the oldest values one by one
@@ -94,8 +102,8 @@ class RollingObject(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def _update(self):
-        'simultaneously add a new value and remove the old value'
+    def _update_window(self):
+        'add a new value from the iterator and remove the oldest value from the window'
         pass
 
     @staticmethod

@@ -57,7 +57,7 @@ class Min(RollingObject):
         self._obs = 0
         self._buffer = deque()
 
-    def _update(self):
+    def _update_window(self):
         value = next(self._iterator)
         self._i += 1
         new_pair = pair(value, self._i + self.window_size)
@@ -140,7 +140,7 @@ class Max(RollingObject):
         self._i = -1
         self._obs = 0
 
-    def _update(self):
+    def _update_window(self):
         value = next(self._iterator)
         self._i += 1
         new_pair = pair(value, self._i + self.window_size)
@@ -216,7 +216,7 @@ class MinHeap(RollingObject):
         self._i = -1
         self._obs = 0
 
-    def _update(self):
+    def _update_window(self):
         value = next(self._iterator)
         self._i += 1
         new_pair = pair(value, self._i + self.window_size)
