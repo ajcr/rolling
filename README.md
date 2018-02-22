@@ -6,24 +6,22 @@ Arithmetical, logical and statistical functions are implemented. Both fixed-leng
 
 ## Overview
 
-This module provides implementations of useful rolling-window operations, including sum, mean, and max. These operations can be applied over any iterable Python object, finite or infinite (lists, generators, files, and so on).
+Naively applying builtin Python's functions to a window (e.g. `sum()` and `max()`) becomes increasingly slow as the window gets larger. The complexity is typically **O(k)** where **k** is the size of the window.
 
-Naively applying builtin functions to a window (such as `sum()` and `max()`) becomes increasingly slow as window size increases (the complexity is typically **O(k)** where **k** is the size of the window).
+Luckily, for many operations there are algorithms that run in sublinear (e.g. **O(log k)**) or constant time (**O(1)**). The rolling window algorithms implemented so far in this module are summarised below:
 
-However for many operations, there are algorithms that compute the value for each window in _constant_ time as window size increases, **O(1)**. The rolling window algorithms implemented so far in this module are summarised below:
-
-| Operation                | Update   | Memory | Comments |
-| ------------------------ |:--------:|:------:|-----------------------------|
-| Sum                      | O(1)     | O(k)   | Sum of window values |
-| Mean                     | O(1)     | O(k)   | Arithmetic mean of window |
-| Median                   | O(log k) | O(k)   | Uses an indexable skiplist approach (proposed by R. Hettinger) |
-| Var                      | O(1)     | O(k)   | Rolling variance, uses Welford's algorithm |
-| Std                      | O(1)     | O(k)   | Rolling standard deviation, uses Welford's algorithm |
-| Any                      | O(1)     | O(1)   | True if any value in the window is True, else False |
-| All                      | O(1)     | O(1)   | True if all values in the window are True, else False |
-| Min                      | O(1)     | O(k)   | Uses the 'Ascending Minima' algorithm |
-| MinHeap                  | O(1)     | O(k)   | Uses heap to track ascending minima. Memory is linear with k for unordered data |
-| Max                      | O(1)     | O(k)   | Uses the 'Descending Maxima' algorithm |
+| Operation        | Update   | Memory | Comments |
+| ---------------- |:--------:|:------:|-----------------------------|
+| Sum              | O(1)     | O(k)   | Sum of window values |
+| Mean             | O(1)     | O(k)   | Arithmetic mean of window values |
+| Median           | O(log k) | O(k)   | Median, uses indexable skiplist (proposed by R. Hettinger) |
+| Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm |
+| Std              | O(1)     | O(k)   | Standard deviation, uses Welford's algorithm |
+| Any              | O(1)     | O(1)   | True if *any* value in the window is True, else False |
+| All              | O(1)     | O(1)   | True if *all* values in the window are True, else False |
+| Min              | O(1)     | O(k)   | Minimum value, tracks ascending minima using a deque |
+| MinHeap          | O(1)     | O(k)   | Minimum value, tracks ascending minima using a heap |
+| Max              | O(1)     | O(k)   | Maximum value, tracks descending maxima using a deque |
 
 See the References section below for more details about the algorithms and links to other resources.
 
@@ -48,7 +46,7 @@ Now suppose we have this list:
 ```python
 >>> counts = [1, 5, 2, 0, 3]
 ```
-The `rolling()` function creates an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over the list (or any other iterable) with a specified window size and reduction operation:
+The `rolling()` function creates an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list, with a reduction operation for a given window size:
 ```python
 >>> r_sum = rolling(counts, window_size=3, operation='Sum') # rolling sum
 >>> r_all = rolling(counts, window_size=3, operation='All') # rolling all
@@ -65,14 +63,14 @@ The result of iterating over each rolling object using `list()` is shown below. 
 >>> list(r_max)
 [5, 5, 3]
 ```
-As well as the built-in efficient algorithms, any callable Python object can be applied to the rolling window when using the `rolling()` function:
+As well as the built-in efficient algorithms provided by this module, any callable Python object can be applied to the rolling window. For instance, Python's `tuple()` function:
 ```python
 >>> r_list = rolling(counts, window_size=3, operation=tuple)
 >>> list(r_list)
 [(1, 5, 2), (5, 2, 0), (2, 0, 3)]
 ```
 
-Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluation at the beginning and end of the iterable. For instance:
+Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluated at the beginning and end of the iterable. For instance:
 ```python
 >>> r_list = rolling(counts, window_size=3, operation=list, window_type='variable')
 >>> list(r_list)
@@ -84,15 +82,6 @@ Variable-length windows can be specified using the `window_type` argument. This 
  [0, 3],
  [3]]
 ```
-
-## Discussion and future work
-
-The algorithms implemented by this module are chosen to be efficient in the sense that the cost of computing each new return value scales efficiently with the size of window.
-
-In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function) rather than using `rolling(array, k, 'Min')`.
-
-With this in mind, in future it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
-
 ## References and resources
 
 Some rolling algorithms are widely known (e.g. 'Sum' and 'Mean') and I am not sure which source to cite.
@@ -105,3 +94,11 @@ Other rolling algorithms are very cleverly designed and I learned a lot by readi
 
 - **Var** and **Std** use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). I referred to the rolling variance implementation in [pandas](https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx#L635-L784) as well as an older edit of the Wikipedia page [Algorithms for calculating variance](https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179).
 
+
+## Discussion and future work
+
+The algorithms implemented by this module are chosen to be efficient in the sense that the cost of computing each new return value scales efficiently with the size of window.
+
+In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function) rather than using `rolling(array, k, 'Min')`.
+
+With this in mind, in future it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
