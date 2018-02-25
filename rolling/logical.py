@@ -47,13 +47,11 @@ class All(RollingObject):
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
-        self._i = 0
-        self._obs = window_size
+        self._i = -1
+        self._obs = 1
         self._last_false = -1
-        for val in islice(self._iterator, window_size - 1):
-            self._i += 1
-            if not val:
-                self._last_false = self._i
+        for new in islice(self._iterator, window_size-1):
+            self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._i = -1
@@ -122,13 +120,11 @@ class Any(RollingObject):
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
-        self._i = 0
-        self._obs = window_size
+        self._i = -1
+        self._obs = 1
         self._last_true = -1
-        for val in islice(self._iterator, window_size - 1):
-            self._i += 1
-            if val:
-                self._last_true = self._i
+        for new in islice(self._iterator, window_size-1):
+            self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._i = -1

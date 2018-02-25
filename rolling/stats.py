@@ -72,11 +72,8 @@ class Var(RollingObject):
         self._mean = 0.0 # mean of values
         self._sslm = 0.0 # sum of squared values less the mean
 
-        for value in islice(self._iterator, window_size - 1):
-            self._buffer.append(value)
-            delta = value - self._mean
-            self._mean += delta / self._obs
-            self._sslm += delta * (value - self._mean)
+        for new in islice(self._iterator, window_size-1):
+            self._add_new(new)
 
         # insert mean at the start of the buffer so that the
         # the first call to update returns the correct value
@@ -200,14 +197,13 @@ class Median(RollingObject):
         self._skiplist = IndexableSkiplist(window_size)
 
         # update buffer and skiplist with initial values
-        for value in islice(self._iterator, window_size - 1):
-            self._buffer.append(value)
-            self._skiplist.insert(value)
+        for new in islice(self._iterator, window_size-1):
+            self._add_new(new)
 
         # insert a dummy value (the last element seen) so that
         # the window is full and iterator works as expected
-        self._buffer.appendleft(value)
-        self._skiplist.insert(value)
+        self._buffer.appendleft(new)
+        self._skiplist.insert(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._buffer = deque(maxlen=window_size)

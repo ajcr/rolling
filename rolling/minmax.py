@@ -44,13 +44,8 @@ class Min(RollingObject):
         self._i = -1
         self._obs = 0
         self._buffer = deque()
-        for value in islice(self._iterator, window_size - 1):
-            self._i += 1
-            self._obs += 1
-            new_pair = pair(value, self._i + self.window_size)
-            while self._buffer and self._buffer[-1].value >= value:
-                self._buffer.pop()
-            self._buffer.append(new_pair)
+        for new in islice(self._iterator, window_size-1):
+            self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._i = -1
@@ -125,13 +120,8 @@ class Max(RollingObject):
         self._i = -1
         self._obs = 0
         self._buffer = deque()
-        for value in islice(self._iterator, window_size - 1):
-            self._i += 1
-            self._obs += 1
-            new_pair = pair(value, self._i + self.window_size)
-            while self._buffer and self._buffer[-1].value <= value:
-                self._buffer.pop()
-            self._buffer.append(new_pair)
+        for new in islice(self._iterator, window_size-1):
+            self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._buffer = deque()
@@ -202,6 +192,7 @@ class MinHeap(RollingObject):
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
+        # note: faster to initialise heap this way, rather than use _add_new()
         self._heap = [pair(value, i + window_size) for i, value in enumerate(head)]
         heapq.heapify(self._heap)
         self._i = len(self._heap) - 1
