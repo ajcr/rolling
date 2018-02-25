@@ -8,5 +8,5 @@ setup(name='rolling',
       author='Alex Riley',
       license='MIT',
       packages=['rolling'],
-      tests_require=['pytest'],
+      tests_require=['pytest>=2.8.0'],
       zip_safe=False)
