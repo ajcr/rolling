@@ -1,21 +1,23 @@
 # rolling
 
-A collection of efficient rolling (i.e. sliding, moving) window algorithms for Python, with a easy-to-use iterface.
+A collection of computationally efficient rolling window iterators for Python, with a simple iterface (a.k.a. 'sliding window', 'moving window').
 
-Arithmetical, logical and statistical functions are implemented. Both fixed-length and variable-length windows are supported.
+Useful arithmetical, logical and statistical functions are implemented. There's also a more general 'apply' mode. Both fixed-length and variable-length windows are supported.
+
+To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
 ## Overview
 
 Naively applying builtin Python's functions to a window (e.g. `sum()` and `max()`) becomes increasingly slow as the window gets larger. The complexity is typically **O(k)** where **k** is the size of the window.
 
-Luckily, for many operations there are algorithms that run in sublinear (e.g. **O(log k)**) or constant time (**O(1)**). The rolling window algorithms implemented so far in this module are summarised below:
+Luckily, for many operations there are algorithms that update a window in sublinear time (e.g. **O(log k)**) or constant time (**O(1)**). The rolling window algorithms implemented so far in this module are summarised below:
 
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
 | Sum              | O(1)     | O(k)   | Sum of window values |
 | Mean             | O(1)     | O(k)   | Arithmetic mean of window values |
 | Median           | O(log k) | O(k)   | Median, uses indexable skiplist (proposed by R. Hettinger) |
-| Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm |
+| Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm for better numerical stability |
 | Std              | O(1)     | O(k)   | Standard deviation, uses Welford's algorithm |
 | Any              | O(1)     | O(1)   | True if *any* value in the window is True, else False |
 | All              | O(1)     | O(1)   | True if *all* values in the window are True, else False |
