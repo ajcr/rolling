@@ -91,8 +91,7 @@ class Var(RollingObject):
         self._mean = 0.0 # mean of values
         self._sslm = 0.0 # sum of squared values less the mean
 
-    def _add_new(self):
-        new = next(self._iterator)
+    def _add_new(self, new):
         self._buffer.append(new)
 
         delta = new - self._mean
@@ -106,8 +105,7 @@ class Var(RollingObject):
         self._mean -= delta / self._obs
         self._sslm -= delta * (old - self._mean)
 
-    def _update_window(self):
-        new = next(self._iterator)
+    def _update_window(self, new):
         old = self._buffer[0]
         self._buffer.append(new)
 
@@ -215,15 +213,13 @@ class Median(RollingObject):
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)
 
-    def _update_window(self):
-        new = next(self._iterator)
+    def _update_window(self, new):
         old = self._buffer.popleft()
         self._skiplist.remove(old)
         self._skiplist.insert(new)
         self._buffer.append(new)
 
-    def _add_new(self):
-        new = next(self._iterator)
+    def _add_new(self, new):
         self._skiplist.insert(new)
         self._buffer.append(new)
 

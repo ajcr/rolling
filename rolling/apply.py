@@ -64,14 +64,14 @@ class Apply(RollingObject):
     def current_value(self):
         return self._operation(self._buffer)
 
-    def _add_new(self):
-        self._buffer.append(next(self._iterator))
+    def _add_new(self, new):
+        self._buffer.append(new)
 
     def _remove_old(self):
         self._buffer.popleft()
 
-    def _update_window(self):
-        self._buffer.append(next(self._iterator))
+    def _update_window(self, new):
+        self._buffer.append(new)
 
     @property
     def _obs(self):

@@ -60,17 +60,15 @@ class All(RollingObject):
         self._obs = 0
         self._last_false = -1
 
-    def _add_new(self):
-        val = next(self._iterator)
+    def _add_new(self, new):
         self._i += 1
         self._obs += 1
-        if not val:
+        if not new:
             self._last_false = self._i
 
-    def _update_window(self):
-        val = next(self._iterator)
+    def _update_window(self, new):
         self._i += 1
-        if not val:
+        if not new:
             self._last_false = self._i
 
     def _remove_old(self):
@@ -137,17 +135,15 @@ class Any(RollingObject):
         self._obs = 0
         self._last_true = -1
 
-    def _add_new(self):
-        val = next(self._iterator)
+    def _add_new(self, new):
         self._i += 1
         self._obs += 1
-        if val:
+        if new:
             self._last_true = self._i
 
-    def _update_window(self):
-        val = next(self._iterator)
+    def _update_window(self, new):
         self._i += 1
-        if val:
+        if new:
             self._last_true = self._i
 
     def _remove_old(self):
