@@ -1,5 +1,7 @@
 # rolling
 
+![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master)
+
 A collection of computationally efficient rolling window iterators for Python, with a simple iterface (a.k.a. 'sliding window', 'moving window').
 
 Useful arithmetical, logical and statistical functions are implemented. There's also a more general 'apply' mode. Both fixed-length and variable-length windows are supported.
