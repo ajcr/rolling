@@ -4,6 +4,7 @@ from rolling.logical import All, Any
 
 
 @pytest.mark.parametrize('array,window_size,expected', [
+    ([0, 1, 1, 1, 0], 6, []),
     ([0, 1, 1, 1, 0], 5, [False]),
     ([0, 1, 1, 1, 0], 4, [False, False]),
     ([0, 1, 1, 1, 0], 3, [False, True, False]),
@@ -50,6 +51,7 @@ def test_rolling_all_variable(array, window_size, expected):
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
+    ([0, 1, 1, 1, 0], 6, []),
     ([0, 1, 1, 1, 0], 5, [True]),
     ([0, 1, 1, 1, 0], 4, [True, True]),
     ([0, 1, 1, 1, 0], 3, [True, True, True]),

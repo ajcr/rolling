@@ -3,6 +3,7 @@ import pytest
 from rolling.arithmetic import Sum
 
 @pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 6, []),
     ([3, 0, 1, 7, 2], 5, [13]),
     ([3, 0, 1, 7, 2], 4, [11, 10]),
     ([3, 0, 1, 7, 2], 3, [4, 8, 10]),

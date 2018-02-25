@@ -5,6 +5,7 @@ from rolling.minmax import Min, Max, MinHeap
 # todo: remove duplication of test data
 
 min_test_data = [
+    ([3, 0, 1, 7, 2], 6, []),
     ([3, 0, 1, 7, 2], 5, [0]),
     ([3, 0, 1, 7, 2], 4, [0, 0]),
     ([3, 0, 1, 7, 2], 3, [0, 0, 1]),
@@ -58,6 +59,7 @@ def test_rolling_minheap(array, window_size, expected):
     assert list(r) == expected
 
 @pytest.mark.parametrize('array,window_size,expected', [
+    ([3, 0, 1, 7, 2], 6, []),
     ([3, 0, 1, 7, 2], 5, [7]),
     ([3, 0, 1, 7, 2], 4, [7, 7]),
     ([3, 0, 1, 7, 2], 3, [3, 7, 7]),
