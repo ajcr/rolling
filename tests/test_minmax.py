@@ -4,7 +4,7 @@ from rolling.minmax import Min, Max, MinHeap
 
 # todo: remove duplication of test data
 
-min_test_data = [
+min_fixed_test_data = [
     ([3, 0, 1, 7, 2], 6, []),
     ([3, 0, 1, 7, 2], 5, [0]),
     ([3, 0, 1, 7, 2], 4, [0, 0]),
@@ -43,17 +43,18 @@ min_test_data = [
     ([3, 3, 3, 3, 3], 1, [3, 3, 3, 3, 3]),
 
     # longer array to check multiple deaths at start of buffer
-    ([0, 39, 46, 1, 78, 87, 76, 88, 64, 86],
-      5,
-     [0,  1,  1,  1, 64, 64]),
+    ([0, 39, 46, 1, 78, 87, 76, 88, 64, 86], 5, [0,  1,  1,  1, 64, 64]),
+
+    ([],  5, []),
+    ([1], 5, []),
 ]
 
-@pytest.mark.parametrize('array,window_size,expected', min_test_data)
+@pytest.mark.parametrize('array,window_size,expected', min_fixed_test_data)
 def test_rolling_min(array, window_size, expected):
     r = Min(array, window_size)
     assert list(r) == expected
 
-@pytest.mark.parametrize('array,window_size,expected', min_test_data)
+@pytest.mark.parametrize('array,window_size,expected', min_fixed_test_data)
 def test_rolling_minheap(array, window_size, expected):
     r = MinHeap(array, window_size)
     assert list(r) == expected
@@ -103,6 +104,9 @@ def test_rolling_minheap(array, window_size, expected):
     ([69, 66, 12, 80, 52, 47, 9, 77, 15, 92, 13, 7, 66, 45, 70, 5, 87],
       5,
      [80, 80, 80, 80, 77, 92, 92, 92, 92, 92, 70, 70, 87]),
+
+    ([],  5, []),
+    ([1], 5, []),
 ])
 def test_rolling_max(array, window_size, expected):
     r = Max(array, window_size)
@@ -120,6 +124,8 @@ def test_rolling_max(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 3, [-8, -8, -8, -8, -9, -9, -9]),
     ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+
+    ([], 5, []),
 ])
 def test_rolling_min_variable(array, window_size, expected):
     r = Min(array, window_size, window_type='variable')
@@ -137,6 +143,8 @@ def test_rolling_min_variable(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 3, [-8, -8, -8, -8, -9, -9, -9]),
     ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+
+    ([], 5, []),
 ])
 def test_rolling_minheap_variable(array, window_size, expected):
     r = MinHeap(array, window_size, window_type='variable')
@@ -154,6 +162,8 @@ def test_rolling_minheap_variable(array, window_size, expected):
     ([-8, 1, 7, -8, -9], 3, [-8, 1, 7, 7, 7, -8, -9]),
     ([-8, 1, 7, -8, -9], 2, [-8, 1, 7, 7, -8, -9]),
     ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+
+    ([], 5, []),
 ])
 def test_rolling_max_variable(array, window_size, expected):
     r = Max(array, window_size, window_type='variable')

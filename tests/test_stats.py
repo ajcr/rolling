@@ -15,6 +15,9 @@ from rolling.stats import Mean, Var, Std, Median
     ([3, -8, 1, 7, -2], 3, [-4/3, 0/3, 6/3]),
     ([3, -8, 1, 7, -2], 2, [-5/2, -7/2, 8/2, 5/2]),
     ([3, -8, 1, 7, -2], 1, [3, -8, 1, 7, -2]),
+
+    ([],  5, []),
+    ([1], 5, []),
 ])
 def test_rolling_mean(array, window_size, expected):
     r = Mean(array, window_size)
@@ -75,6 +78,16 @@ def test_rolling_var(array, window_size, expected):
 ])
 def test_rolling_var_variable(array, window_size, expected):
     r = Var(array, window_size, window_type='variable')
+    assert pytest.approx(list(r), nan_ok=True) == expected
+
+@pytest.mark.parametrize('array,window_type,expected', [
+    ([],  'fixed', []),
+    ([3], 'fixed', []),
+    ([],  'variable', []),
+    ([1], 'variable', [float('nan')]),
+])
+def test_rolling_var_over_short_iterable(array, window_type, expected):
+    r = Var(array, 5, window_type=window_type)
     assert pytest.approx(list(r), nan_ok=True) == expected
 
 @pytest.mark.parametrize('array', [
@@ -138,6 +151,8 @@ def test_rolling_std(array, window_size, expected):
     ([3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3], 5, [1, 1, 1, 1, -2, 1, 1]),
     ([3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3], 8, [1.0, -0.5, 1.0, 2.0]),
     ([3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3], 9, [1, 1, 1]),
+    ([],  5, []),
+    ([1], 5, []),
 ])
 def test_rolling_median(array, window_size, expected):
     r = Median(array, window_size)
@@ -149,6 +164,7 @@ def test_rolling_median(array, window_size, expected):
     ([3, 0, 1, 7, 2], 3, [3, 1.5, 1, 1, 2, 4.5, 2]),
     ([3, 0, 1, 7, 2], 2, [3, 1.5, 0.5, 4.0, 4.5, 2]),
     ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
+    ([], 5, []),
 ])
 def test_rolling_median_variable(array, window_size, expected):
     r = Median(array, window_size, window_type='variable')

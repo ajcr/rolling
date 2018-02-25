@@ -15,6 +15,9 @@ from rolling.arithmetic import Sum
     ([3, -8, 1, 7, -2], 3, [-4, 0, 6]),
     ([3, -8, 1, 7, -2], 2, [-5, -7, 8, 5]),
     ([3, -8, 1, 7, -2], 1, [3, -8, 1, 7, -2]),
+
+    ([],  5, []),
+    ([1], 5, []),
 ])
 def test_rolling_sum(array, window_size, expected):
     r = Sum(array, window_size)
@@ -32,6 +35,8 @@ def test_rolling_sum(array, window_size, expected):
     ([3, -8, 1, 7, -2], 3, [3, -5, -4, 0, 6, 5, -2]),
     ([3, -8, 1, 7, -2], 2, [3, -5, -7, 8, 5, -2]),
     ([3, -8, 1, 7, -2], 1, [3, -8, 1, 7, -2]),
+
+    ([], 5, []),
 ])
 def test_rolling_sum_variable(array, window_size, expected):
     r = Sum(array, window_size, window_type='variable')
