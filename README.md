@@ -29,6 +29,8 @@ See the References section below for more details about the algorithms and links
 
 ## Installation
 
+Currently, only Python 3.4 and above is supported.
+
 There are no external library dependencies for running this module.
 
 ```
