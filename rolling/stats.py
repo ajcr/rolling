@@ -200,10 +200,16 @@ class Median(RollingObject):
         for new in islice(self._iterator, window_size-1):
             self._add_new(new)
 
-        # insert a dummy value (the last element seen) so that
-        # the window is full and iterator works as expected
-        self._buffer.appendleft(new)
-        self._skiplist.insert(new)
+        try:
+            # insert a dummy value (the last element seen) so that
+            # the window is full and iterator works as expected
+            self._buffer.appendleft(new)
+            self._skiplist.insert(new)
+        except UnboundLocalError:
+            # if we didn't see any elements (the iterable had no
+            # elements or just one element), just use 0 instead
+            self._buffer.appendleft(0)
+            self._skiplist.insert(0)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._buffer = deque(maxlen=window_size)
