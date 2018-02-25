@@ -33,14 +33,14 @@ See the References section below for more details about the algorithms and links
 
 There are no external library dependencies for running this module.
 
-The module is testing with Python 3.5 and above and Python 3.4 is known to work too. Python 2 is not currently supported.
+The module is tested with Python 3.5 and above and Python 3.4 is also known to work. Python 2 is not currently supported.
 
 ```
 git clone https://github.com/ajcr/rolling.git
 cd rolling/
 pip install .
 ```
-If you want to run the tests you'll need to install pytest; once done, just run `pytest` from the base directory.
+If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/); once done, just run `pytest` from the base directory.
 
 ## Quickstart
 
