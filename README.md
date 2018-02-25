@@ -35,6 +35,10 @@ There are no external library dependencies for running this module.
 
 The module is tested with Python 3.5 and above and Python 3.4 is also known to work. Python 2 is not currently supported.
 
+You can install the module using `pip install rolling`.
+
+Alternatively, you can install it from source:
+
 ```
 git clone https://github.com/ajcr/rolling.git
 cd rolling/
