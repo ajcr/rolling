@@ -1,9 +1,31 @@
 from setuptools import setup
 
+long_description = """**rolling** is a collection of computationally efficient
+rolling window iterators for Python.
+
+Many useful arithmetical, logical and statistical functions are implemented
+to allow the window to be computed in sub-linear time (and in many instances
+constant time):
+
+- Sum
+- All
+- Any
+- Min
+- Max
+- Mean
+- Median
+- Variance
+- Standard deviation
+
+There's also a more general 'apply' mode where any specific function can be
+applied to the window. Both fixed-length and variable-length windows are supported.
+"""
+
 setup(
     name='rolling',
     version='0.1',
     description='Efficient rolling window algorithms',
+    long_description=long_description,
     classifiers=[
       'Development Status :: 3 - Alpha',
       'Intended Audience :: Developers',
