@@ -4,27 +4,27 @@ import abc
 class RollingObject(metaclass=abc.ABCMeta):
     """Baseclass for rolling iterator objects.
 
-    The __new__ method sets the appropriate magic
-    methods upon class creation.
+    The __new__ method here sets appropriate magic
+    methods for the class (__iter__ and __init__)
+    depending on window_type.upon class creation.
 
     All iteration logic is handled in this class:
     subclasses just implement methods manipulating
-    any attributes needed to compute their rolling
-    operation as the iteration progresses.
+    any attributes needed to compute the value of
+    the rolling window as values are added and removed.
 
-    All subclasses *must* implement the following methods
-    with the following call signatures:
+    Subclasses *must* implement the following methods
+    with the following parameters:
 
-        _init_fixed(self, iterable, window_size, **kwargs)
-        _init_variable(self, iterable, window_size, **kwargs)
-        _update_window(self, new)
-        _add_new(self, new)
-        _remove_old(self)
-        current_value(self) [this is a @property]
+      _init_fixed(self, iterable, window_size, **kwargs)
+      _init_variable(self, iterable, window_size, **kwargs)
+      _update_window(self, new)
+      _add_new(self, new)
+      _remove_old(self)
+      current_value(self) # this is a @property
 
-    Note: variable-length instances must also have a self._obs
-    attribute to return the current size of the variable-length
-    window.
+    Variable-length instances must also have a self._obs
+    attribute returning the current size of the window.
     """
     def __new__(cls, iterable, window_size, window_type='fixed', **kwargs):
         if window_type == 'fixed':
@@ -35,7 +35,6 @@ class RollingObject(metaclass=abc.ABCMeta):
             cls.__next__ = cls._next_variable
         else:
             raise ValueError("Unknown window_type '{}'".format(window_type))
-        # create instance and initialise attributes
         self = super().__new__(cls)
         self.window_type = window_type
         self.window_size = self._validate_window_size(window_size)
@@ -72,7 +71,7 @@ class RollingObject(metaclass=abc.ABCMeta):
             self._update_window(new)
             return self.current_value
         except StopIteration:
-            # if the iterator finishes, remove the oldest values one by one
+            # if the iterator finishes, remove the oldest values one at a time
             if self._obs == 1:
                 raise
             else:
