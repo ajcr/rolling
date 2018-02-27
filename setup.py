@@ -23,7 +23,7 @@ applied to the window. Both fixed-length and variable-length windows are support
 
 setup(
     name='rolling',
-    version='0.1',
+    version='0.1.1',
     description='Efficient rolling window algorithms',
     long_description=long_description,
     classifiers=[
