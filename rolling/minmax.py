@@ -192,7 +192,7 @@ class MinHeap(RollingObject):
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
-        # note: faster to initialise heap this way, rather than use _add_new()
+        # faster to create the heap this way, rather than repeat _add_new()
         self._heap = [pair(value, i + window_size) for i, value in enumerate(head)]
         heapq.heapify(self._heap)
         self._i = len(self._heap) - 1
