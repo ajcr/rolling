@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 long_description = """**rolling** is a collection of computationally efficient
 rolling window iterators for Python.
@@ -44,7 +44,7 @@ setup(
     python_requires='>=3.4.0',
     author='Alex Riley',
     license='MIT',
-    packages=['rolling'],
+    packages=find_packages(),
     tests_require=['pytest>=2.8.0'],
     zip_safe=False,
 )
