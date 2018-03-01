@@ -1,6 +1,6 @@
 # rolling
 
-![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master)
+![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master) [![codecov](https://codecov.io/gh/ajcr/rolling/branch/master/graph/badge.svg)](https://codecov.io/gh/ajcr/rolling)
 
 A collection of computationally efficient rolling window iterators for Python, with a simple iterface (a.k.a. 'sliding window', 'moving window').
 
