@@ -2,17 +2,19 @@
 
 ![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master) [![codecov](https://codecov.io/gh/ajcr/rolling/branch/master/graph/badge.svg)](https://codecov.io/gh/ajcr/rolling)
 
-A collection of computationally efficient rolling window iterators for Python, with a simple iterface (a.k.a. 'sliding window', 'moving window').
+A collection of computationally efficient rolling window iterators for Python, with a simple iterface.
 
-Useful arithmetical, logical and statistical functions are implemented. There's also a more general 'apply' mode. Both fixed-length and variable-length windows are supported.
+This module implements useful arithmetical, logical and statistical functions. There's also a more general 'apply' mode. Both fixed-length and variable-length windows are supported.
 
 To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
 ## Overview
 
-Naively applying builtin Python's functions to a window (e.g. `sum()` and `max()`) becomes increasingly slow as the window gets larger. The complexity is typically **O(k)** where **k** is the size of the window.
+Suppose we have a list `x` and we want to find the maximum of each window of 3 values. We could use Python's `max()` function and write `[max(x[i:i+3]) for i in range(len(x) - 2)]` to do this, for example.
 
-Luckily, for many operations there are algorithms that update a window in sublinear time (e.g. **O(log k)**) or constant time (**O(1)**). The rolling window algorithms implemented so far in this module are summarised below:
+But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically linear (**O(k)** where **k** is the size of the window).
+
+For for many operations there are algorithms that update a window in _sublinear_ time (e.g. **O(log k)**) or constant time (**O(1)**). The algorithms implemented so far in this module are summarised below:
 
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
@@ -33,11 +35,11 @@ See the References section below for more details about the algorithms and links
 
 There are no external library dependencies for running this module.
 
-The module is tested with Python 3.5 and above and Python 3.4 is also known to work. Python 2 is not currently supported.
+The module is tested with Python 3.5 and above, and Python 3.4 is also known to work. Python 2 is not currently supported.
 
-You can install the module using `pip install rolling`.
+You can install it using `pip install rolling`.
 
-Alternatively, you can install it from source:
+Alternatively, you can install from source:
 
 ```
 git clone https://github.com/ajcr/rolling.git
