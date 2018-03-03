@@ -19,6 +19,7 @@ For for many operations there are algorithms that update a window in _sublinear_
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
 | Sum              | O(1)     | O(k)   | Sum of window values |
+| Nunique          | O(1)     | O(k)   | Number of unique window values |
 | Mean             | O(1)     | O(k)   | Arithmetic mean of window values |
 | Median           | O(log k) | O(k)   | Median, uses indexable skiplist (proposed by R. Hettinger) |
 | Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm for better numerical stability |

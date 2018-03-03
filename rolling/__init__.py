@@ -1,5 +1,5 @@
 from .apply import Apply
-from .arithmetic import Sum
+from .arithmetic import Sum, Nunique
 from .base import RollingObject
 from .logical import All, Any
 from .minmax import Min, Max, MinHeap
@@ -29,6 +29,7 @@ def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwarg
         passing one of the following strings returns a RollingObject
         subclass instance implementing the operation efficiently:
             - 'Sum', sum of values
+            - 'Nunique', number of unique values
             - 'Any', true if any value is true, else false
             - 'All', true if all values are true, else false
             - 'Min', minimum value
