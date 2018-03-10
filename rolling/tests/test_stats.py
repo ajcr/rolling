@@ -1,6 +1,6 @@
 import pytest
 
-from rolling.stats import Mean, Var, Std, Median
+from rolling.stats import Mean, Var, Std, Median, Mode
 
 @pytest.mark.parametrize('array,window_size,expected', [
     ([3, 0, 1, 7, 2], 6, []),
@@ -169,3 +169,37 @@ def test_rolling_median(array, window_size, expected):
 def test_rolling_median_variable(array, window_size, expected):
     r = Median(array, window_size, window_type='variable')
     assert pytest.approx(list(r)) == expected
+
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ('xxyxz', 5, [{'x'}]),
+    ('xxyxz', 4, [{'x'}, {'x'}]),
+    ('xxyxz', 3, [{'x'}, {'x'}, {'x', 'y', 'z'}]),
+    ('xxyxz', 2, [{'x'}, {'x', 'y'}, {'x', 'y'}, {'x', 'z'}]),
+    ('xxyxz', 1, [{'x'}, {'x'}, {'y'}, {'x'}, {'z'}]),
+
+    ([],  5, []),
+    (['x'], 5, []),
+])
+def test_rolling_mode(array, window_size, expected):
+    r = Mode(array, window_size)
+    # NOTE: we copy the returned set so that it is not
+    # mutated after further iteration
+    assert [set_.copy() for set_ in (r)] == expected
+
+
+@pytest.mark.parametrize('array,window_size,expected', [
+    ('xxyxz', 5, [{'x'}, {'x'}, {'x'}, {'x'}, {'x'}, {'x'}, {'x', 'y', 'z'}, {'x', 'z'}, {'z'}]),
+    ('xxyxz', 4, [{'x'}, {'x'}, {'x'}, {'x'}, {'x'}, {'x', 'y', 'z'}, {'x', 'z'}, {'z'}]),
+    ('xxyxz', 3, [{'x'}, {'x'}, {'x'}, {'x'}, {'x', 'y', 'z'}, {'x', 'z'}, {'z'}]),
+    ('xxyxz', 2, [{'x'}, {'x'}, {'x', 'y'}, {'x', 'y'}, {'x', 'z'}, {'z'}]),
+    ('xxyxz', 1, [{'x'}, {'x'}, {'y'}, {'x'}, {'z'}]),
+
+    ([],  5, []),
+    (['x'], 5, [{'x'}]),
+])
+def test_rolling_mode_variable(array, window_size, expected):
+    r = Mode(array, window_size, window_type='variable')
+    # NOTE: we copy the returned set so that it is not
+    # mutated after further iteration
+    assert [set_.copy() for set_ in (r)] == expected

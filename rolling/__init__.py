@@ -3,7 +3,7 @@ from .arithmetic import Sum, Nunique
 from .base import RollingObject
 from .logical import All, Any
 from .minmax import Min, Max, MinHeap
-from .stats import Mean, Var, Std, Median
+from .stats import Mean, Var, Std, Median, Mode
 
 def _get_subclasses(cls):
     # https://stackoverflow.com/a/33607093/3923281
@@ -37,6 +37,7 @@ def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwarg
             - 'Max', maximum value
             - 'Mean', mean value
             - 'Median', median value
+            - 'Mode', set of most common values
             - 'Var', variance of values
             - 'Std', standard deviation of values
 

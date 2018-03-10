@@ -22,6 +22,7 @@ For for many operations there are algorithms that update a window in _sublinear_
 | Nunique          | O(1)     | O(k)   | Number of unique window values |
 | Mean             | O(1)     | O(k)   | Arithmetic mean of window values |
 | Median           | O(log k) | O(k)   | Median, uses indexable skiplist (proposed by R. Hettinger) |
+| Mode             | O(1)     | O(k)   | Set of most common values, uses a bi-directional counter |
 | Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm for better numerical stability |
 | Std              | O(1)     | O(k)   | Standard deviation, uses Welford's algorithm |
 | Any              | O(1)     | O(1)   | True if *any* value in the window is True, else False |
