@@ -100,7 +100,7 @@ class Nunique(RollingObject):
     --------
 
     >>> import rolling
-    >>> word = 'missippippi'
+    >>> word = 'mississippi'
     >>> r_nunique = rolling.Nunique(word, 3)
     >>> next(r_nunique)
     3
