@@ -2,9 +2,9 @@
 
 ![PyPI version](https://badge.fury.io/py/rolling.svg) ![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master) [![codecov](https://codecov.io/gh/ajcr/rolling/branch/master/graph/badge.svg)](https://codecov.io/gh/ajcr/rolling)
 
-A collection of computationally efficient rolling window iterators for Python, with a simple iterface.
+A collection of computationally efficient rolling window iterators for Python.
 
-This module implements useful arithmetical, logical and statistical functions. There's also a more general 'apply' mode. Both fixed-length and variable-length windows are supported.
+This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows. There's also a flexible 'apply' mode where any user-defined function can be used on the window. Both fixed-length and variable-length window iteration is supported.
 
 To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
