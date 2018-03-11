@@ -12,17 +12,17 @@ To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart)
 
 Suppose we have a list `x` and we want to find the maximum of each window of 3 values. We could use Python's `max()` function and write `[max(x[i:i+3]) for i in range(len(x) - 2)]` to do this, for example.
 
-But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically linear (**O(k)** where **k** is the size of the window).
+But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically linear (i.e. **O(k)** where **k** is the size of the window).
 
-For for many operations there are algorithms that update a window in _sublinear_ time (e.g. **O(log k)**) or constant time (**O(1)**). The algorithms implemented so far in this module are summarised below:
+For for many operations there are algorithms that return the value for the next window in _sublinear_ time (e.g. **O(log k)**) or constant time (**O(1)**). The algorithms implemented so far in this module are summarised below:
 
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
 | Sum              | O(1)     | O(k)   | Sum of window values |
 | Nunique          | O(1)     | O(k)   | Number of unique window values |
 | Mean             | O(1)     | O(k)   | Arithmetic mean of window values |
-| Median           | O(log k) | O(k)   | Median, uses indexable skiplist (proposed by R. Hettinger) |
-| Mode             | O(1)     | O(k)   | Set of most common values, uses a bi-directional counter |
+| Median           | O(log k) | O(k)   | Median, uses an indexable skiplist to maintain sorted order |
+| Mode             | O(1)     | O(k)   | Set of most common values, tracked using a bi-directional counter |
 | Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm for better numerical stability |
 | Std              | O(1)     | O(k)   | Standard deviation, uses Welford's algorithm |
 | Any              | O(1)     | O(1)   | True if *any* value in the window is True, else False |
@@ -31,7 +31,7 @@ For for many operations there are algorithms that update a window in _sublinear_
 | MinHeap          | O(1)     | O(k)   | Minimum value, tracks ascending minima using a heap |
 | Max              | O(1)     | O(k)   | Maximum value, tracks descending maxima using a deque |
 
-See the References section below for more details about the algorithms and links to other resources.
+See the [References](https://github.com/ajcr/rolling#references-and-resources) section below for more details about the algorithms and links to other resources.
 
 ## Installation
 
@@ -48,7 +48,7 @@ git clone https://github.com/ajcr/rolling.git
 cd rolling/
 pip install .
 ```
-If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/); once done, just run `pytest` from the base directory.
+If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/). Once done, just run `pytest` from the base directory.
 
 ## Quickstart
 
@@ -86,7 +86,7 @@ As well as the built-in efficient algorithms provided by this module, any callab
 
 Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluated at the beginning and end of the iterable. For instance:
 ```python
->>> r_list = rolling(counts, window_size=3, operation=list, window_type='variable')
+>>> r_list = rolling([1, 5, 2, 0, 3], window_size=3, operation=list, window_type='variable')
 >>> list(r_list)
 [[1],
  [1, 5],
@@ -98,7 +98,7 @@ Variable-length windows can be specified using the `window_type` argument. This 
 ```
 ## References and resources
 
-Some rolling algorithms are widely known (e.g. 'Sum' and 'Mean') and I am not sure which source to cite.
+Some rolling algorithms are widely known (e.g. 'Sum') and I am not sure which source to cite. Some algorithms I made up (e.g. 'Any', 'All') but these are relatively simple and probably exist elsewhere.
 
 Other rolling algorithms are very cleverly designed and I learned a lot by reading about them and seeing other peoples' implementations. Here are the main resources that I used:
 
@@ -113,6 +113,6 @@ Other rolling algorithms are very cleverly designed and I learned a lot by readi
 
 The algorithms implemented by this module are chosen to be efficient in the sense that the cost of computing each new return value scales efficiently with the size of window.
 
-In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function) rather than using `rolling(array, k, 'Min')`.
+In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function `min()`) rather than using `rolling(array, k, 'Min')`.
 
 With this in mind, in future it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
