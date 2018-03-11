@@ -68,3 +68,22 @@ bigrams_no_spaces = (bigram for bigram in bigrams if ' ' not in bigram)
 bigram_freqs = Counter(bigrams_no_spaces)
 bigram_freqs.most_common(5)
 ```
+
+## Too Many Requests
+
+Track incoming requests to a website. If one or more users is responsible for more than a quarter of the last 1000 requests, print a warning message:
+
+```python
+import rolling
+
+# Setup
+
+USER_IP_ADDRESSES = (...) # some infinite stream of IP addresses of website users
+WINDOW_SIZE = 1000
+
+# Solution
+
+for ip_addresses, count in rolling.Mode(USER_IP_ADDRESSES, WINDOW_SIZE, return_count=True):
+    if count > WINDOW_SIZE / 4:
+        print('Warning: {} requests each from IP addresses {}.format(count, ', '.join(ip_addresses)))
+```
