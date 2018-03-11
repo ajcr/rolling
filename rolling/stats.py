@@ -258,6 +258,9 @@ class Mode(RollingObject):
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
+    return_count : bool, default False
+        if True, also return an integer showing the
+        count of the most common values
 
     Complexity
     ----------
@@ -278,8 +281,9 @@ class Mode(RollingObject):
     where mode() will raise an error if the mode
     is not unique.
     """
-    def _init_fixed(self, iterable, window_size, **kwargs):
+    def _init_fixed(self, iterable, window_size, return_count=False, **kwargs):
         self._buffer = deque(maxlen=window_size)
+        self.return_count = return_count
         self._bicounter = BiCounter()
         for item in islice(self._iterator, window_size-1):
             self._add_new(item)
@@ -288,8 +292,9 @@ class Mode(RollingObject):
         self._buffer.appendleft('DUMMY_VALUE')
         self._bicounter.increment('DUMMY_VALUE')
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self, iterable, window_size, return_count=False, **kwargs):
         self._buffer = deque(maxlen=window_size)
+        self.return_count = return_count
         self._bicounter = BiCounter()
 
     def _update_window(self, new):
@@ -308,7 +313,10 @@ class Mode(RollingObject):
 
     @property
     def current_value(self):
-        return self._bicounter.most_common_items
+        if self.return_count:
+            return self._bicounter.most_common_items, self._bicounter.largest_count
+        else:
+            return self._bicounter.most_common_items
 
     @property
     def _obs(self):
