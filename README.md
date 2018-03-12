@@ -52,24 +52,24 @@ If you want to run the tests you'll need to install [pytest](https://docs.pytest
 
 ## Quickstart
 
-Import the `rolling()` function:
+Import the `rolling` module:
 ```python
->>> from rolling import rolling
+>>> import rolling
 ```
 Now suppose we have this list:
 ```python
 >>> counts = [1, 5, 2, 0, 3]
 ```
-The `rolling()` function creates an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list, with a reduction operation for a given window size:
+We can create an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list that performs a reduction operation for a given window size (3 in this case):
 ```python
->>> r_sum = rolling(counts, window_size=3, operation='Sum') # rolling sum
->>> r_all = rolling(counts, window_size=3, operation='All') # rolling all
->>> r_max = rolling(counts, window_size=3, operation='Max') # rolling max
+>>> r_sum = rolling.Sum(counts, 3)
+>>> r_all = rolling.All(counts, 3)
+>>> r_max = rolling.Max(counts, 3)
 ```
-The result of iterating over each rolling object using `list()` is shown below. Note that the window type is fixed by default, meaning that only windows of the specified size (3) are used:
+The result of iterating over each rolling object using `list()` is shown below. Note that the window type is fixed by default, meaning that only full windows of the specified size are used:
 ```python
 >>> list(r_sum)
-[8, 7, 5]
+[8, 7, 5] # i.e. [1+5+2, 5+2+0, 2+0+3]
 
 >>> list(r_all)
 [True, False, False]
@@ -77,16 +77,16 @@ The result of iterating over each rolling object using `list()` is shown below. 
 >>> list(r_max)
 [5, 5, 3]
 ```
-As well as the built-in efficient algorithms provided by this module, any callable Python object can be applied to the rolling window. For instance, Python's `tuple()` function:
+As well as the built-in efficient algorithms provided by this module, any callable Python object can be applied to a rolling window using the `Apply()` class. For instance, Python's `tuple()` function:
 ```python
->>> r_list = rolling(counts, window_size=3, operation=tuple)
+>>> r_list = rolling.Apply(counts, 3, operation=tuple)
 >>> list(r_list)
 [(1, 5, 2), (5, 2, 0), (2, 0, 3)]
 ```
 
 Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluated at the beginning and end of the iterable. For instance:
 ```python
->>> r_list = rolling([1, 5, 2, 0, 3], window_size=3, operation=list, window_type='variable')
+>>> r_list = rolling.Apply([1, 5, 2, 0, 3], 3, operation=list, window_type='variable')
 >>> list(r_list)
 [[1],
  [1, 5],
@@ -113,6 +113,6 @@ Other rolling algorithms are very cleverly designed and I learned a lot by readi
 
 The algorithms implemented by this module are chosen to be efficient in the sense that the cost of computing each new return value scales efficiently with the size of window.
 
-In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling(array, k, min)` (apply Python's builtin minimum function `min()`) rather than using `rolling(array, k, 'Min')`.
+In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling.Apply(array, k, min)` (apply Python's builtin minimum function `min()`) rather than using `rolling.Min(array, k)`.
 
 With this in mind, in future it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
