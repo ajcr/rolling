@@ -21,9 +21,9 @@ is_heads = (flip == 'H' for flip in coin_flips)
 any(rolling.All(is_heads, 25))
 ```
 
-## Rolling Range
+## Peak-to-Peak
 
-In a stream of auction bids, track the difference between the maximum and minimum values occurring in a window of size 500.
+In a stream of auction bids, find the greatest difference between the maximum and minimum bids occurring in a window of size 500.
 
 ```python
 import itertools
@@ -43,7 +43,7 @@ size = 500
 roll_max = rolling.Max(bids_1, size)
 roll_min = rolling.Min(bids_2, size)
 
-differences = (hi-lo for hi, lo in zip(roll_max, roll_min))
+max(hi-lo for hi, lo in zip(roll_max, roll_min))
 ```
 
 ## Ngrams
