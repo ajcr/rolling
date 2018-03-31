@@ -4,7 +4,7 @@
 
 A collection of computationally efficient rolling window iterators for Python.
 
-This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows. There's also a flexible 'apply' mode where any user-defined function can be used on the window. Both fixed-length and variable-length window iteration is supported.
+This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows. There's also a flexible 'Apply' iterator whereby any callable can be used on the window. Both fixed-length and variable-length window iteration is supported.
 
 To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
@@ -12,9 +12,9 @@ To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart)
 
 Suppose we have a list `x` and we want to find the maximum of each window of 3 values. We could use Python's `max()` function and write `[max(x[i:i+3]) for i in range(len(x) - 2)]` to do this, for example.
 
-But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically linear (i.e. **O(k)** where **k** is the size of the window).
+But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically _linear_ (i.e. **O(k)** where **k** is the size of the window).
 
-For for many operations there are algorithms that return the value for the next window in _sublinear_ time (e.g. **O(log k)**) or constant time (**O(1)**). The algorithms implemented so far in this module are summarised below:
+For for many operations there are algorithms that return the value for the next window in _sublinear_ time (e.g. **O(log k)**) or _constant_ time (i.e. **O(1)**). The algorithms implemented so far in this module are summarised below:
 
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
@@ -35,19 +35,20 @@ See the [References](https://github.com/ajcr/rolling#references-and-resources) s
 
 ## Installation
 
-There are no external library dependencies for running this module.
+You can install the latest release of the module using `pip install rolling`
 
-The module is tested with Python 3.5 and above, and Python 3.4 is also known to work. Python 2 is not currently supported.
-
-You can install it using `pip install rolling`.
-
-Alternatively, you can install from source:
+Alternatively, you can install from source on GitHub to include the very latest changes. For example:
 
 ```
 git clone https://github.com/ajcr/rolling.git
 cd rolling/
 pip install .
 ```
+
+There are no external library dependencies for running this module.
+
+The module is tested with Python 3.5 and above, and Python 3.4 is also known to work. Python 2 is not currently supported.
+
 If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/). Once done, just run `pytest` from the base directory.
 
 ## Quickstart
@@ -56,17 +57,26 @@ Import the `rolling` module:
 ```python
 >>> import rolling
 ```
+
 Now suppose we have this list:
 ```python
 >>> counts = [1, 5, 2, 0, 3]
 ```
+
 We can create an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list that performs a reduction operation for a given window size (3 in this case):
 ```python
 >>> r_sum = rolling.Sum(counts, 3)
 >>> r_all = rolling.All(counts, 3)
 >>> r_max = rolling.Max(counts, 3)
 ```
-The result of iterating over each rolling object using `list()` is shown below. Note that the window type is fixed by default, meaning that only full windows of the specified size are used:
+
+Here's the representation of the rolling sum object. Note that the window type is 'fixed' by default, meaning that only _full_ windows of the specified size are computed:
+```python
+>>> r_sum
+Rolling(operation='Sum', window_size=3, window_type='fixed')
+```
+
+The result of iterating over each of these rolling object using `list()` is shown below.
 ```python
 >>> list(r_sum)
 [8, 7, 5] # i.e. [1+5+2, 5+2+0, 2+0+3]
@@ -77,6 +87,7 @@ The result of iterating over each rolling object using `list()` is shown below. 
 >>> list(r_max)
 [5, 5, 3]
 ```
+
 As well as the built-in efficient algorithms provided by this module, any callable Python object can be applied to a rolling window using the `Apply()` class. For instance, Python's `tuple()` function:
 ```python
 >>> r_list = rolling.Apply(counts, 3, operation=tuple)
@@ -96,9 +107,10 @@ Variable-length windows can be specified using the `window_type` argument. This 
  [0, 3],
  [3]]
 ```
+
 ## References and resources
 
-Some rolling algorithms are widely known (e.g. 'Sum') and I am not sure which source to cite. Some algorithms I made up (e.g. 'Any', 'All') but these are relatively simple and probably exist elsewhere.
+Some rolling algorithms are widely known (e.g. 'Sum') and I am not sure which source to cite. Some algorithms I made up as I was putting the module together (e.g. 'Any', 'All'), but these are relatively simple and probably exist elsewhere.
 
 Other rolling algorithms are very cleverly designed and I learned a lot by reading about them and seeing other peoples' implementations. Here are the main resources that I used:
 
