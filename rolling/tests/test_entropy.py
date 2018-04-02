@@ -9,7 +9,7 @@ from rolling.entropy import Entropy, _test_entropy
     'qqqqqqqq',
     'xxxyxyyxyxyxx',
     'asabsdhvshsfhohdshdsfohwefsdfasbdbbdbbasdssabbsbsbsbasdbd',
-    'cumcumber',
+    'cucumber',
     'foo...bar',
     'cupcupspoonspoon knife',
 ])
@@ -20,4 +20,4 @@ def test_rolling_entropy(window_size, sequence):
 
 def test_rolling_entropy_raises_for_variable():
     with pytest.raises(NotImplementedError):
-        Entropy([], 5, window_type='variable')
+        Entropy('abcde', 5, window_type='variable')

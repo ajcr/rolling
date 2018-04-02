@@ -18,7 +18,7 @@ class Entropy(RollingObject):
     """Iterator object that computes the Shannon
     entropy of a rolling window over a Python iterable.
 
-    Currently only implemented for window_type='fixed'
+    Note: only window_type='fixed' is supported.
 
     Parameters
     ----------
