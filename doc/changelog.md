@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add this changelog to the doc directory
 - Nunique class
 - Add Mode class (supported by a BiCounter, a bi-directional counter)
+- Add Entropy class (Shannon entropy, fixed-size windows only)
 
 ### Changed
 

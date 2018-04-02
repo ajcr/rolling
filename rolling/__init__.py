@@ -1,6 +1,7 @@
 from .apply import Apply
 from .arithmetic import Sum, Nunique
 from .base import RollingObject
+from .entropy import Entropy
 from .logical import All, Any
 from .minmax import Min, Max, MinHeap
 from .stats import Mean, Var, Std, Median, Mode
@@ -40,6 +41,7 @@ def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwarg
             - 'Mode', set of most common values
             - 'Var', variance of values
             - 'Std', standard deviation of values
+            - 'Entropy', Shannon entropy of window
 
         if a callable object is passed instead of a string, an instance
         of the Apply class will be returned using that callable as the

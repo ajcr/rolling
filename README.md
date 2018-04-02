@@ -30,6 +30,7 @@ For for many operations there are algorithms that return the value for the next 
 | Min              | O(1)     | O(k)   | Minimum value, tracks ascending minima using a deque |
 | MinHeap          | O(1)     | O(k)   | Minimum value, tracks ascending minima using a heap |
 | Max              | O(1)     | O(k)   | Maximum value, tracks descending maxima using a deque |
+| Entropy          | O(1)     | O(k)   | Shannon entropy of the window (for fixed-size windows only) |
 
 See the [References](https://github.com/ajcr/rolling#references-and-resources) section below for more details about the algorithms and links to other resources.
 
