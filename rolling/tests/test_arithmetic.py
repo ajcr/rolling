@@ -16,8 +16,8 @@ def _nunique(seq):
 @pytest.mark.parametrize('window_size', list(range(1, 6)))
 @pytest.mark.parametrize('window_type', ['fixed', 'variable'])
 def test_rolling_sum(array, window_size, window_type):
-    expected = Sum(array, window_size, window_type=window_type)
-    got = Apply(array, window_size, operation=sum, window_type=window_type)
+    got = Sum(array, window_size, window_type=window_type)
+    expected = Apply(array, window_size, operation=sum, window_type=window_type)
     assert list(got) == list(expected)
 
 
@@ -30,6 +30,6 @@ def test_rolling_sum(array, window_size, window_type):
 @pytest.mark.parametrize('window_size', list(range(1, 6)))
 @pytest.mark.parametrize('window_type', ['fixed', 'variable'])
 def test_rolling_nunique(word, window_size, window_type):
-    expected = Nunique(word, window_size, window_type=window_type)
-    got = Apply(word, window_size, operation=_nunique, window_type=window_type)
+    got = Nunique(word, window_size, window_type=window_type)
+    expected = Apply(word, window_size, operation=_nunique, window_type=window_type)
     assert list(got) == list(expected)
