@@ -1,170 +1,44 @@
 import pytest
 
+from rolling.apply import Apply
 from rolling.minmax import Min, Max, MinHeap
 
-# todo: remove duplication of test data
+test_data = (
+    [69, 66, 12, 80, 52, 47, 9, 77, 15, 92, 13, 7, 66, 45, 70, 5, 87],
+    [0, 39, 46, 1, 78, 87, 76, 88, 64, 86],
+    [3, 0, 1, 7, 2],
+    [-8, 1, 7, -8, -9],
+    [8, 1, 0, -3, 9],
+    [1, 2, 3, 4, 5],
+    [5, 4, 3, 2, 1],
+    [3, 3, 3, 3, 3],
+    [1],
+    [],
+)
 
-min_fixed_test_data = [
-    ([3, 0, 1, 7, 2], 6, []),
-    ([3, 0, 1, 7, 2], 5, [0]),
-    ([3, 0, 1, 7, 2], 4, [0, 0]),
-    ([3, 0, 1, 7, 2], 3, [0, 0, 1]),
-    ([3, 0, 1, 7, 2], 2, [0, 0, 1, 2]),
-    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
 
-    ([-8, 1, 7, -8, -9], 5, [-9]),
-    ([-8, 1, 7, -8, -9], 4, [-8, -9]),
-    ([-8, 1, 7, -8, -9], 3, [-8, -8, -9]),
-    ([-8, 1, 7, -8, -9], 2, [-8, 1, -8, -9]),
-    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
+@pytest.mark.parametrize('array', test_data)
+@pytest.mark.parametrize('window_size', [1, 2, 3, 4, 5, 10])
+@pytest.mark.parametrize('window_type', ['fixed', 'variable'])
+def test_rolling_min(array, window_size, window_type):
+    got = Min(array, window_size, window_type=window_type)
+    expected = Apply(array, window_size, operation=min, window_type=window_type)
+    assert list(got) == list(expected)
 
-    ([8, 1, 0, -3, 9], 5, [-3]),
-    ([8, 1, 0, -3, 9], 4, [-3, -3]),
-    ([8, 1, 0, -3, 9], 3, [0, -3, -3]),
-    ([8, 1, 0, -3, 9], 2, [1, 0, -3, -3]),
-    ([8, 1, 0, -3, 9], 1, [8, 1, 0, -3, 9]),
 
-    ([1, 2, 3, 4, 5], 5, [1]),
-    ([1, 2, 3, 4, 5], 4, [1, 2]),
-    ([1, 2, 3, 4, 5], 3, [1, 2, 3]),
-    ([1, 2, 3, 4, 5], 2, [1, 2, 3, 4]),
-    ([1, 2, 3, 4, 5], 1, [1, 2, 3, 4, 5]),
+@pytest.mark.parametrize('array', test_data)
+@pytest.mark.parametrize('window_size', [1, 2, 3, 4, 5, 10])
+@pytest.mark.parametrize('window_type', ['fixed', 'variable'])
+def test_rolling_minheap(array, window_size, window_type):
+    got = MinHeap(array, window_size, window_type=window_type)
+    expected = Apply(array, window_size, operation=min, window_type=window_type)
+    assert list(got) == list(expected)
 
-    ([5, 4, 3, 2, 1], 5, [1]),
-    ([5, 4, 3, 2, 1], 4, [2, 1]),
-    ([5, 4, 3, 2, 1], 3, [3, 2, 1]),
-    ([5, 4, 3, 2, 1], 2, [4, 3, 2, 1]),
-    ([5, 4, 3, 2, 1], 1, [5, 4, 3, 2, 1]),
 
-    ([3, 3, 3, 3, 3], 5, [3]),
-    ([3, 3, 3, 3, 3], 4, [3, 3]),
-    ([3, 3, 3, 3, 3], 3, [3, 3, 3]),
-    ([3, 3, 3, 3, 3], 2, [3, 3, 3, 3]),
-    ([3, 3, 3, 3, 3], 1, [3, 3, 3, 3, 3]),
-
-    # longer array to check multiple deaths at start of buffer
-    ([0, 39, 46, 1, 78, 87, 76, 88, 64, 86], 5, [0,  1,  1,  1, 64, 64]),
-
-    ([],  5, []),
-    ([1], 5, []),
-]
-
-@pytest.mark.parametrize('array,window_size,expected', min_fixed_test_data)
-def test_rolling_min(array, window_size, expected):
-    r = Min(array, window_size)
-    assert list(r) == expected
-
-@pytest.mark.parametrize('array,window_size,expected', min_fixed_test_data)
-def test_rolling_minheap(array, window_size, expected):
-    r = MinHeap(array, window_size)
-    assert list(r) == expected
-
-@pytest.mark.parametrize('array,window_size,expected', [
-    ([3, 0, 1, 7, 2], 6, []),
-    ([3, 0, 1, 7, 2], 5, [7]),
-    ([3, 0, 1, 7, 2], 4, [7, 7]),
-    ([3, 0, 1, 7, 2], 3, [3, 7, 7]),
-    ([3, 0, 1, 7, 2], 2, [3, 1, 7, 7]),
-    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
-
-    ([-8, 1, 7, -8, -9], 5, [7]),
-    ([-8, 1, 7, -8, -9], 4, [7, 7]),
-    ([-8, 1, 7, -8, -9], 3, [7, 7, 7]),
-    ([-8, 1, 7, -8, -9], 2, [1, 7, 7, -8]),
-    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
-
-    ([8, 1, 0, -3, 9], 5, [9]),
-    ([8, 1, 0, -3, 9], 4, [8, 9]),
-    ([8, 1, 0, -3, 9], 3, [8, 1, 9]),
-    ([8, 1, 0, -3, 9], 2, [8, 1, 0, 9]),
-    ([8, 1, 0, -3, 9], 1, [8, 1, 0, -3, 9]),
-
-    ([1, 2, 3, 4, 5], 5, [5]),
-    ([1, 2, 3, 4, 5], 4, [4, 5]),
-    ([1, 2, 3, 4, 5], 3, [3, 4, 5]),
-    ([1, 2, 3, 4, 5], 2, [2, 3, 4, 5]),
-    ([1, 2, 3, 4, 5], 1, [1, 2, 3, 4, 5]),
-
-    ([5, 4, 3, 2, 1], 5, [5]),
-    ([5, 4, 3, 2, 1], 4, [5, 4]),
-    ([5, 4, 3, 2, 1], 3, [5, 4, 3]),
-    ([5, 4, 3, 2, 1], 2, [5, 4, 3, 2]),
-    ([5, 4, 3, 2, 1], 1, [5, 4, 3, 2, 1]),
-
-    ([3, 3, 3, 3, 3], 5, [3]),
-    ([3, 3, 3, 3, 3], 4, [3, 3]),
-    ([3, 3, 3, 3, 3], 3, [3, 3, 3]),
-    ([3, 3, 3, 3, 3], 2, [3, 3, 3, 3]),
-    ([3, 3, 3, 3, 3], 1, [3, 3, 3, 3, 3]),
-
-    # longer array to check multiple deaths at start of buffer
-    ([69, 66, 12, 80, 52, 47, 9, 77, 15, 92, 13, 7, 66, 45, 70, 5, 87],
-      7,
-     [80, 80, 80, 92, 92, 92, 92, 92, 92, 92, 87]),
-    ([69, 66, 12, 80, 52, 47, 9, 77, 15, 92, 13, 7, 66, 45, 70, 5, 87],
-      5,
-     [80, 80, 80, 80, 77, 92, 92, 92, 92, 92, 70, 70, 87]),
-
-    ([],  5, []),
-    ([1], 5, []),
-])
-def test_rolling_max(array, window_size, expected):
-    r = Max(array, window_size)
-    assert list(r) == expected
-
-@pytest.mark.parametrize('array,window_size,expected', [
-    ([3, 0, 1, 7, 2], 5, [3, 0, 0, 0, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 4, [3, 0, 0, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 3, [3, 0, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 2, [3, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
-
-    ([-8, 1, 7, -8, -9], 5, [-8, -8, -8, -8, -9, -9, -9, -9, -9]),
-    ([-8, 1, 7, -8, -9], 4, [-8, -8, -8, -8, -9, -9, -9, -9]),
-    ([-8, 1, 7, -8, -9], 3, [-8, -8, -8, -8, -9, -9, -9]),
-    ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
-    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
-
-    ([], 5, []),
-])
-def test_rolling_min_variable(array, window_size, expected):
-    r = Min(array, window_size, window_type='variable')
-    assert list(r) == expected
-
-@pytest.mark.parametrize('array,window_size,expected', [
-    ([3, 0, 1, 7, 2], 5, [3, 0, 0, 0, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 4, [3, 0, 0, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 3, [3, 0, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 2, [3, 0, 0, 1, 2, 2]),
-    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
-
-    ([-8, 1, 7, -8, -9], 5, [-8, -8, -8, -8, -9, -9, -9, -9, -9]),
-    ([-8, 1, 7, -8, -9], 4, [-8, -8, -8, -8, -9, -9, -9, -9]),
-    ([-8, 1, 7, -8, -9], 3, [-8, -8, -8, -8, -9, -9, -9]),
-    ([-8, 1, 7, -8, -9], 2, [-8, -8, 1, -8, -9, -9]),
-    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
-
-    ([], 5, []),
-])
-def test_rolling_minheap_variable(array, window_size, expected):
-    r = MinHeap(array, window_size, window_type='variable')
-    assert list(r) == expected
-
-@pytest.mark.parametrize('array,window_size,expected', [
-    ([3, 0, 1, 7, 2], 5, [3, 3, 3, 7, 7, 7, 7, 7, 2]),
-    ([3, 0, 1, 7, 2], 4, [3, 3, 3, 7, 7, 7, 7, 2]),
-    ([3, 0, 1, 7, 2], 3, [3, 3, 3, 7, 7, 7, 2]),
-    ([3, 0, 1, 7, 2], 2, [3, 3, 1, 7, 7, 2]),
-    ([3, 0, 1, 7, 2], 1, [3, 0, 1, 7, 2]),
-
-    ([-8, 1, 7, -8, -9], 5, [-8, 1, 7, 7, 7, 7, 7, -8, -9]),
-    ([-8, 1, 7, -8, -9], 4, [-8, 1, 7, 7, 7, 7, -8, -9]),
-    ([-8, 1, 7, -8, -9], 3, [-8, 1, 7, 7, 7, -8, -9]),
-    ([-8, 1, 7, -8, -9], 2, [-8, 1, 7, 7, -8, -9]),
-    ([-8, 1, 7, -8, -9], 1, [-8, 1, 7, -8, -9]),
-
-    ([], 5, []),
-])
-def test_rolling_max_variable(array, window_size, expected):
-    r = Max(array, window_size, window_type='variable')
-    assert list(r) == expected
+@pytest.mark.parametrize('array', test_data)
+@pytest.mark.parametrize('window_size', [1, 2, 3, 4, 5, 10])
+@pytest.mark.parametrize('window_type', ['fixed', 'variable'])
+def test_rolling_max(array, window_size, window_type):
+    got = Max(array, window_size, window_type=window_type)
+    expected = Apply(array, window_size, operation=max, window_type=window_type)
+    assert list(got) == list(expected)
