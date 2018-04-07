@@ -18,7 +18,7 @@ class Entropy(RollingObject):
     """Iterator object that computes the Shannon
     entropy of a rolling window over a Python iterable.
 
-    Note: only window_type='fixed' is supported.
+    Note: window_type='variable' is not supported.
 
     Parameters
     ----------
@@ -40,15 +40,18 @@ class Entropy(RollingObject):
     --------
 
     >>> import rolling
-    >>> seq = 'aabbbmbbbbccaaaabcba'
-    >>> r_entropy = rolling.Entropy(seq, 15)
+    >>> seq = 'aaaaaaaaaxaxxvazsdzsdqrmke'
+    >>> r_entropy = rolling.Entropy(seq, 10)
     >>> list(r_entropy)
-    [1.6894822670191827,
-     1.6894822670191827,
-     1.640223928941852,
-     1.7464657985040721,
-     1.7464657985040721,
-     1.7819370635467044]
+    [0.4689955935892812,
+     0.4689955935892812,
+     0.7219280948873623,
+     0.8812908992306927,
+     1.295461844238322,
+     1.295461844238322,
+     1.6854752972273344,
+     2.046439344671015,
+     ...]
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
@@ -66,9 +69,9 @@ class Entropy(RollingObject):
             self._entropy -= x
 
         # insert a dummy value that is removed when next() is called
-        self._buffer.appendleft('dummy_value')
+        self._buffer.appendleft('DUMMY_VALUE')
         x = (1 / window_size) * log2(1 / window_size)
-        self._summands['dummy_value'] = (1, x)
+        self._summands['DUMMY_VALUE'] = (1, x)
         self._entropy -= x
 
     def _init_variable(self, iterable, window_size, **kwargs):
@@ -102,7 +105,6 @@ class Entropy(RollingObject):
             log_p_new = log2(p_new)
             self._summands[new] = (count + 1, p_new * log_p_new)
             self._entropy += summand - (p_new * log_p_new)
-
         else:
             p_new = 1 / self.window_size
             log_p_new = log2(p_new)
