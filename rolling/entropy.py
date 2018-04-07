@@ -1,17 +1,8 @@
 from collections import Counter, deque
 from itertools import islice
-from math import fsum, log2
+from math import log2
 
 from .base import RollingObject
-
-
-def _test_entropy(sequence):
-    """Compute the Shannon entropy of a sequence
-    in a standard way (used for testing).
-    """
-    N = len(sequence)
-    counts = Counter(sequence)
-    return -fsum((c / N) * log2(c / N) for c in counts.values())
 
 
 class Entropy(RollingObject):
