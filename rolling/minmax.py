@@ -6,7 +6,6 @@ from .base import RollingObject
 
 pair = namedtuple('pair', ['value', 'death'])
 
-# todo: reduce code duplication in the classes below
 
 class Min(RollingObject):
     """Iterator object that computes the minimum
