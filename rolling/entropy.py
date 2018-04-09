@@ -21,8 +21,7 @@ class Entropy(RollingObject):
     Complexity
     ----------
 
-    Update time:  O(1) when the overall size of
-        window does not change, O(k) otherwise
+    Update time:  O(1) (for fixed-length windows)
     Memory usage: O(k)
 
     where k is the size of the rolling window
