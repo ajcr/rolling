@@ -5,17 +5,13 @@ rolling window iterators for Python.
 
 Many useful arithmetical, logical and statistical functions are implemented
 to allow the window to be computed in sub-linear time (and in many instances
-constant time):
+constant time). These include:
 
 - Sum
-- All
-- Any
-- Min
-- Max
-- Mean
-- Median
-- Variance
-- Standard deviation
+- Min and Max
+- All and Any
+- Mean, Median and Mode
+- Variance and Standard deviation
 
 There's also a more general 'apply' mode where any specific function can be
 applied to the window. Both fixed-length and variable-length windows are supported.
