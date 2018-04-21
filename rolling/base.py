@@ -27,20 +27,27 @@ class RollingObject(metaclass=abc.ABCMeta):
     attribute returning the current size of the window.
     """
     def __new__(cls, iterable, window_size, window_type='fixed', **kwargs):
+
         if window_type == 'fixed':
             cls.__init__ = cls._init_fixed
             cls.__next__ = cls._next_fixed
+
         elif window_type == 'variable':
             cls.__init__ = cls._init_variable
             cls.__next__ = cls._next_variable
+
         else:
             raise ValueError("Unknown window_type '{}'".format(window_type))
+
         self = super().__new__(cls)
+
         self.window_type = window_type
         self.window_size = self._validate_window_size(window_size)
         self._iterator = iter(iterable)
+
         if self.window_type == 'variable':
             self._filled = False
+
         return self
 
     def __repr__(self):
@@ -65,11 +72,13 @@ class RollingObject(metaclass=abc.ABCMeta):
             if self._obs == self.window_size:
                 self._filled = True
             return self.current_value
+
         # once the window size is reached, update window until the iterator finishes
         try:
             new = next(self._iterator)
             self._update_window(new)
             return self.current_value
+
         except StopIteration:
             # if the iterator finishes, remove the oldest values one at a time
             if self._obs == 1:
