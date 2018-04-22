@@ -46,7 +46,6 @@ def _skew(seq):
         return float('nan')
 
     R = sqrt(B)
-
     return ((sqrt(N * (N - 1)) * C) / ((N - 2) * R * R * R))
 
 
@@ -151,7 +150,7 @@ def test_rolling_mode(array, window_size, window_type):
     got = Mode(array, window_size, window_type=window_type)
     expected = Apply(array, window_size, operation=_mode, window_type=window_type)
     # NOTE: we copy the returned set so that it is not mutated after further iteration
-    assert [set_.copy() for set_ in (got)] == list(expected)
+    assert [set_.copy() for set_ in got] == list(expected)
 
 
 @pytest.mark.parametrize('array', [
