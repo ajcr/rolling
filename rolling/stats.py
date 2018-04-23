@@ -368,7 +368,7 @@ class Skew(RollingObject):
         # the first call to update returns the correct value
         self._buffer.appendleft(0)
 
-    def _init_variable(self, iterable, window_size, ddof=1, **kwargs):
+    def _init_variable(self, iterable, window_size, **kwargs):
         if window_size <= 2:
             raise ValueError('window_size must be greater than 2')
 
@@ -407,7 +407,7 @@ class Skew(RollingObject):
 
         # compute moments
         A = self._x1 / self._obs
-        B = self._x2 / self._obs - A * A
+        B = self._x2 / self._obs - A*A
         C = self._x3 / self._obs - A*A*A - 3*A*B
 
         if B <= 1e-14:
@@ -416,7 +416,7 @@ class Skew(RollingObject):
         R = sqrt(B)
 
         return ((sqrt(self._obs * (self._obs - 1)) * C) /
-                   ((self._obs - 2) * R * R * R))
+                   ((self._obs - 2) * R*R*R))
 
     @property
     def _obs(self):
