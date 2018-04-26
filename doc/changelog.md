@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Mode class (supported by a BiCounter, a bi-directional counter)
 - Add Entropy class (Shannon entropy, fixed-size windows only)
 - Add Skew class (skewness)
+- Add Kurtosis class
 
 ### Changed
 

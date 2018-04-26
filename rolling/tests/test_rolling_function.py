@@ -4,7 +4,7 @@ from rolling import rolling, _rolling_methods, Apply
 
 @pytest.mark.parametrize('name,cls', list(_rolling_methods.items()) + [(set, Apply)])
 def test_rolling_function_returns_correct_class_instance(name, cls):
-    instance = rolling([], 3, operation=name)
+    instance = rolling([], 5, operation=name)
     assert type(instance) is cls
 
 def test_unknown_operation_string():

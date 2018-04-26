@@ -4,7 +4,7 @@ from .base import RollingObject
 from .entropy import Entropy
 from .logical import All, Any
 from .minmax import Min, Max, MinHeap
-from .stats import Mean, Var, Std, Median, Mode, Skew
+from .stats import Mean, Var, Std, Median, Mode, Skew, Kurtosis
 
 def _get_subclasses(cls):
     # https://stackoverflow.com/a/33607093/3923281
@@ -40,6 +40,7 @@ def rolling(iterable, window_size, operation='Sum', window_type='fixed', **kwarg
             - 'Median', median value
             - 'Mode', set of most common values
             - 'Skew', unbiased skewness
+            - 'Kurtosis', kurtosis of window
             - 'Var', variance of values
             - 'Std', standard deviation of values
             - 'Entropy', Shannon entropy of window

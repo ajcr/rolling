@@ -5,7 +5,7 @@ from statistics import variance, stdev, mean as _mean, median as _median
 import pytest
 
 from rolling.apply import Apply
-from rolling.stats import Mean, Var, Std, Median, Mode, Skew
+from rolling.stats import Mean, Var, Std, Median, Mode, Skew, Kurtosis
 
 def _var(seq):
     if len(seq) <= 1:
@@ -47,6 +47,30 @@ def _skew(seq):
 
     R = sqrt(B)
     return ((sqrt(N * (N - 1)) * C) / ((N - 2) * R * R * R))
+
+def _kurtosis(seq):
+    if len(seq) <= 3:
+        return float('nan')
+
+    N = len(seq)
+
+    # compute moments
+    A = sum(seq) / N
+    R = A*A
+
+    B = sum(n**2 for n in seq) / N - R
+    R *= A
+
+    C = sum(n**3 for n in seq) / N - R - 3*A*B
+    R *= A
+
+    D = sum(n**4 for n in seq) / N - R - 6*B*A*A - 4*C*A
+
+    if B <= 1e-14:
+        return float('nan')
+
+    K = (N*N - 1) * D / (B*B) - 3*((N - 1)**2)
+    return K / ((N - 2)*(N - 3))
 
 
 @pytest.mark.parametrize('array', [
@@ -165,4 +189,19 @@ def test_rolling_mode(array, window_size, window_type):
 def test_rolling_skew(array, window_size, window_type):
     got = Skew(array, window_size, window_type=window_type)
     expected = Apply(array, window_size, operation=_skew, window_type=window_type)
+    assert pytest.approx(list(got), nan_ok=True) == list(expected)
+
+
+@pytest.mark.parametrize('array', [
+    [3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3],
+    [3.2, -8.1, 4.2, 7.7, -2.1, 0, 0, -2.1, -2.9, 2.4, 3.6],
+    [3, 0, 1, 7, 2],
+    [1],
+    [],
+])
+@pytest.mark.parametrize('window_size', [4, 5, 6])
+@pytest.mark.parametrize('window_type', ['fixed', 'variable'])
+def test_rolling_kurtosis(array, window_size, window_type):
+    got = Kurtosis(array, window_size, window_type=window_type)
+    expected = Apply(array, window_size, operation=_kurtosis, window_type=window_type)
     assert pytest.approx(list(got), nan_ok=True) == list(expected)

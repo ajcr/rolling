@@ -26,6 +26,7 @@ For for many operations there are algorithms that return the value for the next 
 | Var              | O(1)     | O(k)   | Variance, uses Welford's algorithm for better numerical stability |
 | Std              | O(1)     | O(k)   | Standard deviation, uses Welford's algorithm |
 | Skew             | O(1)     | O(k)   | Skewness of the window |
+| Kurtosis         | O(1)     | O(k)   | Kurtosis of the window |
 | Any              | O(1)     | O(1)   | True if *any* value in the window is True, else False |
 | All              | O(1)     | O(1)   | True if *all* values in the window are True, else False |
 | Min              | O(1)     | O(k)   | Minimum value, tracks ascending minima using a deque |
