@@ -446,7 +446,7 @@ class Kurtosis(RollingObject):
     Notes
     -----
 
-    This implementation of rolling skewness is based
+    This implementation of rolling kurtosis is based
     on the pandas code here:
 
     https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx
