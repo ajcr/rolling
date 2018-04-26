@@ -401,22 +401,22 @@ class Skew(RollingObject):
 
     @property
     def current_value(self):
+        N = self._obs
 
-        if self._obs < 3:
+        if N < 3:
             return float('nan')
 
         # compute moments
-        A = self._x1 / self._obs
-        B = self._x2 / self._obs - A*A
-        C = self._x3 / self._obs - A*A*A - 3*A*B
+        A = self._x1 / N
+        B = self._x2 / N - A*A
+        C = self._x3 / N - A*A*A - 3*A*B
 
         if B <= 1e-14:
             return float('nan')
 
         R = sqrt(B)
 
-        return ((sqrt(self._obs * (self._obs - 1)) * C) /
-                   ((self._obs - 2) * R*R*R))
+        return (sqrt(N * (N - 1)) * C) / ((N - 2) * R*R*R)
 
     @property
     def _obs(self):
