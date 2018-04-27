@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+- Remove general rolling() function
+
 
 ## [0.1.1] - 2018-03-01
 ### Changed

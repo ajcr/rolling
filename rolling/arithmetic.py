@@ -37,15 +37,6 @@ class Sum(RollingObject):
     >>> list(r_sum)
     [13, 11, 15]
 
-    Notes
-    -----
-
-    This object can also be instantiated using the
-    `rolling()` function by passing 'Sum':
-
-    >>> from rolling import rolling
-    >>> r_sum = rolling(seq, window_size=3, operation='Sum')
-
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
@@ -109,15 +100,6 @@ class Nunique(RollingObject):
     >>> r_nunique = rolling.Nunique(word, 4)
     >>> list(r_nunique)
     [3, 2, 2, 2, 2, 3, 3]
-
-    Notes
-    -----
-
-    This object can also be instantiated using the
-    `rolling()` function by passing 'Nunique':
-
-    >>> from rolling import rolling
-    >>> r_nunique = rolling(seq, window_size=3, operation='Nunique')
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):

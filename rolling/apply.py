@@ -40,17 +40,7 @@ class Apply(RollingObject):
     >>> list(r_sum)
     [13, 11, 15]
 
-    Notes
-    -----
-
-    This object can also be instantiated using the
-    `rolling()` function by passing the callable:
-
-    >>> from rolling import rolling
-    >>> r_tuples = rolling(seq, window_size=3, operation=tuples)
-
     """
-
     def _init_fixed(self, iterable, window_size, operation=sum, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)

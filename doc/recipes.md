@@ -64,7 +64,7 @@ waits a famished frog"""
 from collections import Counter
 import rolling
 
-bigrams = rolling.rolling(sentence, 2, operation=tuple)
+bigrams = rolling.Apply(sentence, 2, operation=tuple)
 
 bigrams_no_spaces = (bigram for bigram in bigrams if ' ' not in bigram)
 bigram_freqs = Counter(bigrams_no_spaces)

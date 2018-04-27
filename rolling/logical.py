@@ -36,15 +36,6 @@ class All(RollingObject):
     >>> list(r_all)
     [False, False, True]
 
-    Notes
-    -----
-
-    This object can also be instantiated using the
-    `rolling()` function by passing 'All':
-
-    >>> from rolling import rolling
-    >>> r_all = rolling(seq, window_size=3, operation='All')
-
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._i = -1
@@ -108,15 +99,6 @@ class Any(RollingObject):
     >>> r_any = rolling.Any(seq, 4)
     >>> list(r_any)
     [True, True, True]
-
-    Notes
-    -----
-
-    This object can also be instantiated using the
-    `rolling()` function by passing 'Any':
-
-    >>> from rolling import rolling
-    >>> r_any = rolling(seq, window_size=3, operation='Any')
 
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
