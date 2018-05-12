@@ -87,7 +87,8 @@ class RollingObject(metaclass=abc.ABCMeta):
                 self._remove_old()
                 return self.current_value
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def current_value(self):
         'return the current value of the window'
         pass
