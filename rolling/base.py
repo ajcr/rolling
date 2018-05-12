@@ -6,10 +6,10 @@ class RollingObject(metaclass=abc.ABCMeta):
 
     The __new__ method here sets appropriate magic
     methods for the class (__iter__ and __init__)
-    depending on window_type.upon class creation.
+    depending on window_type.
 
-    All iteration logic is handled in this class:
-    subclasses just implement methods manipulating
+    All iteration logic is handled in this class.
+    Subclasses just implement methods manipulating
     any attributes needed to compute the value of
     the rolling window as values are added and removed.
 
