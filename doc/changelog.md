@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.0] - 2018-05-12
 ### Added
 - Add this changelog to the doc directory
 - Nunique class
@@ -14,8 +15,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Entropy class (Shannon entropy, fixed-size windows only)
 - Add Skew class (skewness)
 - Add Kurtosis class
-
-### Changed
 
 ### Removed
 
