@@ -1,5 +1,5 @@
 from collections import deque, namedtuple
-import heapq
+from heapq import heapify, heappush, heappop
 from itertools import islice
 
 from .base import RollingObject
@@ -193,7 +193,7 @@ class MinHeap(RollingObject):
         head = islice(self._iterator, window_size - 1)
         # faster to create the heap this way, rather than repeat _add_new()
         self._heap = [pair(value, i + window_size) for i, value in enumerate(head)]
-        heapq.heapify(self._heap)
+        heapify(self._heap)
         self._i = len(self._heap) - 1
         self._obs = len(self._heap)
 
@@ -205,23 +205,23 @@ class MinHeap(RollingObject):
     def _update_window(self, new):
         self._i += 1
         new_pair = pair(new, self._i + self.window_size)
-        heapq.heappush(self._heap, new_pair)
+        heappush(self._heap, new_pair)
         # remove any minima that die on this iteration
         while self._heap[0].death <= self._i:
-            heapq.heappop(self._heap)
+            heappop(self._heap)
 
     def _add_new(self, new):
         self._i += 1
         self._obs += 1
         new_pair = pair(new, self._i + self.window_size)
-        heapq.heappush(self._heap, new_pair)
+        heappush(self._heap, new_pair)
 
     def _remove_old(self):
         self._i += 1
         self._obs -= 1
         # remove any minima that die on this iteration
         while self._heap[0].death <= self._i:
-            heapq.heappop(self._heap)
+            heappop(self._heap)
 
     @property
     def current_value(self):
