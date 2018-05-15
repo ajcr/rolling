@@ -54,13 +54,13 @@ class Entropy(RollingObject):
         counts = Counter(self._buffer)
 
         for value, count in counts.items():
-            x = (count / window_size) * log2(count / window_size)
+            x = count / window_size * log2(count / window_size)
             self._summands[value] = (count, x)
             self._entropy -= x
 
         # insert a dummy value that is removed when next() is called
         self._buffer.appendleft('DUMMY_VALUE')
-        x = (1 / window_size) * log2(1 / window_size)
+        x = log2(1 / window_size) / window_size
         self._summands['DUMMY_VALUE'] = (1, x)
         self._entropy -= x
 
@@ -94,12 +94,12 @@ class Entropy(RollingObject):
             p_new = (count + 1) / self.window_size
             log_p_new = log2(p_new)
             self._summands[new] = (count + 1, p_new * log_p_new)
-            self._entropy += summand - (p_new * log_p_new)
+            self._entropy += summand - p_new * log_p_new
         else:
             p_new = 1 / self.window_size
             log_p_new = log2(p_new)
             self._summands[new] = (1, p_new * log_p_new)
-            self._entropy -= (p_new * log_p_new)
+            self._entropy -= p_new * log_p_new
 
     def _add_new(self, new):
         pass
