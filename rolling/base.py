@@ -26,6 +26,7 @@ class RollingObject(metaclass=abc.ABCMeta):
 
     Variable-length instances must also have a self._obs
     attribute returning the current size of the window.
+
     """
     def __new__(cls, iterable, window_size, window_type='fixed', **kwargs):
 
@@ -59,13 +60,17 @@ class RollingObject(metaclass=abc.ABCMeta):
         return self
 
     def _next_fixed(self):
-        'return the next value for fixed-length windows'
+        """
+        Return the next value for fixed-length windows
+        """
         new = next(self._iterator)
         self._update_window(new)
         return self.current_value
 
     def _next_variable(self):
-        'return the next value for variable-length windows'
+        """
+        Return the next value for variable-length windows
+        """
         # while the window size is not reached, add new values
         if not self._filled and self._obs < self.window_size:
             new = next(self._iterator)
@@ -80,8 +85,8 @@ class RollingObject(metaclass=abc.ABCMeta):
             self._update_window(new)
             return self.current_value
 
+        # if the iterator finishes, remove the oldest values one at a time
         except StopIteration:
-            # if the iterator finishes, remove the oldest values one at a time
             if self._obs == 1:
                 raise
             else:
