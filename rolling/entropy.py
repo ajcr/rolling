@@ -6,8 +6,9 @@ from .base import RollingObject
 
 
 class Entropy(RollingObject):
-    """Iterator object that computes the Shannon
-    entropy of a rolling window over a Python iterable.
+    """
+    Iterator object that computes the Shannon entropy
+    of a rolling window over a Python iterable.
 
     Note: window_type='variable' is not supported.
 

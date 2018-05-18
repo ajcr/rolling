@@ -1,4 +1,5 @@
-"""This code is taken from Raymond Hettinger's recipe for
+"""
+This code is taken from Raymond Hettinger's recipe for
 indexable skiplist solution to the rolling median problem.
 Only very minor modifications have been made to the code
 (e.g. to make it compatible with Python 3).
@@ -21,6 +22,7 @@ I referred to the implementation there also:
 
 The indexable skiplist allows O(log k) insertions and deletions
 and allows a value to be retrieved by rank.
+
 """
 from random import random
 from math import log, ceil
@@ -33,7 +35,9 @@ class Node(object):
 
 
 class End(object):
-    'Sentinel object that always compares greater than another object'
+    """
+    Sentinel object that always compares greater than another object
+    """
     def __gt__(self, other):
         return True
 
@@ -48,8 +52,9 @@ NIL = Node(End(), [], [])
 
 
 class IndexableSkiplist(object):
-    'Sorted collection supporting O(lg n) insertion, removal, and lookup by rank.'
-
+    """
+    Sorted collection supporting O(lg n) insertion, removal, and lookup by rank.
+    """
     def __init__(self, expected_size):
         self.size = 0
         self.maxlevels = int(1 + log(expected_size, 2))

@@ -5,8 +5,9 @@ from .base import RollingObject
 
 
 class Apply(RollingObject):
-    """Iterator object that applies a function
-    to a rolling window over a Python iterable.
+    """
+    Iterator object that applies a function to
+    a rolling window over a Python iterable.
 
     Parameters
     ----------

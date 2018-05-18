@@ -2,7 +2,8 @@ from collections import defaultdict
 
 
 class BiCounter(object):
-    """A dictionary mapping each item to a count,
+    """
+    A dictionary mapping each item to a count,
     and mapping these counts to a set of items.
 
     Parameters
@@ -10,6 +11,7 @@ class BiCounter(object):
 
     iterable : any iterable object (optional)
         count the frequencies of items in the iterable
+
     """
     def __init__(self, iterable=None):
         self.item_to_freq = defaultdict(lambda: 0)

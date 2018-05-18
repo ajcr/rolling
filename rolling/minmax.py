@@ -8,7 +8,8 @@ pair = namedtuple('pair', ['value', 'death'])
 
 
 class Min(RollingObject):
-    """Iterator object that computes the minimum
+    """
+    Iterator object that computes the minimum
     of a rolling window over a Python iterable.
 
     Parameters
@@ -33,8 +34,8 @@ class Min(RollingObject):
     maintain a deque of ascending minima.
 
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
-    """
 
+    """
     # Note: _obs must be tracked separately, we cannot just use
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
@@ -84,7 +85,8 @@ class Min(RollingObject):
 
 
 class Max(RollingObject):
-    """Iterator object that computes the maximum
+    """
+    Iterator object that computes the maximum
     of a rolling window over a Python iterable.
 
     Parameters
@@ -109,8 +111,8 @@ class Max(RollingObject):
     maintain a deque of descending maxima.
 
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
-    """
 
+    """
     # Note: _obs must be tracked separately, we cannot just use
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
@@ -160,7 +162,8 @@ class Max(RollingObject):
 
 
 class MinHeap(RollingObject):
-    """Iterator object that computes the minimum value
+    """
+    Iterator object that computes the minimum value
     of a rolling window over a Python iterable.
 
     Parameters

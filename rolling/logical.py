@@ -5,8 +5,9 @@ from .base import RollingObject
 
 
 class All(RollingObject):
-    """Iterator object that computes whether all
-    values in a rolling window over a Python iterable
+    """
+    Iterator object that computes whether all values
+    in a rolling window over a Python iterable
     evaluate to True.
 
     Parameters
@@ -69,8 +70,9 @@ class All(RollingObject):
 
 
 class Any(RollingObject):
-    """Iterator object that computes whether any
-    values in a rolling window over a Python iterable
+    """
+    Iterator object that computes whether any values
+    in a rolling window over a Python iterable
     evaluate to True.
 
     Parameters

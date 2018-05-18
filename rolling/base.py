@@ -2,7 +2,8 @@ import abc
 
 
 class RollingObject(metaclass=abc.ABCMeta):
-    """Baseclass for rolling iterator objects.
+    """
+    Baseclass for rolling iterator objects.
 
     The __new__ method here sets appropriate magic
     methods for the class (__iter__ and __init__)
@@ -90,37 +91,51 @@ class RollingObject(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def current_value(self):
-        'return the current value of the window'
+        """
+        Return the current value of the window
+        """
         pass
 
     @abc.abstractmethod
     def _init_fixed(self):
-        'intialise as a fixed-size window'
+        """
+        Intialise as a fixed-size window
+        """
         pass
 
     @abc.abstractmethod
     def _init_variable(self):
-        'intialise as a variable-size window'
+        """
+        Intialise as a variable-size window
+        """
         pass
 
     @abc.abstractmethod
     def _remove_old(self):
-        'remove the oldest value from the window, decreasing window size by 1'
+        """
+        Remove the oldest value from the window, decreasing window size by 1
+        """
         pass
 
     @abc.abstractmethod
     def _add_new(self, new):
-        'add a new value to the window, increasing window size by 1'
+        """
+        Add a new value to the window, increasing window size by 1
+        """
         pass
 
     @abc.abstractmethod
     def _update_window(self, new):
-        'add a new value to the window and remove the oldest value from the window'
+        """
+        Add a new value to the window and remove the oldest value from the window
+        """
         pass
 
     @staticmethod
     def _validate_window_size(k):
-        'check if k is a positive integer'
+        """
+        Check if k is a positive integer
+        """
         if not isinstance(k, int):
             raise TypeError('window_size must be integer type, got {}'.format(type(k).__name__))
         if k <= 0:

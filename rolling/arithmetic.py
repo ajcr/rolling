@@ -5,8 +5,9 @@ from .base import RollingObject
 
 
 class Sum(RollingObject):
-    """Iterator object that computes the sum
-    of a rolling window over a Python iterable.
+    """
+    Iterator object that computes the sum of a
+    rolling window over a Python iterable.
 
     Parameters
     ----------
@@ -69,7 +70,8 @@ class Sum(RollingObject):
 
 
 class Nunique(RollingObject):
-    """Iterator object that counts the number of
+    """
+    Iterator object that counts the number of
     unique values in a rolling window.
 
     Parameters

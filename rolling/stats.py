@@ -9,8 +9,9 @@ from .structures.bicounter import BiCounter
 
 
 class Mean(Sum):
-    """Iterator object that computes the mean
-    of a rolling window over a Python iterable.
+    """
+    Iterator object that computes the mean of
+    a rolling window over a Python iterable.
 
     Parameters
     ----------
@@ -26,6 +27,7 @@ class Mean(Sum):
     Memory usage: O(k)
 
     where k is the size of the rolling window
+
     """
     @property
     def current_value(self):
@@ -33,7 +35,8 @@ class Mean(Sum):
 
 
 class Var(RollingObject):
-    """Iterator object that computes the variance
+    """
+    Iterator object that computes the variance
     of a rolling window over a Python iterable.
 
     Parameters
@@ -63,6 +66,7 @@ class Var(RollingObject):
 
     Otherwise, if (N - ddof) is less than 0 (for variable-size
     windows), the variance is computed as NaN.
+
     """
     def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
         if window_size <= ddof:
@@ -126,7 +130,8 @@ class Var(RollingObject):
 
 
 class Std(Var):
-    """Iterator object that computes the standard deviation
+    """
+    Iterator object that computes the standard deviation
     of a rolling window over a Python iterable.
 
     Parameters
@@ -157,6 +162,7 @@ class Std(Var):
 
     Otherwise, if N-ddof is less than 0 (for variable-size
     windows), the variance is computed as NaN.
+
     """
     @property
     def current_value(self):
@@ -167,7 +173,8 @@ class Std(Var):
 
 
 class Median(RollingObject):
-    """Iterator object that computes the median value
+    """
+    Iterator object that computes the median value
     of a rolling window over a Python iterable.
 
     Parameters
@@ -192,6 +199,7 @@ class Median(RollingObject):
     as the window moves (using an idea of R. Hettinger [1]).
 
     [1] http://code.activestate.com/recipes/576930/
+
     """
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._buffer = deque(maxlen=window_size)
@@ -244,7 +252,8 @@ class Median(RollingObject):
 
 
 class Mode(RollingObject):
-    """Iterator object that computes the mode
+    """
+    Iterator object that computes the mode
     of a rolling window over a Python iterable.
 
     IMPORTANT: the return set of modal values may be mutated
@@ -280,6 +289,7 @@ class Mode(RollingObject):
     This contrasts with Python's statistics module
     where mode() will raise an error if the mode
     is not unique.
+
     """
     def _init_fixed(self, iterable, window_size, return_count=False, **kwargs):
         self._buffer = deque(maxlen=window_size)
@@ -324,7 +334,8 @@ class Mode(RollingObject):
 
 
 class Skew(RollingObject):
-    """Iterator object that computes the skewness
+    """
+    Iterator object that computes the skewness
     of a rolling window over a Python iterable.
 
     Parameters
@@ -424,7 +435,8 @@ class Skew(RollingObject):
 
 
 class Kurtosis(RollingObject):
-    """Iterator object that computes the kurtosis
+    """
+    Iterator object that computes the kurtosis
     of a rolling window over a Python iterable.
 
     Parameters
