@@ -15,14 +15,14 @@ class Apply(RollingObject):
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
-    operation : callable, default sum()
+    operation : callable, default sum
         a function, or class implementing a __call__
         method, to be applied to each window
 
     Complexity
     ----------
 
-    Update time:  dependent on operation
+    Update time:  operation dependent
     Memory usage: O(k)
 
     where k is the size of the rolling window
@@ -30,16 +30,23 @@ class Apply(RollingObject):
     Examples
     --------
 
+    Rolling sum using builtin sum():
+
     >>> import rolling
     >>> seq = (8, 1, 1, 3, 6, 5)
-    >>> r_sum = rolling.Apply(seq, 3)
+    >>> r_sum = rolling.Apply(seq, 3, operation=sum)
     >>> next(r_sum)
     10
     >>> next(r_sum)
     5
-    >>> r_sum = rolling.Apply(seq, 4)
-    >>> list(r_sum)
-    [13, 11, 15]
+
+    Reverse each window:
+
+    >>> r_rev = rolling.Apply(seq, 4, operation=lambda x: list(reversed(x)))
+    >>> list(r_rev)
+    [[3, 1, 1, 8],
+     [6, 3, 1, 1],
+     [5, 6, 3, 1]]
 
     """
     def _init_fixed(self, iterable, window_size, operation=sum, **kwargs):
