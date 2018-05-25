@@ -38,7 +38,7 @@ See the [References](https://github.com/ajcr/rolling#references-and-resources) s
 
 ## Installation
 
-You can install the latest release of the module using PIP:
+You can install the latest release of the module using pip:
 ```
 pip install rolling
 ```
