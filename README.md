@@ -2,15 +2,15 @@
 
 ![PyPI version](https://badge.fury.io/py/rolling.svg) ![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master) [![codecov](https://codecov.io/gh/ajcr/rolling/branch/master/graph/badge.svg)](https://codecov.io/gh/ajcr/rolling)
 
-A collection of computationally efficient rolling window iterators for Python.
+A collection of computationally efficient rolling window iterators and operations for Python.
 
-This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows. There's also a flexible 'Apply' iterator whereby any callable can be used on the window. Both fixed-length and variable-length window iteration is supported.
+This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows, including Sum, Min, Max, Median and Standard Deviation. There's also a flexible 'Apply' iterator whereby any function can be applied to the window. Both fixed-length and variable-length window iteration is supported.
 
 To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
 ## Overview
 
-Suppose we have a list `x` and we want to find the maximum of each window of 3 values. We could use Python's `max()` function and write `[max(x[i:i+3]) for i in range(len(x) - 2)]` to do this, for example.
+Suppose we have a list of integer values `x` and we want to find the maximum of each window of 3 values. We could use Python's `max()` function and write `[max(x[i:i+3]) for i in range(len(x) - 2)]` to do this, for example.
 
 But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically _linear_ (i.e. **O(k)** where **k** is the size of the window).
 
@@ -120,7 +120,7 @@ Some rolling algorithms are widely known (e.g. 'Sum') and I am not sure which so
 
 Other rolling algorithms are very cleverly designed and I learned a lot by reading about them and seeing other peoples' implementations. Here are the main resources that I used:
 
-- **Max** and **Min** are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in [pandas](http://pandas.pydata.org/) and [bottleneck](https://github.com/kwgoodman/bottleneck). My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk ['The Secret Life Of Rolling Pandas'](https://www.youtube.com/watch?v=XM_r5La-1tA). The algorithm is also described by Keegan Carruthers-Smith [here](https://people.cs.uct.ac.za/~ksmith/articles/sliding_window_minimum.html), along with code examples.
+- **Max** and **Min** are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in [pandas](http://pandas.pydata.org/) and [bottleneck](https://github.com/kwgoodman/bottleneck). My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk _[The Secret Life Of Rolling Pandas](https://www.youtube.com/watch?v=XM_r5La-1tA)_. The algorithm is also described by Keegan Carruthers-Smith [here](https://people.cs.uct.ac.za/~ksmith/articles/sliding_window_minimum.html), along with code examples.
 
 - **Median** uses the indexable skiplist approach presented by Raymond Hettinger [here](http://code.activestate.com/recipes/577073/).
 
