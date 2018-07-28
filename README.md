@@ -69,20 +69,24 @@ Now suppose we have this list:
 >>> counts = [1, 5, 2, 0, 3]
 ```
 
-We can create an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list that performs a reduction operation for a given window size (3 in this case):
+The `rolling` module allows us to can create an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list that performs a reduction operation for a given window size (we'll use a window size of 3 for this example).
+
+Now let's create three iterator objects that roll over this list, each performing a different operation:
+
 ```python
 >>> r_sum = rolling.Sum(counts, 3)
 >>> r_all = rolling.All(counts, 3)
 >>> r_max = rolling.Max(counts, 3)
 ```
 
-Here's the representation of the rolling sum object. Note that the window type is 'fixed' by default, meaning that only _full_ windows of the specified size are computed:
+Here's the representation of the `rolling.Sum` iterator object. Note that the window type is 'fixed' by default, meaning that only _full_ windows of the specified size are computed (the window does not roll on/off the list):
+
 ```python
 >>> r_sum
 Rolling(operation='Sum', window_size=3, window_type='fixed')
 ```
 
-The result of iterating over each of these rolling object using `list()` is shown below.
+The result of iterating over each of these rolling iterator objects using `list()` is shown below.
 ```python
 >>> list(r_sum)
 [8, 7, 5] # i.e. [1+5+2, 5+2+0, 2+0+3]
