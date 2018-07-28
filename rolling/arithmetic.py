@@ -127,9 +127,7 @@ class Nunique(RollingObject):
 
     def _remove_old(self):
         old = self._buffer.popleft()
-        self._counter[old] -= 1
-        if self._counter[old] == 0:
-            del self._counter[old]
+        self._counter -= Counter([old])
 
     @property
     def current_value(self):
