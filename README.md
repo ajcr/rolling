@@ -19,6 +19,7 @@ For for many operations there are algorithms that return the value for the next 
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
 | Sum              | O(1)     | O(k)   | Sum of window values |
+| Product          | O(1)     | O(k)   | Product of window values |
 | Nunique          | O(1)     | O(k)   | Number of unique window values |
 | Mean             | O(1)     | O(k)   | Arithmetic mean of window values |
 | Median           | O(log k) | O(k)   | Median, uses an indexable skiplist to maintain sorted order |
