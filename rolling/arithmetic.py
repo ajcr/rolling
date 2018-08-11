@@ -107,7 +107,6 @@ class Product(RollingObject):
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
-        self._buffer.appendleft(1)
         self._zero_count = 0
 
         prod = 1
@@ -118,6 +117,7 @@ class Product(RollingObject):
             else:
                 self._zero_count += 1
 
+        self._buffer.appendleft(1)
         self._product = prod
 
     def _init_variable(self, iterable, window_size, **kwargs):
@@ -139,9 +139,9 @@ class Product(RollingObject):
         else:
             self._zero_count += 1
 
-
     def _add_new(self, new):
         self._buffer.append(new)
+
         if new:
             self._product *= new
         else:
@@ -149,6 +149,7 @@ class Product(RollingObject):
 
     def _remove_old(self):
         old = self._buffer.popleft()
+
         if old:
             self._product /= old
         else:
@@ -164,6 +165,7 @@ class Product(RollingObject):
     @property
     def _obs(self):
         return len(self._buffer)
+
 
 class Nunique(RollingObject):
     """
