@@ -45,6 +45,7 @@ class Entropy(RollingObject):
      ...]
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._entropy = 0.0
         self._summands = {}
@@ -60,13 +61,13 @@ class Entropy(RollingObject):
             self._entropy -= x
 
         # insert a dummy value that is removed when next() is called
-        self._buffer.appendleft('DUMMY_VALUE')
+        self._buffer.appendleft("DUMMY_VALUE")
         x = log2(1 / window_size) / window_size
-        self._summands['DUMMY_VALUE'] = (1, x)
+        self._summands["DUMMY_VALUE"] = (1, x)
         self._entropy -= x
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        raise NotImplementedError('Entropy not implemented for variable windows')
+        raise NotImplementedError("Entropy not implemented for variable windows")
 
     def _update_window(self, new):
         old = self._buffer[0]

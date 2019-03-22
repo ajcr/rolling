@@ -39,6 +39,7 @@ class Sum(RollingObject):
     [13, 11, 15]
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
@@ -104,6 +105,7 @@ class Product(RollingObject):
     [24, 18, 90]
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
@@ -202,11 +204,12 @@ class Nunique(RollingObject):
     [3, 2, 2, 2, 2, 3, 3]
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
         # append a dummy value that is removed when next() is called
-        self._buffer.appendleft('dummy_value')
+        self._buffer.appendleft("dummy_value")
         self._counter = Counter(self._buffer)
 
     def _init_variable(self, iterable, window_size, **kwargs):

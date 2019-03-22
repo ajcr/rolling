@@ -28,13 +28,14 @@ class RollingObject(metaclass=abc.ABCMeta):
     attribute returning the current size of the window.
 
     """
-    def __new__(cls, iterable, window_size, window_type='fixed', **kwargs):
 
-        if window_type == 'fixed':
+    def __new__(cls, iterable, window_size, window_type="fixed", **kwargs):
+
+        if window_type == "fixed":
             cls.__init__ = cls._init_fixed
             cls.__next__ = cls._next_fixed
 
-        elif window_type == 'variable':
+        elif window_type == "variable":
             cls.__init__ = cls._init_variable
             cls.__next__ = cls._next_variable
 
@@ -47,14 +48,15 @@ class RollingObject(metaclass=abc.ABCMeta):
         self.window_size = self._validate_window_size(window_size)
         self._iterator = iter(iterable)
 
-        if self.window_type == 'variable':
+        if self.window_type == "variable":
             self._filled = False
 
         return self
 
     def __repr__(self):
         return "Rolling(operation='{}', window_size={}, window_type='{}')".format(
-                    self.__class__.__name__, self.window_size, self.window_type)
+            self.__class__.__name__, self.window_size, self.window_type
+        )
 
     def __iter__(self):
         return self
@@ -142,7 +144,9 @@ class RollingObject(metaclass=abc.ABCMeta):
         Check if k is a positive integer
         """
         if not isinstance(k, int):
-            raise TypeError('window_size must be integer type, got {}'.format(type(k).__name__))
+            raise TypeError(
+                "window_size must be integer type, got {}".format(type(k).__name__)
+            )
         if k <= 0:
-            raise ValueError('window_size must be positive')
+            raise ValueError("window_size must be positive")
         return k

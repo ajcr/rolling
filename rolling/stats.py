@@ -29,6 +29,7 @@ class Mean(Sum):
     where k is the size of the rolling window
 
     """
+
     @property
     def current_value(self):
         return self._sum / self._obs
@@ -68,16 +69,17 @@ class Var(RollingObject):
     windows), the variance is computed as NaN.
 
     """
+
     def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
         if window_size <= ddof:
-            raise ValueError('window_size must be greater than ddof')
+            raise ValueError("window_size must be greater than ddof")
 
         self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
-        self._mean = 0.0 # mean of values
-        self._sslm = 0.0 # sum of squared values less the mean
+        self._mean = 0.0  # mean of values
+        self._sslm = 0.0  # sum of squared values less the mean
 
-        for new in islice(self._iterator, window_size-1):
+        for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
         # insert mean at the start of the buffer so that the
@@ -86,12 +88,12 @@ class Var(RollingObject):
 
     def _init_variable(self, iterable, window_size, ddof=1, **kwargs):
         if window_size <= ddof:
-            raise ValueError('window_size must be greater than ddof')
+            raise ValueError("window_size must be greater than ddof")
 
         self.ddof = ddof
         self._buffer = deque(maxlen=window_size)
-        self._mean = 0.0 # mean of values
-        self._sslm = 0.0 # sum of squared values less the mean
+        self._mean = 0.0  # mean of values
+        self._sslm = 0.0  # sum of squared values less the mean
 
     def _add_new(self, new):
         self._buffer.append(new)
@@ -120,7 +122,7 @@ class Var(RollingObject):
     @property
     def current_value(self):
         if self._obs <= self.ddof:
-            return float('nan')
+            return float("nan")
         else:
             return self._sslm / (self._obs - self.ddof)
 
@@ -164,10 +166,11 @@ class Std(Var):
     windows), the variance is computed as NaN.
 
     """
+
     @property
     def current_value(self):
         if self._obs <= self.ddof:
-            return float('nan')
+            return float("nan")
         else:
             return sqrt(self._sslm / (self._obs - self.ddof))
 
@@ -201,12 +204,13 @@ class Median(RollingObject):
     [1] http://code.activestate.com/recipes/576930/
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._buffer = deque(maxlen=window_size)
         self._skiplist = IndexableSkiplist(window_size)
 
         # update buffer and skiplist with initial values
-        for new in islice(self._iterator, window_size-1):
+        for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
         try:
@@ -244,7 +248,7 @@ class Median(RollingObject):
             return self._skiplist[self._obs // 2]
         else:
             i = self._obs // 2
-            return (self._skiplist[i] + self._skiplist[i-1]) / 2
+            return (self._skiplist[i] + self._skiplist[i - 1]) / 2
 
     @property
     def _obs(self):
@@ -291,16 +295,17 @@ class Mode(RollingObject):
     is not unique.
 
     """
+
     def _init_fixed(self, iterable, window_size, return_count=False, **kwargs):
         self._buffer = deque(maxlen=window_size)
         self.return_count = return_count
         self._bicounter = BiCounter()
-        for item in islice(self._iterator, window_size-1):
+        for item in islice(self._iterator, window_size - 1):
             self._add_new(item)
 
         # insert a value to be removed on the first call to update
-        self._buffer.appendleft('DUMMY_VALUE')
-        self._bicounter.increment('DUMMY_VALUE')
+        self._buffer.appendleft("DUMMY_VALUE")
+        self._bicounter.increment("DUMMY_VALUE")
 
     def _init_variable(self, iterable, window_size, return_count=False, **kwargs):
         self._buffer = deque(maxlen=window_size)
@@ -363,16 +368,17 @@ class Skew(RollingObject):
     https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         if window_size <= 2:
-            raise ValueError('window_size must be greater than 2')
+            raise ValueError("window_size must be greater than 2")
 
         self._buffer = deque(maxlen=window_size)
         self._x1 = 0.0
         self._x2 = 0.0
         self._x3 = 0.0
 
-        for new in islice(self._iterator, window_size-1):
+        for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
         # insert zero at the start of the buffer so that the
@@ -381,7 +387,7 @@ class Skew(RollingObject):
 
     def _init_variable(self, iterable, window_size, **kwargs):
         if window_size <= 2:
-            raise ValueError('window_size must be greater than 2')
+            raise ValueError("window_size must be greater than 2")
 
         self._buffer = deque(maxlen=window_size)
         self._x1 = 0.0
@@ -392,42 +398,42 @@ class Skew(RollingObject):
         self._buffer.append(new)
 
         self._x1 += new
-        self._x2 += new*new
-        self._x3 += new*new*new
+        self._x2 += new * new
+        self._x3 += new * new * new
 
     def _remove_old(self):
         old = self._buffer.popleft()
 
         self._x1 -= old
-        self._x2 -= old*old
-        self._x3 -= old*old*old
+        self._x2 -= old * old
+        self._x3 -= old * old * old
 
     def _update_window(self, new):
         old = self._buffer[0]
         self._buffer.append(new)
 
         self._x1 += new - old
-        self._x2 += new*new - old*old
-        self._x3 += new*new*new - old*old*old
+        self._x2 += new * new - old * old
+        self._x3 += new * new * new - old * old * old
 
     @property
     def current_value(self):
         N = self._obs
 
         if N < 3:
-            return float('nan')
+            return float("nan")
 
         # compute moments
         A = self._x1 / N
-        B = self._x2 / N - A*A
-        C = self._x3 / N - A*A*A - 3*A*B
+        B = self._x2 / N - A * A
+        C = self._x3 / N - A * A * A - 3 * A * B
 
         if B <= 1e-14:
-            return float('nan')
+            return float("nan")
 
         R = sqrt(B)
 
-        return (sqrt(N * (N - 1)) * C) / ((N - 2) * R*R*R)
+        return (sqrt(N * (N - 1)) * C) / ((N - 2) * R * R * R)
 
     @property
     def _obs(self):
@@ -464,9 +470,10 @@ class Kurtosis(RollingObject):
     https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx
 
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         if window_size <= 3:
-            raise ValueError('window_size must be greater than 3')
+            raise ValueError("window_size must be greater than 3")
 
         self._buffer = deque(maxlen=window_size)
         self._x1 = 0.0
@@ -474,7 +481,7 @@ class Kurtosis(RollingObject):
         self._x3 = 0.0
         self._x4 = 0.0
 
-        for new in islice(self._iterator, window_size-1):
+        for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
         # insert zero at the start of the buffer so that the
@@ -483,7 +490,7 @@ class Kurtosis(RollingObject):
 
     def _init_variable(self, iterable, window_size, **kwargs):
         if window_size <= 3:
-            raise ValueError('window_size must be greater than 3')
+            raise ValueError("window_size must be greater than 3")
 
         self._buffer = deque(maxlen=window_size)
         self._x1 = 0.0
@@ -495,51 +502,51 @@ class Kurtosis(RollingObject):
         self._buffer.append(new)
 
         self._x1 += new
-        self._x2 += new*new
-        self._x3 += new**3
-        self._x4 += new**4
+        self._x2 += new * new
+        self._x3 += new ** 3
+        self._x4 += new ** 4
 
     def _remove_old(self):
         old = self._buffer.popleft()
 
         self._x1 -= old
-        self._x2 -= old*old
-        self._x3 -= old**3
-        self._x4 -= old**4
+        self._x2 -= old * old
+        self._x3 -= old ** 3
+        self._x4 -= old ** 4
 
     def _update_window(self, new):
         old = self._buffer[0]
         self._buffer.append(new)
 
         self._x1 += new - old
-        self._x2 += new*new - old*old
-        self._x3 += new**3 - old**3
-        self._x4 += new**4 - old**4
+        self._x2 += new * new - old * old
+        self._x3 += new ** 3 - old ** 3
+        self._x4 += new ** 4 - old ** 4
 
     @property
     def current_value(self):
         N = self._obs
 
         if N <= 3:
-            return float('nan')
+            return float("nan")
 
         # compute moments
         A = self._x1 / N
-        R = A*A
+        R = A * A
 
         B = self._x2 / N - R
         R *= A
 
-        C = self._x3 / N - R - 3*A*B
+        C = self._x3 / N - R - 3 * A * B
         R *= A
 
-        D = self._x4 / N - R - 6*B*A*A - 4*C*A
+        D = self._x4 / N - R - 6 * B * A * A - 4 * C * A
 
         if B <= 1e-14:
-            return float('nan')
+            return float("nan")
 
-        K = (N*N - 1) * D / (B*B) - 3*((N - 1)**2)
-        return K / ((N - 2)*(N - 3))
+        K = (N * N - 1) * D / (B * B) - 3 * ((N - 1) ** 2)
+        return K / ((N - 2) * (N - 3))
 
     @property
     def _obs(self):

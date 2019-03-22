@@ -49,6 +49,7 @@ class Apply(RollingObject):
      [5, 6, 3, 1]]
 
     """
+
     def _init_fixed(self, iterable, window_size, operation=sum, **kwargs):
         head = islice(self._iterator, window_size - 1)
         self._buffer = deque(head, maxlen=window_size)
@@ -77,4 +78,5 @@ class Apply(RollingObject):
 
     def __repr__(self):
         return "Rolling(operation='{}', window_size={}, window_type='{}')".format(
-                    self._operation.__name__, self.window_size, self.window_type)
+            self._operation.__name__, self.window_size, self.window_type
+        )
