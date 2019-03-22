@@ -13,6 +13,7 @@ class BiCounter(object):
         count the frequencies of items in the iterable
 
     """
+
     def __init__(self, iterable=None):
         self.item_to_freq = defaultdict(lambda: 0)
         self.freq_to_items = defaultdict(set)
@@ -22,7 +23,7 @@ class BiCounter(object):
                 self.increment(item)
 
     def increment(self, item):
-        'Increase the count of an item by one'
+        "Increase the count of an item by one"
         freq = self.item_to_freq.get(item, 0)
 
         if freq > 0:
@@ -39,7 +40,7 @@ class BiCounter(object):
             del self.freq_to_items[freq]
 
     def decrement(self, item):
-        'Decrease the count of an item by one'
+        "Decrease the count of an item by one"
         freq = self.item_to_freq.get(item, 0)
         # if the item in not there already, we are done
         if freq:

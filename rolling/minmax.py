@@ -4,7 +4,7 @@ from itertools import islice
 
 from .base import RollingObject
 
-pair = namedtuple('pair', ['value', 'death'])
+pair = namedtuple("pair", ["value", "death"])
 
 
 class Min(RollingObject):
@@ -36,6 +36,7 @@ class Min(RollingObject):
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
 
     """
+
     # Note: _obs must be tracked separately, we cannot just use
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
@@ -44,7 +45,7 @@ class Min(RollingObject):
         self._i = -1
         self._obs = 0
         self._buffer = deque()
-        for new in islice(self._iterator, window_size-1):
+        for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
@@ -113,6 +114,7 @@ class Max(RollingObject):
     [1] http://www.richardhartersworld.com/cri/2001/slidingmin.html
 
     """
+
     # Note: _obs must be tracked separately, we cannot just use
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
@@ -121,7 +123,7 @@ class Max(RollingObject):
         self._i = -1
         self._obs = 0
         self._buffer = deque()
-        for new in islice(self._iterator, window_size-1):
+        for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
@@ -192,6 +194,7 @@ class MinHeap(RollingObject):
     that the heap can grow to be larger than the specified
     window size, k, in cases where data is ordered.
     """
+
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         # faster to create the heap this way, rather than repeat _add_new()

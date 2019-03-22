@@ -29,7 +29,8 @@ from math import log, ceil
 
 
 class Node(object):
-    __slots__ = 'value', 'next', 'width'
+    __slots__ = "value", "next", "width"
+
     def __init__(self, value, next, width):
         self.value, self.next, self.width = value, next, width
 
@@ -38,6 +39,7 @@ class End(object):
     """
     Sentinel object that always compares greater than another object
     """
+
     def __gt__(self, other):
         return True
 
@@ -55,10 +57,11 @@ class IndexableSkiplist(object):
     """
     Sorted collection supporting O(lg n) insertion, removal, and lookup by rank.
     """
+
     def __init__(self, expected_size):
         self.size = 0
         self.maxlevels = int(1 + log(expected_size, 2))
-        self.head = Node('HEAD', [NIL]*self.maxlevels, [1]*self.maxlevels)
+        self.head = Node("HEAD", [NIL] * self.maxlevels, [1] * self.maxlevels)
 
     def __getitem__(self, i):
         node = self.head
@@ -82,7 +85,7 @@ class IndexableSkiplist(object):
 
         # insert a link to the newnode at each level
         d = min(self.maxlevels, 1 - int(log(random(), 2.0)))
-        newnode = Node(value, [None]*d, [None]*d)
+        newnode = Node(value, [None] * d, [None] * d)
         steps = 0
         for level in range(d):
             prevnode = chain[level]
@@ -104,7 +107,7 @@ class IndexableSkiplist(object):
                 node = node.next[level]
             chain[level] = node
         if value != chain[0].next[0].value:
-            raise KeyError('Not Found')
+            raise KeyError("Not Found")
 
         # remove one link at each level
         d = len(chain[0].next[0].next)
