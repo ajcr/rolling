@@ -39,19 +39,7 @@ def test_rolling_apply(array, window_size, expected):
                 [1],
             ],
         ),
-        (
-            4,
-            [
-                [3],
-                [3, 6],
-                [3, 6, 5],
-                [3, 6, 5, 8],
-                [6, 5, 8, 1],
-                [5, 8, 1],
-                [8, 1],
-                [1],
-            ],
-        ),
+        (4, [[3], [3, 6], [3, 6, 5], [3, 6, 5, 8], [6, 5, 8, 1], [5, 8, 1], [8, 1], [1]]),
         (3, [[3], [3, 6], [3, 6, 5], [6, 5, 8], [5, 8, 1], [8, 1], [1]]),
         (2, [[3], [3, 6], [6, 5], [5, 8], [8, 1], [1]]),
         (1, [[3], [6], [5], [8], [1]]),
@@ -64,12 +52,7 @@ def test_rolling_apply_variable(array, window_size, expected):
 
 @pytest.mark.parametrize(
     "array,window_type,expected",
-    [
-        ([], "fixed", []),
-        ([3], "fixed", []),
-        ([], "variable", []),
-        ([1], "variable", [[1]]),
-    ],
+    [([], "fixed", []), ([3], "fixed", []), ([], "variable", []), ([1], "variable", [[1]])],
 )
 def test_rolling_apply_over_short_iterable(array, window_type, expected):
     r = Apply(array, 5, operation=list, window_type=window_type)

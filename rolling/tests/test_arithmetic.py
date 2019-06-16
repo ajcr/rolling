@@ -1,3 +1,6 @@
+import string
+
+from hypothesis import given, strategies as st
 import pytest
 
 from rolling.apply import Apply
@@ -11,17 +14,7 @@ def _product(it):
     return x
 
 
-@pytest.mark.parametrize(
-    "array",
-    [
-        [3, -8, 1, 7, -2, 4, 7, 2, 1],
-        [3, -8, 0, 7, -2, 4, 7, 0, 1],
-        [3, 0, 1, 7, 2],
-        [1],
-        [],
-    ],
-)
-@pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5])
+@given(array=st.lists(st.integers(), max_size=15), window_size=st.integers(1, 15))
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_sum(array, window_size, window_type):
     got = Sum(array, window_size, window_type=window_type)
@@ -29,17 +22,7 @@ def test_rolling_sum(array, window_size, window_type):
     assert list(got) == list(expected)
 
 
-@pytest.mark.parametrize(
-    "array",
-    [
-        [3, -8, 1, 7, -2, 4, 7, 2, 1],
-        [3, -8, 0, 7, -2, 4, 7, 0, 1],
-        [3, 0, 1, 7, 2],
-        [1],
-        [],
-    ],
-)
-@pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5])
+@given(array=st.lists(st.integers(), max_size=15), window_size=st.integers(1, 15))
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_product(array, window_size, window_type):
     got = Product(array, window_size, window_type=window_type)
@@ -47,12 +30,9 @@ def test_rolling_product(array, window_size, window_type):
     assert list(got) == list(expected)
 
 
-@pytest.mark.parametrize("word", ["aabbc", "xooxyzzziiismsdd", "jjjjjj", ""])
-@pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5])
+@given(word=st.text(alphabet=string.ascii_lowercase, max_size=15), window_size=st.integers(1, 15))
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_nunique(word, window_size, window_type):
     got = Nunique(word, window_size, window_type=window_type)
-    expected = Apply(
-        word, window_size, operation=lambda x: len(set(x)), window_type=window_type
-    )
+    expected = Apply(word, window_size, operation=lambda x: len(set(x)), window_type=window_type)
     assert list(got) == list(expected)

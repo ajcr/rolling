@@ -2,6 +2,7 @@ from collections import Counter
 from math import sqrt
 from statistics import variance, stdev, mean as _mean, median as _median
 
+from hypothesis import given, strategies as st
 import pytest
 
 from rolling.apply import Apply
@@ -78,8 +79,7 @@ def _kurtosis(seq):
     return K / ((N - 2) * (N - 3))
 
 
-@pytest.mark.parametrize("array", [[3, 0, 1, 7, 2], [3, -8, 1, 7, -2], [1], []])
-@pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5])
+@given(array=st.lists(st.integers(), max_size=15), window_size=st.integers(1, 15))
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_mean(array, window_size, window_type):
     got = Mean(array, window_size, window_type=window_type)
@@ -87,47 +87,7 @@ def test_rolling_mean(array, window_size, window_type):
     assert pytest.approx(list(got)) == list(expected)
 
 
-@pytest.mark.parametrize(
-    "array",
-    [
-        [
-            82,
-            80,
-            14,
-            73,
-            9,
-            19,
-            60,
-            31,
-            4,
-            87,
-            38,
-            36,
-            38,
-            58,
-            20,
-            97,
-            25,
-            99,
-            79,
-            31,
-            97,
-            73,
-            79,
-            71,
-            78,
-            56,
-            73,
-            24,
-            53,
-            59,
-        ],
-        [3, 5, 1, 4, 1],
-        [5],
-        [],
-    ],
-)
-@pytest.mark.parametrize("window_size", [3, 7, 10, 20])
+@given(array=st.lists(st.integers(), max_size=30), window_size=st.integers(2, 15))
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_var(array, window_size, window_type):
     got = Var(array, window_size, window_type=window_type)
@@ -135,9 +95,7 @@ def test_rolling_var(array, window_size, window_type):
     assert pytest.approx(list(got), nan_ok=True) == list(expected)
 
 
-@pytest.mark.parametrize(
-    "array", [[82, 80, 14, 73, 9, 19, 60, 31, 4, 87, 38, 36, 38, 58, 20]]
-)
+@pytest.mark.parametrize("array", [[82, 80, 14, 73, 9, 19, 60, 31, 4, 87, 38, 36, 38, 58, 20]])
 @pytest.mark.parametrize(
     "ddof,expected",
     [
@@ -274,9 +232,7 @@ def test_rolling_std(array, window_size, window_type):
     assert pytest.approx(list(got), nan_ok=True) == list(expected)
 
 
-@pytest.mark.parametrize(
-    "array", [[3, 0, 1, 7, 2], [3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3], [1], []]
-)
+@pytest.mark.parametrize("array", [[3, 0, 1, 7, 2], [3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3], [1], []])
 @pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5, 6])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_median(array, window_size, window_type):

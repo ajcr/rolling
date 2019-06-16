@@ -1,4 +1,5 @@
 from collections import Counter, deque
+from fractions import Fraction
 from itertools import islice
 
 from .base import RollingObject
@@ -111,23 +112,25 @@ class Product(RollingObject):
         self._buffer = deque(head, maxlen=window_size)
         self._zero_count = 0
 
-        prod = 1
+        prod = Fraction(1)
 
         for value in self._buffer:
             if value:
-                prod *= value
+                prod *= Fraction(value)
             else:
                 self._zero_count += 1
 
-        self._buffer.appendleft(1)
+        self._buffer.appendleft(Fraction(1))
         self._product = prod
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._buffer = deque(maxlen=window_size)
         self._zero_count = 0
-        self._product = 1
+        self._product = Fraction(1)
 
     def _update_window(self, new):
+        new = Fraction(new)
+
         old = self._buffer.popleft()
         self._buffer.append(new)
 
@@ -142,6 +145,8 @@ class Product(RollingObject):
             self._zero_count += 1
 
     def _add_new(self, new):
+        new = Fraction(new)
+
         self._buffer.append(new)
 
         if new:

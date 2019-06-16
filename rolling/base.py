@@ -144,9 +144,7 @@ class RollingObject(metaclass=abc.ABCMeta):
         Check if k is a positive integer
         """
         if not isinstance(k, int):
-            raise TypeError(
-                "window_size must be integer type, got {}".format(type(k).__name__)
-            )
+            raise TypeError("window_size must be integer type, got {}".format(type(k).__name__))
         if k <= 0:
             raise ValueError("window_size must be positive")
         return k
