@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- extend() method added to rolling objects
+
 ## [0.2.0] - 2018-05-12
 ### Added
 - Add this changelog to the doc directory
@@ -17,7 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Kurtosis class
 
 ### Removed
-
 - Remove general rolling() function
 
 
