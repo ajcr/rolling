@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 
 ## [Unreleased]
+### Changed
+- support Python 3.6 to 3.9, remove support for earlier versions
 
 ### Added
 - extend() method added to rolling objects
