@@ -2,19 +2,86 @@
 
 ![PyPI version](https://badge.fury.io/py/rolling.svg) ![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master) [![codecov](https://codecov.io/gh/ajcr/rolling/branch/master/graph/badge.svg)](https://codecov.io/gh/ajcr/rolling)
 
-A collection of computationally efficient rolling window iterators and operations for Python.
+A collection of computationally efficient rolling window iterators for Python.
 
-This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows, including Sum, Min, Max, Median and Standard Deviation. There's also a flexible 'Apply' iterator whereby any function can be applied to the window. Both fixed-length and variable-length window iteration is supported.
+This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows (Sum, Min, Max, Median, Standard Deviation and more). There's also a flexible 'Apply' iterator whereby any function can be applied to the window. Both fixed-length and variable-length window iteration is supported.
 
 To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
+## Installation
+
+You can install the latest release of the module using pip:
+```
+pip install rolling
+```
+
+Alternatively, you can install from source on GitHub to include the very latest development changes. For example:
+```
+git clone https://github.com/ajcr/rolling.git
+cd rolling/
+pip install .
+```
+
+There are no external library dependencies for running this module. If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/). Once done, just run `pytest` from the base directory.
+
 ## Overview
 
-Suppose we have a list of integer values `x` and we want to find the maximum of each window of 3 values. We could use Python's `max()` function and write `[max(x[i:i+3]) for i in range(len(x) - 2)]` to do this, for example.
+Here's a sequence of integers:
+```python
+seq = [3, 1, 4, 1, 5, 9, 2]
+```
+Suppose we want to find the maximum in each window of 5 consecutive integers:
 
-But applying builtin Python's functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window gets larger. The complexity is typically _linear_ (i.e. **O(k)** where **k** is the size of the window).
+![alt tag](https://github.com/ajcr/rolling/blob/master/assets/readme_example_1.png)
 
-For for many operations there are algorithms that return the value for the next window in _sublinear_ time (e.g. **O(log k)**) or _constant_ time (i.e. **O(1)**). The algorithms implemented so far in this module are summarised below:
+One way to do this would be to use Python's `max()` function and write:
+
+```python
+>>> [max(seq[i:i+5]) for i in range(len(seq) - (5-1))]
+[5, 9, 9]
+```
+
+However, as well as being quite verbose, applying builtin functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window size gets bigger. This is because all values in the window are visited again and so the complexity is typically _linear_ (i.e. **O(k)** where **k** is the size of the window).
+
+It's clear by looking at the picture above that the values in the window remain much the same when rolled forward. By keeping track of some information about the window and the values that are removed and added on the roll forward, the operation can be completed much more efficiently, often in _constant_ time (i.e. **O(1)**, not dependent on the size of the window).
+
+This library implements efficient ways to operate on windows:
+
+```python
+>>> import rolling              # import library
+>>> roll = rolling.Max(seq, 5)  # iterator returning maximum of each window of size 5
+>>> list(roll)
+[5, 9, 9] 
+```
+Some of the other operations available are `Sum`, `Median`, `Std` (standard deviation), `Any`/`All` and `Entropy`. See below for a summary of the complexity of these operations.
+
+As well as these efficient algorithms, any callable Python object can be applied to a window using the `Apply()` class. For example:
+```python
+>>> roll_tuple = rolling.Apply(seq, 5, operation=tuple)
+>>> list(roll_tuple)
+[(3, 1, 4, 1, 5),
+ (1, 4, 1, 5, 9),
+ (4, 1, 5, 9, 2)]
+```
+
+Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluated at the beginning and end of the iterable. For instance:
+```python
+>>> roll_list = rolling.Apply(seq, 3, operation=list, window_type='variable')
+>>> list(roll_list)
+[[3],
+ [3, 1],
+ [3, 1, 4],
+ [1, 4, 1],
+ [4, 1, 5],
+ [1, 5, 9],
+ [5, 9, 2],
+ [9, 2],
+ [2]]
+```
+
+## Algorithmic Complexity
+
+The algorithms implemented so far in this module are summarised below:
 
 | Operation        | Update   | Memory | Comments |
 | ---------------- |:--------:|:------:|-----------------------------|
@@ -37,100 +104,17 @@ For for many operations there are algorithms that return the value for the next 
 
 See the [References](https://github.com/ajcr/rolling#references-and-resources) section below for more details about the algorithms and links to other resources.
 
-## Installation
-
-You can install the latest release of the module using pip:
-```
-pip install rolling
-```
-
-Alternatively, you can install from source on GitHub to include the very latest changes. For example:
-
-```
-git clone https://github.com/ajcr/rolling.git
-cd rolling/
-pip install .
-```
-
-There are no external library dependencies for running this module.
-
-The module is tested with Python 3.5 and above, and Python 3.4 is also known to work. Python 2 is not currently supported.
-
-If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/). Once done, just run `pytest` from the base directory.
-
-## Quickstart
-
-Import the `rolling` module:
-```python
->>> import rolling
-```
-
-Now suppose we have this list:
-```python
->>> counts = [1, 5, 2, 0, 3]
-```
-
-The `rolling` module allows us to can create an [iterator object](https://docs.python.org/3/library/stdtypes.html#iterator-types) over this list that performs a reduction operation for a given window size (we'll use a window size of 3 for this example).
-
-Now let's create three iterator objects that roll over this list, each performing a different operation:
-
-```python
->>> r_sum = rolling.Sum(counts, 3)
->>> r_all = rolling.All(counts, 3)
->>> r_max = rolling.Max(counts, 3)
-```
-
-Here's the representation of the `rolling.Sum` iterator object. Note that the window type is 'fixed' by default, meaning that only _full_ windows of the specified size are computed (the window does not roll on/off the list):
-
-```python
->>> r_sum
-Rolling(operation='Sum', window_size=3, window_type='fixed')
-```
-
-The result of iterating over each of these rolling iterator objects using `list()` is shown below.
-```python
->>> list(r_sum)
-[8, 7, 5] # i.e. [1+5+2, 5+2+0, 2+0+3]
-
->>> list(r_all)
-[True, False, False]
-
->>> list(r_max)
-[5, 5, 3]
-```
-
-As well as the built-in efficient algorithms provided by this module, any callable Python object can be applied to a rolling window using the `Apply()` class. For instance, Python's `tuple()` function:
-```python
->>> r_list = rolling.Apply(counts, 3, operation=tuple)
->>> list(r_list)
-[(1, 5, 2), (5, 2, 0), (2, 0, 3)]
-```
-
-Variable-length windows can be specified using the `window_type` argument. This allows windows smaller than the specified size to be evaluated at the beginning and end of the iterable. For instance:
-```python
->>> r_list = rolling.Apply([1, 5, 2, 0, 3], 3, operation=list, window_type='variable')
->>> list(r_list)
-[[1],
- [1, 5],
- [1, 5, 2],
- [5, 2, 0],
- [2, 0, 3],
- [0, 3],
- [3]]
-```
-
 ## References and resources
 
-Some rolling algorithms are widely known (e.g. 'Sum') and I am not sure which source to cite. Some algorithms I made up as I was putting the module together (e.g. 'Any', 'All'), but these are relatively simple and probably exist elsewhere.
+Some rolling algorithms are widely known (e.g. `Sum`) and I am not sure which source to cite. Some algorithms I made up as I was putting the module together (e.g. `Any`, `All`), but these are relatively simple and probably exist elsewhere.
 
 Other rolling algorithms are very cleverly designed and I learned a lot by reading about them and seeing other peoples' implementations. Here are the main resources that I used:
 
-- **Max** and **Min** are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in [pandas](http://pandas.pydata.org/) and [bottleneck](https://github.com/kwgoodman/bottleneck). My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk _[The Secret Life Of Rolling Pandas](https://www.youtube.com/watch?v=XM_r5La-1tA)_. The algorithm is also described by Keegan Carruthers-Smith [here](https://people.cs.uct.ac.za/~ksmith/articles/sliding_window_minimum.html), along with code examples.
+- `Max` and `Min` are implemented using the Ascending Minima and Descending Maxima algorithms described by Richard Harter [here](http://www.richardhartersworld.com/cri/2001/slidingmin.html). This algorithm is also used in [pandas](http://pandas.pydata.org/) and [bottleneck](https://github.com/kwgoodman/bottleneck). My attention was first drawn to this algorithm by Jaime Fernandez del Rio's excellent talk _[The Secret Life Of Rolling Pandas](https://www.youtube.com/watch?v=XM_r5La-1tA)_. The algorithm is also described by Keegan Carruthers-Smith [here](https://people.cs.uct.ac.za/~ksmith/articles/sliding_window_minimum.html), along with code examples.
 
-- **Median** uses the indexable skiplist approach presented by Raymond Hettinger [here](http://code.activestate.com/recipes/577073/).
+- `Median` uses the indexable skiplist approach presented by Raymond Hettinger [here](http://code.activestate.com/recipes/577073/).
 
-- **Var** and **Std** use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). I referred to the rolling variance implementation in [pandas](https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx#L635-L784) as well as an older edit of the Wikipedia page [Algorithms for calculating variance](https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179).
-
+- `Var` and `Std` use [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm). I referred to the rolling variance implementation in [pandas](https://github.com/pandas-dev/pandas/blob/master/pandas/_libs/window.pyx#L635-L784) as well as an older edit of the Wikipedia page [Algorithms for calculating variance](https://en.wikipedia.org/w/index.php?title=Algorithms_for_calculating_variance&oldid=617145179).
 
 ## Discussion and future work
 
@@ -138,4 +122,4 @@ The algorithms implemented by this module are chosen to be efficient in the sens
 
 In practice you might find that it is quicker *not* to use the the 'efficient' algorithm, and instead apply a function to the window. This is especially true for very small window sizes where the cost of updating a window is relatively complex. For instance, while the window size `k` is less than approximately 50, it may quicker to use `rolling.Apply(array, k, min)` (apply Python's builtin minimum function `min()`) rather than using `rolling.Min(array, k)`.
 
-With this in mind, in future it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
+With this in mind, it might be worth implementing some of the algorithms here in compiled code (e.g. as a C extension module, or using Cython) to improve speed.
