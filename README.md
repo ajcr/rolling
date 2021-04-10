@@ -6,16 +6,16 @@ A collection of computationally efficient rolling window iterators for Python.
 
 This module implements useful arithmetical, logical and statistical functions on rolling/moving/sliding windows (Sum, Min, Max, Median, Standard Deviation and more). There's also a flexible 'Apply' iterator whereby any function can be applied to the window. Both fixed-length and variable-length window iteration is supported.
 
-To get started, see the [Quickstart](https://github.com/ajcr/rolling#quickstart) section below, or have a look at the some [Recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
+To get started, see the [Overview](https://github.com/ajcr/rolling#overview) section below, or have a look at the some [recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
 ## Installation
 
-You can install the latest release of the module using pip:
+You can install the module using pip:
 ```
 pip install rolling
 ```
 
-Alternatively, you can install from source on GitHub to include the very latest development changes. For example:
+Alternatively, you can install from source on GitHub if you want the very latest development changes:
 ```
 git clone https://github.com/ajcr/rolling.git
 cd rolling/
@@ -30,20 +30,20 @@ Here's a sequence of integers:
 ```python
 seq = [3, 1, 4, 1, 5, 9, 2]
 ```
-Suppose we want to find the maximum in each window of 5 consecutive integers:
+Suppose we want to find the **maximum** in each window of 5 consecutive integers:
 
 ![alt tag](https://github.com/ajcr/rolling/blob/master/assets/readme_example_1.png)
 
-One way to do this would be to use Python's `max()` function and write:
+One way to do this would be to use Python's `max()` function and apply it to each consecutive slice of 5 elements:
 
 ```python
 >>> [max(seq[i:i+5]) for i in range(len(seq) - (5-1))]
 [5, 9, 9]
 ```
 
-However, as well as being quite verbose, applying builtin functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window size gets bigger. This is because all values in the window are visited again and so the complexity is typically _linear_ (i.e. **O(k)** where **k** is the size of the window).
+However, as well as being quite verbose, applying builtin functions (like `max()` and `sum()`) to a window becomes increasingly slow as the window size gets bigger. This is because all values in the window are visited each time the function is invoked, and so the complexity is typically _linear_ (i.e. **O(k)** where **k** is the size of the window).
 
-It's clear by looking at the picture above that the values in the window remain much the same when rolled forward. By keeping track of some information about the window and the values that are removed and added on the roll forward, the operation can be completed much more efficiently, often in _constant_ time (i.e. **O(1)**, not dependent on the size of the window).
+It's clear by looking at the picture above that most of the values remain in the window when it is rolled forward. By keeping track of some information about the window and the values that are removed and added, an operation such as finding the maximum value can be completed much more efficiently, often in _constant_ time (i.e. **O(1)**, not dependent on the size of the window).
 
 This library implements efficient ways to operate on windows:
 
@@ -79,6 +79,8 @@ Variable-length windows can be specified using the `window_type` argument. This 
  [2]]
 ```
 
+Most of the methods implemented in this module support both fixed and variable size windows.
+
 ## Algorithmic Complexity
 
 The algorithms implemented so far in this module are summarised below:
@@ -100,13 +102,13 @@ The algorithms implemented so far in this module are summarised below:
 | Min              | O(1)     | O(k)   | Minimum value, tracks ascending minima using a deque |
 | MinHeap          | O(1)     | O(k)   | Minimum value, tracks ascending minima using a heap |
 | Max              | O(1)     | O(k)   | Maximum value, tracks descending maxima using a deque |
-| Entropy          | O(1)     | O(k)   | Shannon entropy of the window (for fixed-size windows only) |
+| Entropy          | O(1)     | O(k)   | Shannon entropy of the window (fixed-size windows only) |
 
 See the [References](https://github.com/ajcr/rolling#references-and-resources) section below for more details about the algorithms and links to other resources.
 
 ## References and resources
 
-Some rolling algorithms are widely known (e.g. `Sum`) and I am not sure which source to cite. Some algorithms I made up as I was putting the module together (e.g. `Any`, `All`), but these are relatively simple and probably exist elsewhere.
+Some rolling algorithms are widely known (e.g. `Sum`) and so I am not sure which source to cite. Some algorithms I made up as I was putting the module together (e.g. `Any`, `All`), but these are relatively simple and probably exist elsewhere.
 
 Other rolling algorithms are very cleverly designed and I learned a lot by reading about them and seeing other peoples' implementations. Here are the main resources that I used:
 
