@@ -1,10 +1,13 @@
-from collections import deque, namedtuple
+from collections import deque
 from heapq import heapify, heappush, heappop
 from itertools import islice
+from operator import itemgetter
 
 from .base import RollingObject
 
-pair = namedtuple("pair", ["value", "death"])
+# A tuple in a window has a value and an index at which it will exit the window
+_value = itemgetter(0)
+_death = itemgetter(1)
 
 
 class Min(RollingObject):
@@ -55,21 +58,21 @@ class Min(RollingObject):
 
     def _update_window(self, new):
         self._i += 1
-        new_pair = pair(new, self._i + self.window_size)
+        new_pair = (new, self._i + self.window_size)
         # remove larger values from the end of the buffer
-        while self._buffer and self._buffer[-1].value >= new:
+        while self._buffer and _value(self._buffer[-1]) >= new:
             self._buffer.pop()
         self._buffer.append(new_pair)
         # remove any minima that die on this iteration
-        while self._buffer[0].death <= self._i:
+        if _death(self._buffer[0]) <= self._i:
             self._buffer.popleft()
 
     def _add_new(self, new):
         self._i += 1
         self._obs += 1
-        new_pair = pair(new, self._i + self.window_size)
+        new_pair = (new, self._i + self.window_size)
         # remove larger values from the end of the buffer
-        while self._buffer and self._buffer[-1].value >= new:
+        while self._buffer and _value(self._buffer[-1]) >= new:
             self._buffer.pop()
         self._buffer.append(new_pair)
 
@@ -77,12 +80,12 @@ class Min(RollingObject):
         self._i += 1
         self._obs -= 1
         # remove any minima that die on this iteration
-        while self._buffer[0].death <= self._i:
+        while _death(self._buffer[0]) <= self._i:
             self._buffer.popleft()
 
     @property
     def current_value(self):
-        return self._buffer[0].value
+        return _value(self._buffer[0])
 
 
 class Max(RollingObject):
@@ -133,21 +136,21 @@ class Max(RollingObject):
 
     def _update_window(self, new):
         self._i += 1
-        new_pair = pair(new, self._i + self.window_size)
+        new_pair = (new, self._i + self.window_size)
         # remove smaller values from the end of the buffer
-        while self._buffer and self._buffer[-1].value <= new:
+        while self._buffer and _value(self._buffer[-1]) <= new:
             self._buffer.pop()
         self._buffer.append(new_pair)
         # remove any maxima that die on this iteration
-        while self._buffer[0].death <= self._i:
+        if _death(self._buffer[0]) <= self._i:
             self._buffer.popleft()
 
     def _add_new(self, new):
         self._i += 1
         self._obs += 1
-        new_pair = pair(new, self._i + self.window_size)
+        new_pair = (new, self._i + self.window_size)
         # remove smaller values from the end of the buffer
-        while self._buffer and self._buffer[-1].value <= new:
+        while self._buffer and _value(self._buffer[-1]) <= new:
             self._buffer.pop()
         self._buffer.append(new_pair)
 
@@ -155,12 +158,12 @@ class Max(RollingObject):
         self._i += 1
         self._obs -= 1
         # remove any maxima that die on this iteration
-        while self._buffer[0].death <= self._i:
+        while _death(self._buffer[0]) <= self._i:
             self._buffer.popleft()
 
     @property
     def current_value(self):
-        return self._buffer[0].value
+        return _value(self._buffer[0])
 
 
 class MinHeap(RollingObject):
@@ -198,7 +201,7 @@ class MinHeap(RollingObject):
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
         # faster to create the heap this way, rather than repeat _add_new()
-        self._heap = [pair(value, i + window_size) for i, value in enumerate(head)]
+        self._heap = [(value, i + window_size) for i, value in enumerate(head)]
         heapify(self._heap)
         self._i = len(self._heap) - 1
         self._obs = len(self._heap)
@@ -210,25 +213,25 @@ class MinHeap(RollingObject):
 
     def _update_window(self, new):
         self._i += 1
-        new_pair = pair(new, self._i + self.window_size)
+        new_pair = (new, self._i + self.window_size)
         heappush(self._heap, new_pair)
         # remove any minima that die on this iteration
-        while self._heap[0].death <= self._i:
+        while _death(self._heap[0]) <= self._i:
             heappop(self._heap)
 
     def _add_new(self, new):
         self._i += 1
         self._obs += 1
-        new_pair = pair(new, self._i + self.window_size)
+        new_pair = (new, self._i + self.window_size)
         heappush(self._heap, new_pair)
 
     def _remove_old(self):
         self._i += 1
         self._obs -= 1
         # remove any minima that die on this iteration
-        while self._heap[0].death <= self._i:
+        while _death(self._heap[0]) <= self._i:
             heappop(self._heap)
 
     @property
     def current_value(self):
-        return self._heap[0].value
+        return _value(self._heap[0])
