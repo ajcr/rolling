@@ -171,6 +171,8 @@ class Std(Var):
     def current_value(self):
         if self._obs <= self.ddof:
             return float("nan")
+        elif self._sslm < 0:
+            return 0.0
         else:
             return sqrt(self._sslm / (self._obs - self.ddof))
 
