@@ -123,6 +123,9 @@ class Var(RollingObject):
     def current_value(self):
         if self._obs <= self.ddof:
             return float("nan")
+        elif self._sslm < 0:
+            self._sslm = 0.0
+            return 0.0
         else:
             return self._sslm / (self._obs - self.ddof)
 
@@ -169,12 +172,8 @@ class Std(Var):
 
     @property
     def current_value(self):
-        if self._obs <= self.ddof:
-            return float("nan")
-        elif self._sslm < 0:
-            return 0.0
-        else:
-            return sqrt(self._sslm / (self._obs - self.ddof))
+        variance = super().current_value
+        return sqrt(variance)
 
 
 class Median(RollingObject):
