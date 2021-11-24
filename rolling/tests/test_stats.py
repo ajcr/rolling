@@ -87,18 +87,19 @@ def test_rolling_mean(array, window_size, window_type):
     assert pytest.approx(list(got)) == list(expected)
 
 
-@pytest.mark.parametrize(
-    "array",
-    # fmt: off
-    [
-        [82, 80, 14, 73, 9, 19, 60, 31, 4, 87, 38, 36, 38, 58, 20, 97, 25, 99, 79, 31, 97, 73, 79, 71, 78, 56, 73, 24, 53, 59],
-        [138, 136, 137, 137, 135, 136, 135, 135, 135],
-        [3, 5, 1, 4, 1],
-        [5],
-        [],
-    ],
-    # fmt: on
-)
+# fmt: off
+ARRAYS_TO_TEST_VAR = [
+    [82, 80, 14, 73, 9, 19, 60, 31, 4, 87, 38, 36, 38, 58, 20, 97, 25, 99, 79, 31, 97, 73, 79, 71, 78, 56, 73, 24, 53, 59],
+    [138, 136, 137, 137, 135, 136, 135, 135, 135],
+    [8, 6, 7, 5, 3, 0, 9, -3, -1, -4, -1],
+    [3, 5, 1, 4, 1],
+    [5],
+    [],
+]
+# fmt: on
+
+
+@pytest.mark.parametrize("array", ARRAYS_TO_TEST_VAR)
 @pytest.mark.parametrize("window_size", [3, 7, 10, 20])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_var(array, window_size, window_type):
@@ -198,18 +199,7 @@ def test_rolling_var_variable_with_ddof(array, ddof, expected):
     assert pytest.approx(list(r), nan_ok=True, abs=1e-11) == expected
 
 
-@pytest.mark.parametrize(
-    "array",
-    # fmt: off
-    [
-        [82, 80, 14, 73, 9, 19, 60, 31, 4, 87, 38, 36, 38, 58, 20, 97, 25, 99, 79, 31, 97, 73, 79, 71, 78, 56, 73, 24, 53, 59],
-        [138, 136, 137, 137, 135, 136, 135, 135, 135],
-        [3, 5, 1, 4, 1],
-        [5],
-        [],
-    ],
-    # fmt: on
-)
+@pytest.mark.parametrize("array", ARRAYS_TO_TEST_VAR)
 @pytest.mark.parametrize("window_size", [3, 7, 10, 20])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_std(array, window_size, window_type):
