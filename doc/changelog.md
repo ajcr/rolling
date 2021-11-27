@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## [0.3.1]
+### Added
+- `__version__` attribute added to package
+
+
 ## [0.3.0] - 2021-11-24
 ### Added
 - extend() method added to rolling objects
