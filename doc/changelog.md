@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.1]
 ### Added
 - `__version__` attribute added to package
+- New `rolling.PolynomialHash()` object
 
 ### Changed
 - test modules no longer included pip install

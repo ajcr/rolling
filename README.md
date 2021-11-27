@@ -103,6 +103,7 @@ The algorithms implemented so far in this module are summarised below:
 | MinHeap          | O(1)     | O(k)   | Minimum value, tracks ascending minima using a heap |
 | Max              | O(1)     | O(k)   | Maximum value, tracks descending maxima using a deque |
 | Entropy          | O(1)     | O(k)   | Shannon entropy of the window (fixed-size windows only) |
+| PolynomialHash   | O(1)     | O(k)   | Hash of rolling window |
 
 See the [References](https://github.com/ajcr/rolling#references-and-resources) section below for more details about the algorithms and links to other resources.
 

@@ -25,6 +25,7 @@ class RollingObject(metaclass=abc.ABCMeta):
     attribute that returns the current size of the window.
 
     """
+
     def __init__(self, iterable, window_size, window_type="fixed", **kwargs):
         self.window_type = window_type
         self.window_size = _validate_window_size(window_size)
