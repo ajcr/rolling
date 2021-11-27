@@ -43,7 +43,7 @@ setup(
     python_requires='>=3.6.0',
     author='Alex Riley',
     license='MIT',
-    packages=find_packages(),
+    packages=find_packages(include=["rolling", "rolling.*"]),
     tests_require=['pytest>=2.8.0'],
     zip_safe=False,
 )

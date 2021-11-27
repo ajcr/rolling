@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - `__version__` attribute added to package
 
+### Changed
+- test modules no longer included pip install
 
 ## [0.3.0] - 2021-11-24
 ### Added
