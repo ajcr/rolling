@@ -104,6 +104,7 @@ The algorithms implemented so far in this module are summarised below:
 | Max              | O(1)     | O(k)   | Maximum value, tracks descending maxima using a deque |
 | Entropy          | O(1)     | O(k)   | Shannon entropy of the window (fixed-size windows only) |
 | PolynomialHash   | O(1)     | O(k)   | Hash of rolling window |
+| Match            | O(k)     | O(k)   | True if window matches a target sequence (linear update in worst case) |
 
 See the [References](https://github.com/ajcr/rolling#references-and-resources) section below for more details about the algorithms and links to other resources.
 
