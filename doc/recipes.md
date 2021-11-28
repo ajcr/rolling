@@ -87,5 +87,5 @@ import rolling
 
 for ip_addresses, count in rolling.Mode(USER_IP_ADDRESSES, WINDOW_SIZE, return_count=True):
     if count > WINDOW_SIZE / 4:
-        print('Warning: {} requests each from IP addresses {}.format(count, ', '.join(ip_addresses)))
+        print(f"Warning: {count} requests each from IP addresses {', '.join(ip_addresses)}")
 ```

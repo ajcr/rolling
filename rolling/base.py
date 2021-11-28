@@ -39,7 +39,7 @@ class RollingObject(metaclass=abc.ABCMeta):
             self._init_variable(iterable, window_size, **kwargs)
 
         else:
-            raise ValueError("Unknown window_type '{}'".format(window_type))
+            raise ValueError(f"Unknown window_type '{window_type}'")
 
     def __repr__(self):
         return "Rolling(operation='{}', window_size={}, window_type='{}')".format(
@@ -149,9 +149,7 @@ def _validate_window_size(k):
     Check if k is a positive integer
     """
     if not isinstance(k, int):
-        raise TypeError(
-            "window_size must be integer type, got {}".format(type(k).__name__)
-        )
+        raise TypeError(f"window_size must be integer type, got {type(k).__name__}")
     if k <= 0:
         raise ValueError("window_size must be positive")
     return k
