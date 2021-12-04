@@ -6,23 +6,23 @@ class RollingObject(metaclass=abc.ABCMeta):
     """
     Baseclass for rolling iterator objects.
 
-    All iteration logic is handled in this class.
-    Subclasses implement methods manipulating
-    the attributes needed to compute the value of
-    the rolling window as values are added and removed.
+    All of the iteration logic specific to 'fixed' and
+    'variable' window types is handled by this class.
 
-    Subclasses *must* implement the following methods
-    with the following parameters:
+    Subclasses of RollingObject must implement methods
+    to initialize and manipulate any attributes needed
+    to compute the window value as it rolls across the
+    given iterable.
 
-      _init_fixed(self, iterable, window_size, **kwargs)
-      _init_variable(self, iterable, window_size, **kwargs)
-      _update_window(self, new)
-      _add_new(self, new)
-      _remove_old(self)
-      current_value(self)
+    These methods are:
 
-    Variable-length instances must also have a self._obs
-    attribute that returns the current size of the window.
+     * _init_fixed()
+     * _init_variable()
+     * _update_window()
+     * _add_new()
+     * _remove_old()
+     * _obs()
+     * current_value()
 
     """
 
