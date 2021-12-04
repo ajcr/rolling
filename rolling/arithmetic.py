@@ -219,11 +219,11 @@ class Nunique(RollingObject):
     def _update_window(self, new):
         # remove oldest value before appending new to buffer
         self._remove_old()
-        self._counter[new] = self._counter.setdefault(new, 0) + 1
+        self._counter[new] += 1
         self._buffer.append(new)
 
     def _add_new(self, new):
-        self._counter[new] = self._counter.setdefault(new, 0) + 1
+        self._counter[new] += 1
         self._buffer.append(new)
 
     def _remove_old(self):
