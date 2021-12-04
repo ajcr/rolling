@@ -52,35 +52,38 @@ class RollingObject(metaclass=abc.ABCMeta):
     def __iter__(self):
         return self
 
+    def _next_fixed(self):
+        new = next(self._iterator)
+        self._update_window(new)
+        return self.current_value
+
+    def _next_variable(self):
+        # while the window size is not reached, add new values
+        if not self._filled and self._obs < self.window_size:
+            new = next(self._iterator)
+            self._add_new(new)
+            self._filled = self._obs == self.window_size
+            return self.current_value
+
+        # once the window size is reached, consider fixed until iterator ends
+        try:
+            return self._next_fixed()
+
+        # if the iterator finishes, remove the oldest values one at a time
+        except StopIteration:
+            if self._obs == 1:
+                raise
+            else:
+                self._remove_old()
+                return self.current_value
+
     def __next__(self):
 
         if self.window_type == "fixed":
-            new = next(self._iterator)
-            self._update_window(new)
-            return self.current_value
+            return self._next_fixed()
 
-        elif self.window_type == "variable":
-            # while the window size is not reached, add new values
-            if not self._filled and self._obs < self.window_size:
-                new = next(self._iterator)
-                self._add_new(new)
-                if self._obs == self.window_size:
-                    self._filled = True
-                return self.current_value
-
-            # once the window size is reached, update until the iterator finishes
-            try:
-                new = next(self._iterator)
-                self._update_window(new)
-                return self.current_value
-
-            # if the iterator finishes, remove the oldest values one at a time
-            except StopIteration:
-                if self._obs == 1:
-                    raise
-                else:
-                    self._remove_old()
-                    return self.current_value
+        if self.window_type == "variable":
+            return self._next_variable()
 
         raise NotImplementedError(f"next() not implemented for {self.window_type}")
 
