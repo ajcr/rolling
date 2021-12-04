@@ -14,12 +14,11 @@ M = DEF_MOD
     "sequence, expected",
     [
         # fmt: off
-        # N.B. small non-negative Python integers hash to themselves
-        ([3], 3),
-        ([3, 1], (3*B + 1) % M),
-        ([3, 1, 4], (3*B**2 + 1*B + 4) % M),
-        ([3, 1, 4, 1], (3*B**3 + 1*B**2 + 4*B + 1) % M),
-        ([3, 1, 4, 1, 5], (3*B**4 + 1*B**3 + 4*B**2 + 1*B + 5) % M),
+        ([3], hash(3)),
+        ([3, 1], hash(3)*B + hash(1) % M),
+        ([3, 1, 4], hash(3)*B**2 + hash(1)*B + hash(4) % M),
+        ([3, 1, 4, 1], hash(3)*B**3 + hash(1)*B**2 + hash(4)*B + hash(1) % M),
+        ([3, 1, 4, 1, 5], hash(3)*B**4 + hash(1)*B**3 + hash(4)*B**2 + hash(1)*B + hash(5) % M),
         # fmt: on
     ],
 )
