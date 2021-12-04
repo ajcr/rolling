@@ -41,19 +41,19 @@ class All(RollingObject):
 
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._i = -1
-        self._obs = 1
+        self._window_obs = 1
         self._last_false = -1
         for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._i = -1
-        self._obs = 0
+        self._window_obs = 0
         self._last_false = -1
 
     def _add_new(self, new):
         self._i += 1
-        self._obs += 1
+        self._window_obs += 1
         if not new:
             self._last_false = self._i
 
@@ -63,11 +63,15 @@ class All(RollingObject):
             self._last_false = self._i
 
     def _remove_old(self):
-        self._obs -= 1
+        self._window_obs -= 1
+
+    @property
+    def _obs(self):
+        return self._window_obs
 
     @property
     def current_value(self):
-        return self._i - self._obs >= self._last_false
+        return self._i - self._window_obs >= self._last_false
 
 
 class Any(RollingObject):
@@ -107,19 +111,19 @@ class Any(RollingObject):
 
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._i = -1
-        self._obs = 1
+        self._window_obs = 1
         self._last_true = -1
         for new in islice(self._iterator, window_size - 1):
             self._add_new(new)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         self._i = -1
-        self._obs = 0
+        self._window_obs = 0
         self._last_true = -1
 
     def _add_new(self, new):
         self._i += 1
-        self._obs += 1
+        self._window_obs += 1
         if new:
             self._last_true = self._i
 
@@ -129,8 +133,12 @@ class Any(RollingObject):
             self._last_true = self._i
 
     def _remove_old(self):
-        self._obs -= 1
+        self._window_obs -= 1
+
+    @property
+    def _obs(self):
+        return self._window_obs
 
     @property
     def current_value(self):
-        return self._i - self._obs < self._last_true
+        return self._i - self._window_obs < self._last_true

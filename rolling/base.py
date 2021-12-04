@@ -16,13 +16,16 @@ class RollingObject(metaclass=abc.ABCMeta):
 
     These methods are:
 
-     * _init_fixed()
-     * _init_variable()
-     * _update_window()
-     * _add_new()
-     * _remove_old()
-     * _obs()
-     * current_value()
+     * _init_fixed()     fixed window initialization
+     * _init_variable()  variable window initialization
+     * _update_window()  add new value, remove oldest value
+     * _add_new()        add new value (increase size)
+     * _remove_old()     remove oldest value (decrease size)
+
+    The following @property methods must also be implemented:
+
+     * _obs              number of observations in window
+     * current_value     current value of operation on window
 
     """
 
@@ -105,6 +108,14 @@ class RollingObject(metaclass=abc.ABCMeta):
     def current_value(self):
         """
         Return the current value of the window
+        """
+        pass
+
+    @property
+    @abc.abstractmethod
+    def _obs(self):
+        """
+        Return the number of observations in the window
         """
         pass
 
