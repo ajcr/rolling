@@ -42,6 +42,7 @@ class PolynomialHash(RollingObject):
     iterable : iterable of hashable objects
     window_size : integer, the size of the rolling
         window moving over the iterable
+    window_type : str, "fixed" or "variable"
     base : integer, polynomial base
     mod : integer, all hashes are modulus this value
 
@@ -63,19 +64,21 @@ class PolynomialHash(RollingObject):
     [4984, 900, 5072, 771, 8757, 4984]
     """
 
-    def _init_fixed(self, iterable, window_size, base=DEF_BASE, mod=DEF_MOD):
-        self._buffer = deque([0])
+    def __init__(
+        self, iterable, window_size, window_type="fixed", base=DEF_BASE, mod=DEF_MOD
+    ):
         self._hash = 0
         self._base = base
         self._mod = mod
-        for val in islice(self._iterator, window_size - 1):
+        super().__init__(iterable, window_size, window_type)
+
+    def _init_fixed(self, *args, **kwargs):
+        self._buffer = deque([0])
+        for val in islice(self._iterator, self.window_size - 1):
             self._add_new(val)
 
-    def _init_variable(self, iterable, window_size, base=DEF_BASE, mod=DEF_MOD):
+    def _init_variable(self, *args, **kwargs):
         self._buffer = deque()
-        self._hash = 0
-        self._base = base
-        self._mod = mod
 
     def _add_new(self, new):
         self._hash *= self._base
