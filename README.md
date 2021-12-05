@@ -40,46 +40,59 @@ This library implements efficient ways to perform useful operations on rolling w
 
 ## Operations
 
-The algorithms implemented so far in this module are summarised below. The cost of updating the window (rolling it forward) and the memory footprint of the object are given, where `k` denotes the size of the window.
+The algorithms implemented so far in this module are summarised below. 
+
+The cost of updating the window (rolling it forward) and the memory footprint of the `rolling` object are given, where `k` denotes the size of the window.
+
+The 'Builtin' column shows the comparable method that is found in the Python standard library. This method could be applied to the window (at higher computational cost) to get the same result. Note that it may not be equivalent in all cases, for example due to differences in floating point arithmetic.
+
 
 ### Arithmetical
 
-| Operation        | Update   | Memory | Description |
-| ---------------- |:--------:|:------:|-----------------------------|
-| `Sum`            | O(1)     | O(k)   | Sum of the window values |
-| `Product`        | O(1)     | O(k)   | Product of the window values |
-| `Nunique`        | O(1)     | O(k)   | Number of unique window values |
-| `Min`            | O(1)     | O(k)   | Minimum value of window |
-| `MinHeap`        | O(1)     | O(k)   | Minimum value (internally uses a heap) |
-| `Max`            | O(1)     | O(k)   | Maximum value of window |
+Rolling objects to apply common aggregation or measurement operations to the window.
+
+| Object           | Update   | Memory | Description                            | Builtin |
+| ---------------- |:--------:|:------:|----------------------------------------|----------------|
+| `Sum`            | O(1)     | O(k)   | Sum of the window values               | [`sum`](https://docs.python.org/3/library/functions.html#sum)  |
+| `Product`        | O(1)     | O(k)   | Product of the window values           | [`math.prod`](https://docs.python.org/3.9/library/math.html#math.prod) |
+| `Nunique`        | O(1)     | O(k)   | Number of unique window values         | N/A |
+| `Min`            | O(1)     | O(k)   | Minimum value of window                | [`min`](https://docs.python.org/3/library/functions.html#min) |
+| `MinHeap`        | O(1)     | O(k)   | Minimum value (internally uses a heap) | [`min`](https://docs.python.org/3/library/functions.html#min) |
+| `Max`            | O(1)     | O(k)   | Maximum value of window                | [`max`](https://docs.python.org/3/library/functions.html#max) |
 
 ### Statistical
 
-| Operation        | Update   | Memory | Description |
-| ---------------- |:--------:|:------:|-----------------------------|
-| `Mean`           | O(1)     | O(k)   | Arithmetic mean of window values |
-| `Median`         | O(log k) | O(k)   | Median value of window |
-| `Mode`           | O(1)     | O(k)   | Set of most frequently appearing values in window |
-| `Var`            | O(1)     | O(k)   | Variance of window, with specified degrees of freedom |
-| `Std`            | O(1)     | O(k)   | Standard deviation of window, with specified degrees of freedom | 
-| `Skew`           | O(1)     | O(k)   | Skewness of the window |
-| `Kurtosis`       | O(1)     | O(k)   | Kurtosis of the window |
+Rolling objects to apply statistical operations to the window.
+
+| Object           | Update   | Memory | Description                                                     | Builtin |
+| ---------------- |:--------:|:------:|-----------------------------------------------------------------|----------------------|
+| `Mean`           | O(1)     | O(k)   | Arithmetic mean of window values                                | [`statistics.mean`](https://docs.python.org/3.9/library/statistics.html#statistics.mean) |
+| `Median`         | O(log k) | O(k)   | Median value of window                                          | [`statistics.median`](https://docs.python.org/3.9/library/statistics.html#statistics.median) |
+| `Mode`           | O(1)     | O(k)   | Set of most frequently appearing values in window               | [`statistics.multimode`](https://docs.python.org/3.9/library/statistics.html#statistics.multimode) |
+| `Var`            | O(1)     | O(k)   | Variance of window, with specified degrees of freedom           | [`statistics.pvariance`](https://docs.python.org/3.9/library/statistics.html#statistics.pvariance) |
+| `Std`            | O(1)     | O(k)   | Standard deviation of window, with specified degrees of freedom | [`statistics.pstdev`](https://docs.python.org/3.9/library/statistics.html#statistics.pstdev) |
+| `Skew`           | O(1)     | O(k)   | Skewness of the window                                          | N/A |
+| `Kurtosis`       | O(1)     | O(k)   | Kurtosis of the window                                          | N/A |
 
 ### Logical
 
-| Operation        | Update   | Memory | Description |
-| ---------------- |:--------:|:------:|-----------------------------|
-| `Any`            | O(1)     | O(1)   | True if *any* value in the window is True in a Boolean context, else False |
-| `All`            | O(1)     | O(1)   | True if *all* values in the window are True in a Boolean context, else False |
-| `Match`          | O(1)/O(k)| O(k)   | True if window is equal to a specified target sequence (O(k) update if match, else O(1)) |
+Rolling objects to apply a logical operation to the window.
+
+| Object           | Update   | Memory | Description                                                                              | Builtin |
+| ---------------- |:--------:|:------:|------------------------------------------------------------------------------------------|---------|
+| `Any`            | O(1)     | O(1)   | True if *any* value in the window is True in a Boolean context, else False               | [`any`](https://docs.python.org/3/library/functions.html#any) |
+| `All`            | O(1)     | O(1)   | True if *all* values in the window are True in a Boolean context, else False             | [`all`](https://docs.python.org/3/library/functions.html#all) |
+| `Match`          | O(k)     | O(k)   | True if window is equal to a specified target sequence (O(k) update if match, else O(1)) | N/A     |
 
 ### Miscellaneous
 
-| Operation        | Update   | Memory | Description |
-| ---------------- |:--------:|:------:|-----------------------------|
-| `Apply`          | ?        | O(k)   | Applies a specified callable object to the window (thus update complexity is dependent on the callable) |
-| `Entropy`        | O(1)     | O(k)   | Shannon entropy of the window (fixed-size windows only) |
-| `PolynomialHash` | O(1)     | O(k)   | [Polynomial hash](https://en.wikipedia.org/wiki/Rolling_hash#Polynomial_rolling_hash) of window |
+Rolling objects implementing other operations.
+
+| Object           | Update   | Memory | Description                                                                                             | Builtin |
+| ---------------- |:--------:|:------:|---------------------------------------------------------------------------------------------------------|---------|
+| `Apply`          | ?        | O(k)   | Applies a specified callable object to the window (thus update complexity is dependent on the callable) | N/A |
+| `Entropy`        | O(1)     | O(k)   | Shannon entropy of the window (fixed-size windows only)                                                 | N/A |
+| `PolynomialHash` | O(1)     | O(k)   | [Polynomial hash](https://en.wikipedia.org/wiki/Rolling_hash#Polynomial_rolling_hash) of window         | N/A |
 
 
 By default, fixed length windows are used in all operations. Variable-length windows can be specified using the `window_type` argument.
