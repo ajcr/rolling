@@ -92,6 +92,7 @@ Rolling objects implementing other operations.
 | ---------------- |:--------:|:------:|---------------------------------------------------------------------------------------------------------|---------|
 | `Apply`          | ?        | O(k)   | Applies a specified callable object to the window (thus update complexity is dependent on the callable) | N/A |
 | `Entropy`        | O(1)     | O(k)   | Shannon entropy of the window (fixed-size windows only)                                                 | N/A |
+| `JaccardIndex`   | O(1)     | O(k+s) | Jaccard index (similarity coefficient) of window with a target set (s is size of target set)            | N/A |
 | `PolynomialHash` | O(1)     | O(k)   | [Polynomial hash](https://en.wikipedia.org/wiki/Rolling_hash#Polynomial_rolling_hash) of window         | N/A |
 
 
