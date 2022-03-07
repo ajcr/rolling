@@ -1,8 +1,9 @@
 import abc
+from collections.abc import Iterator
 from itertools import chain
 
 
-class RollingObject(metaclass=abc.ABCMeta):
+class RollingObject(Iterator):
     """
     Baseclass for rolling iterator objects.
 
