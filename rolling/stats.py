@@ -330,9 +330,9 @@ class Mode(RollingObject):
     @property
     def current_value(self):
         if self.return_count:
-            return self._bicounter.most_common_items, self._bicounter.largest_count
+            return self._bicounter.get_most_common(), self._bicounter.largest_count
         else:
-            return self._bicounter.most_common_items
+            return self._bicounter.get_most_common()
 
     @property
     def _obs(self):

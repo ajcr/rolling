@@ -17,7 +17,7 @@ from rolling.structures.bicounter import BiCounter
 )
 def test_init(iterable, common_items, largest_count):
     bc = BiCounter(iterable)
-    assert bc.most_common_items == common_items
+    assert bc.get_most_common() == common_items
     assert bc.largest_count == largest_count
 
 
@@ -36,7 +36,7 @@ def test_init(iterable, common_items, largest_count):
 def test_increment_item_a(iterable, common_items, largest_count):
     bc = BiCounter(iterable)
     bc.increment("a")
-    assert bc.most_common_items == common_items
+    assert bc.get_most_common() == common_items
     assert bc.largest_count == largest_count
 
 
@@ -55,5 +55,5 @@ def test_increment_item_a(iterable, common_items, largest_count):
 def test_decrement_item_a(iterable, common_items, largest_count):
     bc = BiCounter(iterable)
     bc.decrement("a")
-    assert bc.most_common_items == common_items
+    assert bc.get_most_common() == common_items
     assert bc.largest_count == largest_count
