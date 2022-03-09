@@ -71,7 +71,7 @@ class JaccardIndex(RollingObject):
             self._add_new(val)
 
     def _init_variable(self, *args, **kwargs):
-        self._buffer = deque()
+        pass
 
     def _add_new(self, new):
         self._buffer.append(new)
