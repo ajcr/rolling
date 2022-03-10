@@ -21,9 +21,11 @@ Generate a stream of "is_heads" Boolean values. Use `rolling.All` to track wheth
 ```python
 import rolling
 
+WINDOW_SIZE = 25
+
 is_heads = (flip == 'H' for flip in coin_flips)
 
-any(rolling.All(is_heads, 25))
+any(rolling.All(is_heads, WINDOW_SIZE))
 ```
 
 ## Peak-to-Trough
@@ -79,7 +81,7 @@ Convert all two-letter pairs to tuples using `rolling.Apply`. Then use `collecti
 from collections import Counter
 import rolling
 
-bigrams = rolling.Apply(sentence, 2, operation=tuple)
+bigrams = rolling.Apply(sentence, window_size=2, operation=tuple)
 
 bigrams_no_spaces = (bigram for bigram in bigrams if ' ' not in bigram)
 bigram_freqs = Counter(bigrams_no_spaces)
@@ -101,7 +103,7 @@ def infinite_ip_generator(limit=256):
         ints = random.choices(population, k=4)
         yield "{}.{}.{}.{}".format(*ints)
 
-ip_addresses = infinite_ip_generator()
+all_ip_addresses = infinite_ip_generator()
 ```
 
 ### Solution
@@ -113,7 +115,7 @@ import rolling
 
 WINDOW_SIZE = 1000
 
-for ip_addresses, count in rolling.Mode(USER_IP_ADDRESSES, WINDOW_SIZE, return_count=True):
+for ip_addresses, count in rolling.Mode(all_ip_addresses, WINDOW_SIZE, return_count=True):
     if count > WINDOW_SIZE // 4:
         addresses = ", ".join(ip_addresses)
         print(
