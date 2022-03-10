@@ -2,11 +2,26 @@
 
 ![PyPI version](https://badge.fury.io/py/rolling.svg) ![travis-ci](https://travis-ci.org/ajcr/rolling.svg?branch=master) [![codecov](https://codecov.io/gh/ajcr/rolling/branch/master/graph/badge.svg)](https://codecov.io/gh/ajcr/rolling)
 
-A collection of computationally efficient rolling window iterators for Python, with no external dependencies.
+A collection of computationally efficient rolling window iterators for Python.
 
-This module implements useful arithmetical, logical and statistical operations on rolling windows such as `Sum`, `Min`, `Max`, `Mean`, `Median` and more. Both fixed-length and variable-length windows are supported for most operations.
+Useful arithmetical, logical and statistical operations on rolling windows (including `Sum`, `Min`, `Max`, `Mean`, `Median` and more). Both fixed-length and variable-length windows are supported for most operations.
 
 To get started, see the [Overview](https://github.com/ajcr/rolling#overview) section below, or have a look at the some [recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
+
+## Installation
+
+```
+pip install rolling
+```
+
+You can also install from source if you want the very latest development changes:
+```
+git clone https://github.com/ajcr/rolling.git
+cd rolling/
+pip install .
+```
+
+There are no external library dependencies for running this module. If you want to run the unit tests, you'll need to install [pytest](https://docs.pytest.org/en/latest/). Once done, just run `pytest` from the base directory.
 
 ## Overview
 
@@ -113,22 +128,6 @@ This allows windows smaller than the specified size to be evaluated at the begin
  (9, 2),
  (2,)]
 ```
-
-## Installation
-
-You can install the `rolling` module from PyPi using pip:
-```
-pip install rolling
-```
-
-Alternatively, you can install from source on GitHub if you want the very latest development changes:
-```
-git clone https://github.com/ajcr/rolling.git
-cd rolling/
-pip install .
-```
-
-There are no external library dependencies for running this module. If you want to run the tests you'll need to install [pytest](https://docs.pytest.org/en/latest/). Once done, just run `pytest` from the base directory.
 
 ## References and resources
 
