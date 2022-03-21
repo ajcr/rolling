@@ -50,9 +50,6 @@ class RollingObject(Iterator):
             self.__class__.__name__, self.window_size, self.window_type
         )
 
-    def __iter__(self):
-        return self
-
     def _next_fixed(self):
         new = next(self._iterator)
         self._update_window(new)
