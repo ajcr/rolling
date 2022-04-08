@@ -45,7 +45,7 @@ def test_jaccard_index(set_a, set_b, expected):
 )
 @pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5, 7])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
-def test_rolling_polynomial_hash(sequence, window_size, window_type, target_set):
+def test_rolling_jaccard_index(sequence, window_size, window_type, target_set):
     got = JaccardIndex(
         sequence, window_size, window_type=window_type, target_set=target_set,
     )
