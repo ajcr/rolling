@@ -72,7 +72,7 @@ Rolling objects to apply common aggregation or measurement operations to the win
 | `Product`        | O(1)     | O(k)   | Product of the window values           | [`math.prod`](https://docs.python.org/3.9/library/math.html#math.prod) |
 | `Nunique`        | O(1)     | O(k)   | Number of unique window values         | N/A |
 | `Min`            | O(1)     | O(k)   | Minimum value of window                | [`min`](https://docs.python.org/3/library/functions.html#min) |
-| `MinHeap`        | O(1)     | O(k)   | Minimum value (internally uses a heap) | [`min`](https://docs.python.org/3/library/functions.html#min) |
+| `MinHeap`        | O(log(k))| O(k)   | Minimum value (internally uses a heap) | [`min`](https://docs.python.org/3/library/functions.html#min) |
 | `Max`            | O(1)     | O(k)   | Maximum value of window                | [`max`](https://docs.python.org/3/library/functions.html#max) |
 
 ### Statistical
