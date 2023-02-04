@@ -208,13 +208,14 @@ def test_rolling_std(array, window_size, window_type):
     assert pytest.approx(list(got), nan_ok=True) == list(expected)
 
 
+@pytest.mark.parametrize("tracker", ["skiplist", "sortedlist"])
 @pytest.mark.parametrize(
     "array", [[3, 0, 1, 7, 2], [3, -8, 1, 7, -2, 8, 1, -7, -2, 9, 3], [1], []]
 )
 @pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5, 6])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
-def test_rolling_median(array, window_size, window_type):
-    got = Median(array, window_size, window_type=window_type)
+def test_rolling_median(array, window_size, window_type, tracker):
+    got = Median(array, window_size, window_type=window_type, tracker=tracker)
     expected = Apply(array, window_size, operation=_median, window_type=window_type)
     assert pytest.approx(list(got)) == list(expected)
 
