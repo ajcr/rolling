@@ -82,7 +82,7 @@ Rolling objects to apply statistical operations to the window.
 | Object           | Update   | Memory | Description                                                     | Builtin |
 | ---------------- |:--------:|:------:|-----------------------------------------------------------------|----------------------|
 | `Mean`           | O(1)     | O(k)   | Arithmetic mean of window values                                | [`statistics.mean`](https://docs.python.org/3.9/library/statistics.html#statistics.mean) |
-| `Median`         | O(log k) | O(k)   | Median value of window                                          | [`statistics.median`](https://docs.python.org/3.9/library/statistics.html#statistics.median) |
+| `Median`         | O(log k) | O(k)   | Median value of window: O(log k) update if 'skiplist' used      | [`statistics.median`](https://docs.python.org/3.9/library/statistics.html#statistics.median) |
 | `Mode`           | O(1)     | O(k)   | Set of most frequently appearing values in window               | [`statistics.multimode`](https://docs.python.org/3.9/library/statistics.html#statistics.multimode) |
 | `Var`            | O(1)     | O(k)   | Variance of window, with specified degrees of freedom           | [`statistics.pvariance`](https://docs.python.org/3.9/library/statistics.html#statistics.pvariance) |
 | `Std`            | O(1)     | O(k)   | Standard deviation of window, with specified degrees of freedom | [`statistics.pstdev`](https://docs.python.org/3.9/library/statistics.html#statistics.pstdev) |
