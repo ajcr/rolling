@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
-## [0.3.1]
+## [0.4.0]
 ### Added
 - `__version__` attribute added to package
 - New `rolling.PolynomialHash()` object
@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - test modules no longer included pip install
+- faster rolling median implementation using SortedList
 
 ## [0.3.0] - 2021-11-24
 ### Added
