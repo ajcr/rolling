@@ -39,13 +39,11 @@ class Monotonic(All):
     Update time:  O(1)
     Memory usage: O(1)
 
-    where k is the size of the rolling window
-
     Examples
     --------
 
     >>> import rolling
-    >>> r_mono = rollingMonotonic([1,2,3,4,3,2,1], 3, increasing=False))
+    >>> r_mono = rolling.Monotonic([1,2,3,4,3,2,1], 3, increasing=False))
     >>> list(r_mono)
     [False, False, False, True, True]
     """
@@ -63,6 +61,8 @@ class Monotonic(All):
 
         if initial is None:
             self._previous = -float("inf") if increasing else float("inf")
+        else:
+            self._previous = initial
 
         super().__init__(iterable, window_size, window_type)
 
