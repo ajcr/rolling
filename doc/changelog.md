@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `__version__` attribute added to package
 - New `rolling.PolynomialHash()` object
 - New `rolling.Match()` object
+- New `rolling.Monotonic()` object
 
 ### Changed
 - test modules no longer included pip install

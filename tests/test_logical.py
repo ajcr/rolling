@@ -3,7 +3,7 @@ import pytest
 from rolling.apply import Apply
 from rolling.logical import All, Any
 
-test_data = (
+ANY_ALL_TEST_DATA = [
     [1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
     [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
@@ -14,10 +14,10 @@ test_data = (
     [1],
     [0],
     [],
-)
+]
 
 
-@pytest.mark.parametrize("array", test_data)
+@pytest.mark.parametrize("array", ANY_ALL_TEST_DATA)
 @pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5, 6])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_all(array, window_size, window_type):
@@ -26,7 +26,7 @@ def test_rolling_all(array, window_size, window_type):
     assert list(got) == list(expected)
 
 
-@pytest.mark.parametrize("array", test_data)
+@pytest.mark.parametrize("array", ANY_ALL_TEST_DATA)
 @pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5, 6])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_any(array, window_size, window_type):

@@ -97,6 +97,7 @@ Rolling objects to apply a logical operation to the window.
 | ---------------- |:--------:|:------:|------------------------------------------------------------------------------------------|---------|
 | `Any`            | O(1)     | O(1)   | True if *any* value in the window is True in a Boolean context, else False               | [`any`](https://docs.python.org/3/library/functions.html#any) |
 | `All`            | O(1)     | O(1)   | True if *all* values in the window are True in a Boolean context, else False             | [`all`](https://docs.python.org/3/library/functions.html#all) |
+| `Monotonic`      | O(1)     | O(1)   | True if *all* values in the window are monotonic increasing or decreasing                | N/A     |
 | `Match`          | O(k)     | O(k)   | True if window is equal to a specified target sequence (O(k) update if match, else O(1)) | N/A     |
 
 ### Miscellaneous
