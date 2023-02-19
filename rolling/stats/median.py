@@ -3,7 +3,7 @@ from itertools import islice
 
 from rolling.base import RollingObject
 from rolling.structures.skiplist import IndexableSkiplist
-from rolling.structures.sorted_list import SortedList
+from rolling.structures.sortedlist import SortedList
 
 
 class Median(RollingObject):
