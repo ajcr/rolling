@@ -38,8 +38,3 @@ class SortedList(MutableSequence):
 
     def __delitem__(self, index):
         del self._list[index]
-
-    def __eq__(self, other):
-        if isinstance(other, SortedList):
-            return self._list == other._list
-        return self._list == other
