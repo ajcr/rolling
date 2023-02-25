@@ -1,14 +1,24 @@
 from collections import Counter, deque
 from itertools import islice
-from math import log2
+from math import fsum, log2
 
 from .base import RollingObject
 
 
+def entropy(seq):
+    N = len(seq)
+    counts = Counter(seq)
+    return -fsum((c / N) * log2(c / N) for c in counts.values())
+
+
 class Entropy(RollingObject):
     """
-    Iterator object that computes the Shannon entropy
-    of a rolling window over a Python iterable.
+    Shannon entropy of a rolling window.
+
+    The count of each value, x, in the window is interpreted as
+    the probability, p(x), of the value occuring. The entropy of
+    the window is then understood as the average number of units
+    of information per value.
 
     Note: window_type='variable' is not supported.
 
@@ -45,6 +55,8 @@ class Entropy(RollingObject):
      ...]
 
     """
+    def __init__(self, iterable, window_size):
+        super().__init__(iterable, window_size)
 
     def _init_fixed(self, iterable, window_size, **kwargs):
         self._entropy = 0.0
@@ -61,9 +73,9 @@ class Entropy(RollingObject):
             self._entropy -= x
 
         # insert a dummy value that is removed when next() is called
-        self._buffer.appendleft("DUMMY_VALUE")
+        self._buffer.appendleft(object)
         x = log2(1 / window_size) / window_size
-        self._summands["DUMMY_VALUE"] = (1, x)
+        self._summands[object] = (1, x)
         self._entropy -= x
 
     def _init_variable(self, iterable, window_size, **kwargs):
@@ -73,7 +85,7 @@ class Entropy(RollingObject):
         old = self._buffer[0]
         self._buffer.append(new)
 
-        # if there's nothing to update, exit
+        # if there's nothing to update just return
         if old == new:
             return
 
@@ -85,7 +97,7 @@ class Entropy(RollingObject):
             del self._summands[old]
         else:
             p_old = (count - 1) / self.window_size
-            # readjust entropy
+            # re-adjust entropy
             log_p_old = log2(p_old)
             self._summands[old] = (count - 1, p_old * log_p_old)
             self._entropy -= p_old * log_p_old
