@@ -34,7 +34,7 @@ TEST_REFERENCE_DISTRIBUTION = {
     ]
 )
 def test_entropy(sequence, expected, reference_distribution):
-    assert entropy(sequence, reference_distribution) == pytest.approx(expected)
+    assert entropy(sequence, 2, reference_distribution) == pytest.approx(expected)
 
 
 @pytest.mark.parametrize("window_size", [1, 3, 5, 7, 10, 15])
@@ -52,9 +52,10 @@ def test_entropy(sequence, expected, reference_distribution):
         "ABCDEXABCDEXABCDEXABCDEXABCDEX",
     ],
 )
+@pytest.mark.parametrize("base", [2, 10, "e", 7])
 @pytest.mark.parametrize("reference_distribution", [None, TEST_REFERENCE_DISTRIBUTION])
-def test_rolling_entropy(window_size, sequence, reference_distribution):
-    entropy_ = functools.partial(entropy, reference_distribution=reference_distribution)
+def test_rolling_entropy(window_size, sequence, base, reference_distribution):
+    entropy_ = functools.partial(entropy, base=base, reference_distribution=reference_distribution)
     expected = Apply(sequence, window_size, operation=entropy_)
-    got = Entropy(sequence, window_size, reference_distribution=reference_distribution)
+    got = Entropy(sequence, window_size, base=base, reference_distribution=reference_distribution)
     assert pytest.approx(list(got), abs=1e-10) == list(expected)

@@ -1,17 +1,28 @@
 from collections import Counter, deque
 from itertools import islice
-from math import fsum, log2
+from math import fsum, log2, log10, log
 
 from rolling.base import RollingObject
 
 
-def entropy(seq, reference_distribution=None):
+def _get_log_func(base):
+    if base == 2:
+        return log2
+    if base == 10:
+        return log10
+    if base == "e":
+        return log
+    return lambda x: log(x, base)
+
+
+def entropy(seq, base=2, reference_distribution=None):
     N = len(seq)
     counts = Counter(seq)
+    _log = _get_log_func(base)
     if reference_distribution is None:
-        return -fsum((c / N) * log2(c / N) for c in counts.values())
+        return -fsum((c / N) * _log(c / N) for c in counts.values())
     return fsum(
-        (c / N) * log2(c / N / reference_distribution[k])
+        (c / N) * _log(c / N / reference_distribution[k])
         for k, c in counts.items()
     )
 
@@ -37,6 +48,7 @@ class Entropy(RollingObject):
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
+    base : logarithm base to use (default=2)
     reference_distribution : Mapping[Hashable, float] : actual
         probabilities for values in window, allowing relative
         entropy to be computed (KL-divergence).
@@ -67,10 +79,11 @@ class Entropy(RollingObject):
      ...]
 
     """
-    def __init__(self, iterable, window_size, reference_distribution=None):
+    def __init__(self, iterable, window_size, base=2, reference_distribution=None):
         if reference_distribution is not None and sum(reference_distribution.values()) != 1:
             raise ValueError("reference_distribution probabilities must sum to 1")
         self.reference_distribution = reference_distribution
+        self._log = _get_log_func(base)
         super().__init__(iterable, window_size)
 
     def _init_fixed(self, iterable, window_size, **kwargs):
@@ -122,8 +135,8 @@ class Entropy(RollingObject):
     def _compute_summand(self, value, count):
         p = count / self.window_size
         if self.reference_distribution is None:
-            return p * log2(p)
-        return p * log2(p / self.reference_distribution[value])
+            return p * self._log(p)
+        return p * self._log(p / self.reference_distribution[value])
 
     @property
     def current_value(self):

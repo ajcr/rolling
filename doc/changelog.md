@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - test modules no longer included pip install
 - faster rolling median implementation using SortedList
+- Entropy supports relative entropy computation by passing reference distribution.
+- Entropy supports base argument to change base of logarithm.
 
 ## [0.3.0] - 2021-11-24
 ### Added
