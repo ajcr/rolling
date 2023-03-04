@@ -2,23 +2,32 @@ from collections import Counter, deque
 from itertools import islice
 from math import fsum, log2
 
-from .base import RollingObject
+from rolling.base import RollingObject
 
 
-def entropy(seq):
+def entropy(seq, reference_distribution=None):
     N = len(seq)
     counts = Counter(seq)
-    return -fsum((c / N) * log2(c / N) for c in counts.values())
+    if reference_distribution is None:
+        return -fsum((c / N) * log2(c / N) for c in counts.values())
+    return fsum(
+        (c / N) * log2(c / N / reference_distribution[k])
+        for k, c in counts.items()
+    )
 
 
 class Entropy(RollingObject):
     """
-    Shannon entropy of a rolling window.
+    Entropy of a rolling window.
 
     The count of each value, x, in the window is interpreted as
     the probability, p(x), of the value occuring. The entropy of
     the window is then understood as the average number of units
-    of information per value.
+    of information per value in the window.
+
+    If no reference distribution is given, the window value is the
+    Shannon Entropy. If a reference distribution is given, the
+    value is the relative entropy (Kullback-Leibler Divergence).
 
     Note: window_type='variable' is not supported.
 
@@ -28,6 +37,9 @@ class Entropy(RollingObject):
     iterable : any iterable object
     window_size : integer, the size of the rolling
         window moving over the iterable
+    reference_distribution : Mapping[Hashable, float] : actual
+        probabilities for values in window, allowing relative
+        entropy to be computed (KL-divergence).
 
     Complexity
     ----------
@@ -55,7 +67,10 @@ class Entropy(RollingObject):
      ...]
 
     """
-    def __init__(self, iterable, window_size):
+    def __init__(self, iterable, window_size, reference_distribution=None):
+        if reference_distribution is not None and sum(reference_distribution.values()) != 1:
+            raise ValueError("reference_distribution probabilities must sum to 1")
+        self.reference_distribution = reference_distribution
         super().__init__(iterable, window_size)
 
     def _init_fixed(self, iterable, window_size, **kwargs):
@@ -68,15 +83,13 @@ class Entropy(RollingObject):
         counts = Counter(self._buffer)
 
         for value, count in counts.items():
-            x = count / window_size * log2(count / window_size)
+            x = self._compute_summand(value, count)
             self._summands[value] = (count, x)
             self._entropy -= x
 
         # insert a dummy value that is removed when next() is called
         self._buffer.appendleft(object)
-        x = log2(1 / window_size) / window_size
-        self._summands[object] = (1, x)
-        self._entropy -= x
+        self._summands[object] = (1, 0)
 
     def _init_variable(self, iterable, window_size, **kwargs):
         raise NotImplementedError("Entropy not implemented for variable windows")
@@ -96,35 +109,33 @@ class Entropy(RollingObject):
         if count == 1:
             del self._summands[old]
         else:
-            p_old = (count - 1) / self.window_size
-            # re-adjust entropy
-            log_p_old = log2(p_old)
-            self._summands[old] = (count - 1, p_old * log_p_old)
-            self._entropy -= p_old * log_p_old
+            x = self._compute_summand(old, count-1)
+            self._summands[old] = (count-1, x)
+            self._entropy -= x
 
         # update new summand's contribution to entropy
-        if new in self._summands:
-            count, summand = self._summands[new]
-            p_new = (count + 1) / self.window_size
-            log_p_new = log2(p_new)
-            self._summands[new] = (count + 1, p_new * log_p_new)
-            self._entropy += summand - p_new * log_p_new
-        else:
-            p_new = 1 / self.window_size
-            log_p_new = log2(p_new)
-            self._summands[new] = (1, p_new * log_p_new)
-            self._entropy -= p_new * log_p_new
+        count, summand = self._summands.get(new, (0, 0))
+        x = self._compute_summand(new, count+1)
+        self._summands[new] = (count+1, x)
+        self._entropy += summand - x
 
+    def _compute_summand(self, value, count):
+        p = count / self.window_size
+        if self.reference_distribution is None:
+            return p * log2(p)
+        return p * log2(p / self.reference_distribution[value])
+
+    @property
+    def current_value(self):
+        return abs(self._entropy)
+
+    @property
+    def _obs(self):
+        return len(self._buffer)
+
+    # Required, but unused as variable windows not supported
     def _add_new(self, new):
         pass
 
     def _remove_old(self):
         pass
-
-    @property
-    def current_value(self):
-        return self._entropy
-
-    @property
-    def _obs(self):
-        return len(self._buffer)
