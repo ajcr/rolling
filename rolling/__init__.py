@@ -10,4 +10,4 @@ from .stats import Mean, Var, Std, Median, Mode, Skew, Kurtosis
 
 from rolling.arithmetic import *
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
