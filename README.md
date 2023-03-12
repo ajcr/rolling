@@ -1,6 +1,6 @@
 # rolling
 
-![PyPI version](https://badge.fury.io/py/rolling.svg)
+![PyPI version](https://img.shields.io/pypi/v/rolling.svg?color=brightgreen)
 
 A collection of computationally efficient rolling window iterators for Python.
 
