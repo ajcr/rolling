@@ -31,8 +31,8 @@ class ApplyIndexed(RollingIndexed):
         pass
 
     def _insert(self, idx, val):
-        assert not self._idx_buffer or self._idx_buffer[0] <= idx, \
-            "Indices should be monotonic"
+        if self._idx_buffer and self._idx_buffer[0] > idx:
+            raise ValueError("Indices should be monotonic")
 
         self._idx_buffer.append(idx)
         self._val_buffer.append(val)

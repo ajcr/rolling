@@ -32,6 +32,4 @@ def test_index_date(window_size):
     got = NuniqueIndexed(idx, val, ws)
     expected = ApplyIndexed(idx, val, ws, function=lambda x: len(set(x)))
 
-    print(got._counter)
-
     assert list(got) == list(expected)
