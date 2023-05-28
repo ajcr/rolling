@@ -61,6 +61,12 @@ class Skew(RollingObject):
         self._x2 = 0.0
         self._x3 = 0.0
 
+    def _init_indexed(self, iterable, window_size, **kwargs):
+        self._buffer = deque()
+        self._x1 = 0.0
+        self._x2 = 0.0
+        self._x3 = 0.0
+
     def _add_new(self, new):
         self._buffer.append(new)
 

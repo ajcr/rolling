@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.0]
 ### Added
-- New `rolling.ApplyPairwise` object
+- New `rolling.ApplyPairwise` object.
+- Add `"indexed"` window type to enable operations on windows with an index.
 
-## [0.4.0]
+## [0.4.0] - 2023-03-11
 ### Added
 - `__version__` attribute added to package
 - New `rolling.PolynomialHash()` object

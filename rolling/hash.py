@@ -102,3 +102,6 @@ class PolynomialHash(RollingObject):
     @property
     def _obs(self):
         return len(self._buffer)
+
+    def _init_indexed(self, *args, **kwargs):
+        raise NotImplementedError("window_type='indexed'")

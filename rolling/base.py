@@ -1,4 +1,5 @@
 import abc
+from collections import deque
 from collections.abc import Iterator
 from itertools import chain
 
@@ -7,8 +8,8 @@ class RollingObject(Iterator):
     """
     Baseclass for rolling iterator objects.
 
-    All of the iteration logic specific to 'fixed' and
-    'variable' window types is handled by this class.
+    All iteration logic for 'fixed', 'variable' and
+    'indexed' window types is handled by this class.
 
     Subclasses of RollingObject must implement methods
     to initialize and manipulate any attributes needed
@@ -32,7 +33,7 @@ class RollingObject(Iterator):
 
     def __init__(self, iterable, window_size, window_type="fixed", **kwargs):
         self.window_type = window_type
-        self.window_size = _validate_window_size(window_size)
+        self.window_size = _validate_window_size(window_size, window_type)
         self._iterator = iter(iterable)
         self._filled = self.window_type == "fixed"
 
@@ -41,6 +42,13 @@ class RollingObject(Iterator):
 
         elif window_type == "variable":
             self._init_variable(iterable, window_size, **kwargs)
+
+        elif window_type == "indexed":
+            # keep track of all indexes that we encounter. Assumes that all
+            # values we encounter will be stored in the same order. If not,
+            # the subtype will need to implement its own _next_indexed() method.
+            self._index_buffer = deque()
+            self._init_indexed(iterable, window_size, **kwargs)
 
         else:
             raise ValueError(f"Unknown window_type '{window_type}'")
@@ -75,6 +83,26 @@ class RollingObject(Iterator):
                 self._remove_old()
                 return self.current_value
 
+    def _next_indexed(self):
+        new_index, new_value = next(self._iterator)
+
+        if self._index_buffer and new_index < self._index_buffer[-1]:
+            raise ValueError(
+                "Next index must be greater than or equal to last added index: "
+                f"{new_index} < {self._index_buffer[0]}"
+            )
+
+        self._index_buffer.append(new_index)
+        self._add_new(new_value)
+
+        min_index = new_index - self.window_size
+
+        while self._index_buffer and self._index_buffer[0] <= min_index:
+            self._remove_old()
+            self._index_buffer.popleft()
+
+        return self.current_value
+
     def __next__(self):
 
         if self.window_type == "fixed":
@@ -82,6 +110,9 @@ class RollingObject(Iterator):
 
         if self.window_type == "variable":
             return self._next_variable()
+
+        if self.window_type == "indexed":
+            return self._next_indexed()
 
         raise NotImplementedError(f"next() not implemented for {self.window_type}")
 
@@ -134,6 +165,14 @@ class RollingObject(Iterator):
         """
         pass
 
+    def _init_indexed(self, *args, **kwargs):
+        """
+        Intialise as an indexed window.
+
+        In most cases this is the same as initialising a variable-size window.
+        """
+        return self._init_variable(*args, **kwargs)
+
     @abc.abstractmethod
     def _remove_old(self):
         """
@@ -156,12 +195,13 @@ class RollingObject(Iterator):
         pass
 
 
-def _validate_window_size(k):
+def _validate_window_size(window_size, window_type):
     """
     Check if k is a positive integer
     """
-    if not isinstance(k, int):
-        raise TypeError(f"window_size must be integer type, got {type(k).__name__}")
-    if k <= 0:
-        raise ValueError("window_size must be positive")
-    return k
+    if window_type in {"fixed", "variable"}:
+        if not isinstance(window_size, int):
+            raise TypeError(f"window_size must be integer type, got {type(window_size).__name__}")
+        if window_size <= 0:
+            raise ValueError("window_size must be positive")
+    return window_size

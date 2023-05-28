@@ -58,7 +58,7 @@ class Mode(RollingObject):
         self._bicounter.increment("DUMMY_VALUE")
 
     def _init_variable(self, iterable, window_size, return_count=False, **kwargs):
-        self._buffer = deque(maxlen=window_size)
+        self._buffer = deque()
         self.return_count = return_count
         self._bicounter = BiCounter()
 
