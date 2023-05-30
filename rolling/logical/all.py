@@ -73,3 +73,6 @@ class All(RollingObject):
     def current_value(self):
         return self._i - self._window_obs >= self._last_false
 
+    def _init_indexed(self, *args, **kwargs):
+        raise NotImplementedError("window_type='indexed'")
+

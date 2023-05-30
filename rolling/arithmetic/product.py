@@ -42,7 +42,7 @@ class Product(RollingObject):
 
     def _init_fixed(self, iterable, window_size, **kwargs):
         head = islice(self._iterator, window_size - 1)
-        self._buffer = deque(head, maxlen=window_size)
+        self._buffer = deque(head)
         self._zero_count = 0
 
         prod = 1
@@ -57,7 +57,7 @@ class Product(RollingObject):
         self._product = prod
 
     def _init_variable(self, iterable, window_size, **kwargs):
-        self._buffer = deque(maxlen=window_size)
+        self._buffer = deque()
         self._zero_count = 0
         self._product = 1
 

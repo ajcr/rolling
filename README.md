@@ -4,7 +4,7 @@
 
 A collection of computationally efficient rolling window iterators for Python.
 
-Useful arithmetical, logical and statistical operations on rolling windows (including `Sum`, `Min`, `Max`, `Mean`, `Median` and more). Both fixed-length and variable-length windows are supported for most operations.
+Useful arithmetical, logical and statistical operations on rolling windows (including `Sum`, `Min`, `Max`, `Mean`, `Median` and more). Both fixed-length and variable-length windows are supported for most operations. Many operations also support "indexed" windows.
 
 To get started, see the [Overview](https://github.com/ajcr/rolling#overview) section below, or have a look at the some [recipes](https://github.com/ajcr/rolling/blob/master/doc/recipes.md).
 
@@ -52,6 +52,8 @@ This library implements efficient ways to perform useful operations on rolling w
 >>> list(roll)
 [5, 9, 9] 
 ```
+
+Note that these time complexity values apply to "fixed" and "variable" window types (not the "indexed" window type which depends on the index values encountered).
 
 ## Operations
 
@@ -127,6 +129,21 @@ This allows windows smaller than the specified size to be evaluated at the begin
  (1, 5, 9),
  (5, 9, 2),
  (9, 2),
+ (2,)]
+```
+
+If values are indexed by a monotoncally-increasing index (e.g. with an integer key, timestamp or datetime) then the indexed window type can be used. The size of the window is the maximum distance between the oldest and newest values (e.g. an integer, or timedelta):
+```python
+>>> idx = [0, 1, 2, 6, 7, 11, 15]
+>>> seq = [3, 1, 4, 1, 5,  9,  2]
+>>> roll_list_idx = rolling.Apply(zip(idx, seq), window_size=3, operation=tuple, window_type='indexed')
+>>> list(roll_list_idx)
+[(3,),
+ (3, 1),
+ (3, 1, 4),
+ (1,),
+ (1, 5),
+ (9,),
  (2,)]
 ```
 

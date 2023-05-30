@@ -51,12 +51,12 @@ class Apply(RollingObject):
     """
 
     def _init_fixed(self, iterable, window_size, operation=sum, **kwargs):
-        head = islice(self._iterator, window_size - 1)
-        self._buffer = deque(head, maxlen=window_size)
+        self._buffer = deque([None])
+        self._buffer.extend(islice(self._iterator, window_size - 1))
         self._operation = operation
 
     def _init_variable(self, iterable, window_size, operation=sum, **kwargs):
-        self._buffer = deque(maxlen=window_size)
+        self._buffer = deque()
         self._operation = operation
 
     @property
@@ -70,7 +70,8 @@ class Apply(RollingObject):
         self._buffer.popleft()
 
     def _update_window(self, new):
-        self._buffer.append(new)
+        self._add_new(new)
+        self._remove_old()
 
     @property
     def _obs(self):

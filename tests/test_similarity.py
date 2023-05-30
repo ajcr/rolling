@@ -52,3 +52,29 @@ def test_rolling_jaccard_index(sequence, window_size, window_type, target_set):
     func = partial(jaccard_index, target_set)
     expected = Apply(sequence, window_size, operation=func, window_type=window_type)
     assert pytest.approx(list(got)) == list(expected)
+
+
+INDEXED_VALUES = list(
+    zip(
+        [1, 2, 3, 7, 8, 9, 10, 11, 20, 23, 24, 27],
+        [5, 6, 5, 5, 4, 1,  5,  2,  3,  3,  3,  1],
+    )
+)
+
+
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize(
+    "target_set",
+    [
+        {0},
+        {0, 1},
+        {0, 1, 2, 3},
+        {0, 1, 2, 3, 4, 5},
+    ],
+)
+@pytest.mark.parametrize("window_size", [1, 3, 5, 7])
+def test_rolling_var_indexed(array, window_size, target_set):
+    got = JaccardIndex(array, window_size, window_type="indexed", target_set=target_set)
+    func = partial(jaccard_index, target_set)
+    expected = Apply(array, window_size, operation=func, window_type="indexed")
+    assert pytest.approx(list(got)) == list(expected)

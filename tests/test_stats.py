@@ -87,6 +87,22 @@ def test_rolling_mean(array, window_size, window_type):
     assert pytest.approx(list(got)) == list(expected)
 
 
+INDEXED_VALUES = list(
+    zip(
+        [1, 2, 3, 7, 8, 9, 10, 11, 20, 23, 24, 27],
+        [5, 6, 5, 5, 4, 3,  5,  7,  3,  3,  3,  5],
+    )
+)
+
+
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize("window_size", [1, 3, 5])
+def test_rolling_mean_indexed(array, window_size):
+    got = Mean(array, window_size, window_type="indexed")
+    expected = Apply(array, window_size, operation=_mean, window_type="indexed")
+    assert pytest.approx(list(got)) == list(expected)
+
+
 # fmt: off
 ARRAYS_TO_TEST_VAR = [
     [82, 80, 14, 73, 9, 19, 60, 31, 4, 87, 38, 36, 38, 58, 20, 97, 25, 99, 79, 31, 97, 73, 79, 71, 78, 56, 73, 24, 53, 59],
@@ -105,6 +121,14 @@ ARRAYS_TO_TEST_VAR = [
 def test_rolling_var(array, window_size, window_type):
     got = Var(array, window_size, window_type=window_type)
     expected = Apply(array, window_size, operation=_var, window_type=window_type)
+    assert pytest.approx(list(got), nan_ok=True) == list(expected)
+
+
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize("window_size", [1, 3, 5, 7])
+def test_rolling_var_indexed(array, window_size):
+    got = Var(array, window_size, window_type="indexed")
+    expected = Apply(array, window_size, operation=_var, window_type="indexed")
     assert pytest.approx(list(got), nan_ok=True) == list(expected)
 
 
@@ -220,12 +244,30 @@ def test_rolling_median(array, window_size, window_type, tracker):
     assert pytest.approx(list(got)) == list(expected)
 
 
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize("window_size", [1, 3, 5, 7])
+@pytest.mark.parametrize("tracker", ["skiplist", "sortedlist"])
+def test_rolling_median_indexed(array, window_size, tracker):
+    got = Median(array, window_size, window_type="indexed", tracker=tracker)
+    expected = Apply(array, window_size, operation=_median, window_type="indexed")
+    assert list(got) == list(expected)
+
+
 @pytest.mark.parametrize("array", ["aasbbdasbfiuhf", "xxyxz", "x", ""])
 @pytest.mark.parametrize("window_size", [1, 2, 3, 4, 5])
 @pytest.mark.parametrize("window_type", ["fixed", "variable"])
 def test_rolling_mode(array, window_size, window_type):
     got = Mode(array, window_size, window_type=window_type)
     expected = Apply(array, window_size, operation=_mode, window_type=window_type)
+    # NOTE: we copy the returned set so that it is not mutated after further iteration
+    assert [set_.copy() for set_ in got] == list(expected)
+
+
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize("window_size", [1, 3, 5, 7])
+def test_rolling_mode_indexed(array, window_size):
+    got = Mode(array, window_size, window_type="indexed")
+    expected = Apply(array, window_size, operation=_mode, window_type="indexed")
     # NOTE: we copy the returned set so that it is not mutated after further iteration
     assert [set_.copy() for set_ in got] == list(expected)
 
@@ -248,6 +290,14 @@ def test_rolling_skew(array, window_size, window_type):
     assert pytest.approx(list(got), nan_ok=True) == list(expected)
 
 
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize("window_size", [1, 3, 5, 7])
+def test_rolling_skew_indexed(array, window_size):
+    got = Skew(array, window_size, window_type="indexed")
+    expected = Apply(array, window_size, operation=_skew, window_type="indexed")
+    assert pytest.approx(list(got), nan_ok=True) == list(expected)
+
+
 @pytest.mark.parametrize(
     "array",
     [
@@ -263,4 +313,12 @@ def test_rolling_skew(array, window_size, window_type):
 def test_rolling_kurtosis(array, window_size, window_type):
     got = Kurtosis(array, window_size, window_type=window_type)
     expected = Apply(array, window_size, operation=_kurtosis, window_type=window_type)
+    assert pytest.approx(list(got), nan_ok=True) == list(expected)
+
+
+@pytest.mark.parametrize("array", [INDEXED_VALUES])
+@pytest.mark.parametrize("window_size", [1, 5, 7, 15])
+def test_rolling_kurtosis_indexed(array, window_size):
+    got = Kurtosis(array, window_size, window_type="indexed")
+    expected = Apply(array, window_size, operation=_kurtosis, window_type="indexed")
     assert pytest.approx(list(got), nan_ok=True) == list(expected)

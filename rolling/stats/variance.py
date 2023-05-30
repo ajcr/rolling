@@ -65,6 +65,12 @@ class Var(RollingObject):
         self._mean = 0.0  # mean of values
         self._sslm = 0.0  # sum of squared values less the mean
 
+    def _init_indexed(self, iterable, window_size, ddof=1, **kwargs):
+        self.ddof = ddof
+        self._buffer = deque()
+        self._mean = 0.0  # mean of values
+        self._sslm = 0.0  # sum of squared values less the mean
+
     def _add_new(self, new):
         self._buffer.append(new)
 

@@ -91,6 +91,9 @@ class Min(RollingObject):
     def current_value(self):
         return _value(self._buffer[0])
 
+    def _init_indexed(self, *args, **kwargs):
+        raise NotImplementedError("window_type='indexed'")
+
 
 class Max(RollingObject):
     """
@@ -173,6 +176,8 @@ class Max(RollingObject):
     def current_value(self):
         return _value(self._buffer[0])
 
+    def _init_indexed(self, *args, **kwargs):
+        raise NotImplementedError("window_type='indexed'")
 
 class MinHeap(RollingObject):
     """
@@ -247,3 +252,6 @@ class MinHeap(RollingObject):
     @property
     def current_value(self):
         return _value(self._heap[0])
+
+    def _init_indexed(self, *args, **kwargs):
+        raise NotImplementedError("window_type='indexed'")

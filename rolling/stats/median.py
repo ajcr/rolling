@@ -55,12 +55,13 @@ class Median(RollingObject):
         tracker="sortedlist",
     ):
 
-        self._buffer = deque(maxlen=window_size)
+        self._buffer = deque()
 
-        if tracker == "skiplist":
-            self._tracker = IndexableSkiplist(window_size)
-        elif tracker == "sortedlist":
+
+        if tracker == "sortedlist":
             self._tracker = SortedList()
+        elif tracker == "skiplist":
+            self._tracker = IndexableSkiplist(window_size)
         else:
             raise ValueError(f"tracker must be one of 'skiplist' or 'sortedlist'")
 

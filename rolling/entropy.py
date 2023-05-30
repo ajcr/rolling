@@ -152,3 +152,6 @@ class Entropy(RollingObject):
 
     def _remove_old(self):
         pass
+
+    def _init_indexed(self, *args, **kwargs):
+        raise NotImplementedError("window_type='indexed'")
