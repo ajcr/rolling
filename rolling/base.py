@@ -44,10 +44,10 @@ class RollingObject(Iterator):
             self._init_variable(iterable, window_size, **kwargs)
 
         elif window_type == "indexed":
-            # keep track of all indexes that we encounter. Assumes that all
+            # Keep track of all indexes that we encounter. Assumes that all
             # values we encounter will be stored in the same order. If not,
             # the subtype will need to implement its own _next_indexed() method.
-            self._index_buffer = deque()
+            self.index_buffer = deque()
             self._init_indexed(iterable, window_size, **kwargs)
 
         else:
@@ -86,20 +86,20 @@ class RollingObject(Iterator):
     def _next_indexed(self):
         new_index, new_value = next(self._iterator)
 
-        if self._index_buffer and new_index < self._index_buffer[-1]:
+        if self.index_buffer and new_index < self.index_buffer[-1]:
             raise ValueError(
                 "Next index must be greater than or equal to last added index: "
-                f"{new_index} < {self._index_buffer[0]}"
+                f"{new_index} < {self.index_buffer[0]}"
             )
 
-        self._index_buffer.append(new_index)
+        self.index_buffer.append(new_index)
         self._add_new(new_value)
 
         min_index = new_index - self.window_size
 
-        while self._index_buffer and self._index_buffer[0] <= min_index:
+        while self.index_buffer and self.index_buffer[0] <= min_index:
             self._remove_old()
-            self._index_buffer.popleft()
+            self.index_buffer.popleft()
 
         return self.current_value
 

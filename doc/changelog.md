@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.5.0]
 ### Added
 - New `rolling.ApplyPairwise` object.
-- Add `"indexed"` window type to enable operations on windows with an index.
+- Add `"indexed"` window type to enable operations on windows over `(index, value)` pairs (initial implementation work by @daviddavo)
 
 ## [0.4.0] - 2023-03-11
 ### Added

@@ -124,3 +124,50 @@ for ip_addresses, count in rolling.Mode(all_ip_addresses, WINDOW_SIZE, return_co
         )
 ```
 (This is obviously just a toy example. There are much better ways to do this on actual web servers.)
+
+## Minute Sum
+
+The charity appeal has been broadcast and donations are flooding in. How long does it take for the sum of donations made over the previous 60 seconds to exceed 888?
+
+### Setup
+
+The stream is made up of `(datetime, donation)` pairs:
+
+```python
+import itertools
+import random
+from datetime import datetime, timedelta
+
+def donation_stream(current_time: datetime):
+    while True:
+        donation = random.choice([5, 10, 20, 50, 100])
+        # increment donation time by a random number of seconds
+        current_time += timedelta(seconds=random.randint(0, 10))
+        yield current_time, donation
+```
+
+### Solution
+
+Use an iterator over the indexed values with a window size of 60 seconds:
+
+```python
+import rolling
+
+TARGET = 888
+
+start_time = datetime.now()
+
+sixty_second_window_sums = rolling.Sum(
+    donation_stream(start_time),
+    window_size=timedelta(seconds=60),
+    window_type="indexed",
+)
+
+for window_sum in sixty_second_window_sums:
+    if window_sum > TARGET:
+        print(
+            f"It took {sixty_second_window_sums.index_buffer[-1] - start_time} "
+            f"to exceed {TARGET} in a 60 second window."
+        )
+        break
+```
