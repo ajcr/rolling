@@ -1,4 +1,5 @@
 from rolling.apply import Apply
+from rolling.apply_pairwise import ApplyPairwise
 from rolling.arithmetic import Nunique, Product, Sum
 from rolling.entropy import Entropy
 from rolling.hash import PolynomialHash
