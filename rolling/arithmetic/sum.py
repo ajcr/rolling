@@ -39,15 +39,17 @@ class Sum(RollingObject):
     [13, 11, 15]
 
     """
-    def _init_fixed(self, iterable, window_size, **kwargs):
-        head = islice(self._iterator, window_size - 1)
-        self._buffer = deque(head, maxlen=window_size)
+    def _init_fixed(self):
+        head = islice(self._iterator, self.window_size - 1)
+        self._buffer = deque(head, maxlen=self.window_size)
         self._buffer.appendleft(0)
         self._sum = sum(self._buffer)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
         self._sum = 0
+
+    _init_indexed = _init_variable
 
     def _update_window(self, new):
         self._sum += new - self._buffer.popleft()

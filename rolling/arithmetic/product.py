@@ -40,8 +40,8 @@ class Product(RollingObject):
 
     """
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
-        head = islice(self._iterator, window_size - 1)
+    def _init_fixed(self):
+        head = islice(self._iterator, self.window_size - 1)
         self._buffer = deque(head)
         self._zero_count = 0
 
@@ -56,10 +56,12 @@ class Product(RollingObject):
         self._buffer.appendleft(1)
         self._product = prod
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
         self._zero_count = 0
         self._product = 1
+
+    _init_indexed = _init_variable
 
     def _update_window(self, new):
         old = self._buffer.popleft()

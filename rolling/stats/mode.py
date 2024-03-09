@@ -45,22 +45,24 @@ class Mode(RollingObject):
     is not unique.
 
     """
-
-    def _init_fixed(self, iterable, window_size, return_count=False, **kwargs):
-        self._buffer = deque(maxlen=window_size)
+    def __init__(self, iterable, window_size, window_type="fixed", return_count=False):
         self.return_count = return_count
         self._bicounter = BiCounter()
-        for item in islice(self._iterator, window_size - 1):
+        super().__init__(iterable, window_size, window_type)
+
+    def _init_fixed(self):
+        self._buffer = deque(maxlen=self.window_size)
+        for item in islice(self._iterator, self.window_size - 1):
             self._add_new(item)
 
         # insert a value to be removed on the first call to update
         self._buffer.appendleft("DUMMY_VALUE")
         self._bicounter.increment("DUMMY_VALUE")
 
-    def _init_variable(self, iterable, window_size, return_count=False, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
-        self.return_count = return_count
-        self._bicounter = BiCounter()
+
+    _init_indexed = _init_variable
 
     def _update_window(self, new):
         old = self._buffer.popleft()

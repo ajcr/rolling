@@ -39,14 +39,14 @@ class Any(RollingObject):
 
     """
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
+    def _init_fixed(self):
         self._i = -1
         self._window_obs = 1
         self._last_true = -1
-        for new in islice(self._iterator, window_size - 1):
+        for new in islice(self._iterator, self.window_size - 1):
             self._add_new(new)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._i = -1
         self._window_obs = 0
         self._last_true = -1
@@ -73,5 +73,5 @@ class Any(RollingObject):
     def current_value(self):
         return self._i - self._window_obs < self._last_true
 
-    def _init_indexed(self, *args, **kwargs):
+    def _init_indexed(self):
         raise NotImplementedError("window_type='indexed'")

@@ -8,7 +8,7 @@ class RollingPairwise(Iterator):
     Baseclass for rolling iterators over two iterables.
 
     """
-    def __init__(self, iterable_1, iterable_2, window_size, window_type="fixed", **kwargs):
+    def __init__(self, iterable_1, iterable_2, window_size, window_type="fixed"):
         self.window_type = window_type
         self.window_size = _validate_window_size(window_size)
         self._iterator_1 = iter(iterable_1)
@@ -16,10 +16,10 @@ class RollingPairwise(Iterator):
         self._filled = self.window_type == "fixed"
 
         if window_type == "fixed":
-            self._init_fixed(**kwargs)
+            self._init_fixed()
 
         elif window_type == "variable":
-            self._init_variable(**kwargs)
+            self._init_variable()
 
         else:
             raise ValueError(f"Unknown window_type '{window_type}'")
@@ -80,17 +80,17 @@ class RollingPairwise(Iterator):
         """
         Return the number of observations in the window
         """
-        pass
+        return 0
 
     @abc.abstractmethod
-    def _init_fixed(self, **kwargs):
+    def _init_fixed(self):
         """
         Intialise as a fixed-size window
         """
         pass
 
     @abc.abstractmethod
-    def _init_variable(self, **kwargs):
+    def _init_variable(self):
         """
         Intialise as a variable-size window
         """
@@ -104,14 +104,14 @@ class RollingPairwise(Iterator):
         pass
 
     @abc.abstractmethod
-    def _add_new(self, new):
+    def _add_new(self, new_1, new_2):
         """
         Add a new value to the window, increasing window size by 1
         """
         pass
 
     @abc.abstractmethod
-    def _update_window(self, new):
+    def _update_window(self, new_1, new_2):
         """
         Add a new value to the window and remove the oldest value from the window
         """

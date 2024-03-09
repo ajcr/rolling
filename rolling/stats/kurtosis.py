@@ -35,34 +35,34 @@ class Kurtosis(RollingObject):
 
     """
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
-        if window_size <= 3:
+    def _init_fixed(self):
+        if self.window_size <= 3:
             raise ValueError("window_size must be greater than 3")
 
-        self._buffer = deque(maxlen=window_size)
+        self._buffer = deque(maxlen=self.window_size)
         self._x1 = 0.0
         self._x2 = 0.0
         self._x3 = 0.0
         self._x4 = 0.0
 
-        for new in islice(self._iterator, window_size - 1):
+        for new in islice(self._iterator, self.window_size - 1):
             self._add_new(new)
 
         # insert zero at the start of the buffer so that the
         # the first call to update returns the correct value
         self._buffer.appendleft(0)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
-        if window_size <= 3:
+    def _init_variable(self):
+        if self.window_size <= 3:
             raise ValueError("window_size must be greater than 3")
 
-        self._buffer = deque(maxlen=window_size)
+        self._buffer = deque(maxlen=self.window_size)
         self._x1 = 0.0
         self._x2 = 0.0
         self._x3 = 0.0
         self._x4 = 0.0
 
-    def _init_indexed(self, iterable, window_size, **kwargs):
+    def _init_indexed(self):
         self._buffer = deque()
         self._x1 = 0.0
         self._x2 = 0.0

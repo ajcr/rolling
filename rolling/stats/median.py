@@ -56,8 +56,6 @@ class Median(RollingObject):
     ):
 
         self._buffer = deque()
-
-
         if tracker == "sortedlist":
             self._tracker = SortedList()
         elif tracker == "skiplist":
@@ -67,9 +65,9 @@ class Median(RollingObject):
 
         super().__init__(iterable, window_size, window_type)
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
+    def _init_fixed(self):
         # update buffer and skiplist with initial values
-        for new in islice(self._iterator, window_size - 1):
+        for new in islice(self._iterator, self.window_size - 1):
             self._add_new(new)
 
         try:
@@ -83,9 +81,11 @@ class Median(RollingObject):
             self._buffer.appendleft(0)
             self._tracker.insert(0)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         # no further initialisation required for variable-size windows
         pass
+
+    _init_indexed = _init_variable
 
     def _update_window(self, new):
         old = self._buffer.popleft()

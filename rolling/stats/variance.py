@@ -39,48 +39,38 @@ class Var(RollingObject):
     windows), the variance is computed as NaN.
 
     """
-
-    def _init_fixed(self, iterable, window_size, ddof=1, **kwargs):
-        if window_size <= ddof:
-            raise ValueError("window_size must be greater than ddof")
-
+    def __init__(self, iterable, window_size, window_type="fixed", ddof=1):
         self.ddof = ddof
-        self._buffer = deque(maxlen=window_size)
         self._mean = 0.0  # mean of values
         self._sslm = 0.0  # sum of squared values less the mean
+        super().__init__(iterable, window_size, window_type)
 
-        for new in islice(self._iterator, window_size - 1):
+    def _init_fixed(self):
+        if self.window_size <= self.ddof:
+            raise ValueError("window_size must be greater than ddof")
+
+        self._buffer = deque(maxlen=self.window_size)
+        for new in islice(self._iterator, self.window_size - 1):
             self._add_new(new)
 
         # insert mean at the start of the buffer so that the
         # the first call to update returns the correct value
         self._buffer.appendleft(self._mean)
 
-    def _init_variable(self, iterable, window_size, ddof=1, **kwargs):
-        if window_size <= ddof:
-            raise ValueError("window_size must be greater than ddof")
+    def _init_variable(self):
+        self._buffer = deque(maxlen=self.window_size)
 
-        self.ddof = ddof
-        self._buffer = deque(maxlen=window_size)
-        self._mean = 0.0  # mean of values
-        self._sslm = 0.0  # sum of squared values less the mean
-
-    def _init_indexed(self, iterable, window_size, ddof=1, **kwargs):
-        self.ddof = ddof
+    def _init_indexed(self):
         self._buffer = deque()
-        self._mean = 0.0  # mean of values
-        self._sslm = 0.0  # sum of squared values less the mean
 
     def _add_new(self, new):
         self._buffer.append(new)
-
         delta = new - self._mean
         self._mean += delta / self._obs
         self._sslm += delta * (new - self._mean)
 
     def _remove_old(self):
         old = self._buffer.popleft()
-
         delta = old - self._mean
         self._mean -= delta / self._obs
         self._sslm -= delta * (old - self._mean)
@@ -88,7 +78,6 @@ class Var(RollingObject):
     def _update_window(self, new):
         old = self._buffer[0]
         self._buffer.append(new)
-
         delta = new - old
         delta_old = old - self._mean
         self._mean += delta / self._obs

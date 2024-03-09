@@ -40,16 +40,18 @@ class Nunique(RollingObject):
 
     """
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
-        head = islice(self._iterator, window_size - 1)
+    def _init_fixed(self):
+        head = islice(self._iterator, self.window_size - 1)
         self._buffer = deque(head)
         # append a dummy value that is removed when next() is called
         self._buffer.appendleft("dummy_value")
         self._counter = Counter(self._buffer)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
         self._counter = Counter()
+
+    _init_indexed = _init_variable
 
     def _update_window(self, new):
         # remove oldest value before appending new to buffer

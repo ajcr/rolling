@@ -65,13 +65,15 @@ class JaccardIndex(RollingObject):
         self._union = Counter(self._target_set)
         super().__init__(iterable, window_size, window_type)
 
-    def _init_fixed(self, *args, **kwargs):
+    def _init_fixed(self):
         self._buffer.append(None)
         for val in islice(self._iterator, self.window_size - 1):
             self._add_new(val)
 
-    def _init_variable(self, *args, **kwargs):
+    def _init_variable(self):
         pass
+
+    _init_indexed = _init_variable
 
     def _add_new(self, new):
         self._buffer.append(new)

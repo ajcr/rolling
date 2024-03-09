@@ -44,14 +44,14 @@ class Min(RollingObject):
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
+    def _init_fixed(self):
         self._i = -1
         self._window_obs = 0
         self._buffer = deque()
-        for new in islice(self._iterator, window_size - 1):
+        for new in islice(self._iterator, self.window_size - 1):
             self._add_new(new)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._i = -1
         self._window_obs = 0
         self._buffer = deque()
@@ -91,7 +91,7 @@ class Min(RollingObject):
     def current_value(self):
         return _value(self._buffer[0])
 
-    def _init_indexed(self, *args, **kwargs):
+    def _init_indexed(self):
         raise NotImplementedError("window_type='indexed'")
 
 
@@ -129,14 +129,14 @@ class Max(RollingObject):
     # the size of the buffer as the algorithm may overwrite existing
     # values with a new value, rather than appending the value
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
+    def _init_fixed(self):
         self._i = -1
         self._window_obs = 0
         self._buffer = deque()
-        for new in islice(self._iterator, window_size - 1):
+        for new in islice(self._iterator, self.window_size - 1):
             self._add_new(new)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
         self._i = -1
         self._window_obs = 0
@@ -176,7 +176,7 @@ class Max(RollingObject):
     def current_value(self):
         return _value(self._buffer[0])
 
-    def _init_indexed(self, *args, **kwargs):
+    def _init_indexed(self):
         raise NotImplementedError("window_type='indexed'")
 
 class MinHeap(RollingObject):
@@ -211,15 +211,15 @@ class MinHeap(RollingObject):
     window size, k, in cases where data is ordered.
     """
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
-        head = islice(self._iterator, window_size - 1)
+    def _init_fixed(self):
+        head = islice(self._iterator, self.window_size - 1)
         # faster to create the heap this way, rather than repeat _add_new()
-        self._heap = [(value, i + window_size) for i, value in enumerate(head)]
+        self._heap = [(value, i + self.window_size) for i, value in enumerate(head)]
         heapify(self._heap)
         self._i = len(self._heap) - 1
         self._window_obs = len(self._heap)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         self._heap = []
         self._i = -1
         self._window_obs = 0
@@ -253,5 +253,5 @@ class MinHeap(RollingObject):
     def current_value(self):
         return _value(self._heap[0])
 
-    def _init_indexed(self, *args, **kwargs):
+    def _init_indexed(self):
         raise NotImplementedError("window_type='indexed'")

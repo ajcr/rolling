@@ -44,13 +44,13 @@ class ApplyPairwise(RollingPairwise):
         self._function = function
         super().__init__(iterable_1, iterable_2, window_size=window_size, window_type=window_type)
 
-    def _init_fixed(self, **kwargs):
+    def _init_fixed(self):
         pairs = zip(self._iterator_1, self._iterator_2)
         for item_1, item_2 in islice(pairs, self.window_size-1):
             self._buffer_1.append(item_1)
             self._buffer_2.append(item_2)
 
-    def _init_variable(self, **kwargs):
+    def _init_variable(self):
         pass # no action required
 
     @property

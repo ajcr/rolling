@@ -31,24 +31,24 @@ class RollingObject(Iterator):
 
     """
 
-    def __init__(self, iterable, window_size, window_type="fixed", **kwargs):
+    def __init__(self, iterable, window_size, window_type="fixed"):
         self.window_type = window_type
         self.window_size = _validate_window_size(window_size, window_type)
         self._iterator = iter(iterable)
         self._filled = self.window_type == "fixed"
 
         if window_type == "fixed":
-            self._init_fixed(iterable, window_size, **kwargs)
+            self._init_fixed()
 
         elif window_type == "variable":
-            self._init_variable(iterable, window_size, **kwargs)
+            self._init_variable()
 
         elif window_type == "indexed":
             # Keep track of all indexes that we encounter. Assumes that all
             # values we encounter will be stored in the same order. If not,
             # the subtype will need to implement its own _next_indexed() method.
             self.index_buffer = deque()
-            self._init_indexed(iterable, window_size, **kwargs)
+            self._init_indexed()
 
         else:
             raise ValueError(f"Unknown window_type '{window_type}'")
@@ -149,7 +149,7 @@ class RollingObject(Iterator):
         """
         Return the number of observations in the window
         """
-        pass
+        return 0
 
     @abc.abstractmethod
     def _init_fixed(self):
@@ -165,13 +165,14 @@ class RollingObject(Iterator):
         """
         pass
 
-    def _init_indexed(self, *args, **kwargs):
+    @abc.abstractmethod
+    def _init_indexed(self):
         """
         Intialise as an indexed window.
 
         In most cases this is the same as initialising a variable-size window.
         """
-        return self._init_variable(*args, **kwargs)
+        pass
 
     @abc.abstractmethod
     def _remove_old(self):

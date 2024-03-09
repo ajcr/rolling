@@ -72,12 +72,12 @@ class PolynomialHash(RollingObject):
         self._mod = mod
         super().__init__(iterable, window_size, window_type)
 
-    def _init_fixed(self, *args, **kwargs):
+    def _init_fixed(self):
         self._buffer = deque([0])
         for val in islice(self._iterator, self.window_size - 1):
             self._add_new(val)
 
-    def _init_variable(self, *args, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
 
     def _add_new(self, new):
@@ -103,5 +103,5 @@ class PolynomialHash(RollingObject):
     def _obs(self):
         return len(self._buffer)
 
-    def _init_indexed(self, *args, **kwargs):
+    def _init_indexed(self):
         raise NotImplementedError("window_type='indexed'")

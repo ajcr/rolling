@@ -86,12 +86,12 @@ class Entropy(RollingObject):
         self._log = _get_log_func(base)
         super().__init__(iterable, window_size)
 
-    def _init_fixed(self, iterable, window_size, **kwargs):
+    def _init_fixed(self):
         self._entropy = 0.0
         self._summands = {}
 
-        head = islice(self._iterator, window_size - 1)
-        self._buffer = deque(head, maxlen=window_size)
+        head = islice(self._iterator, self.window_size - 1)
+        self._buffer = deque(head, maxlen=self.window_size)
 
         counts = Counter(self._buffer)
 
@@ -104,7 +104,7 @@ class Entropy(RollingObject):
         self._buffer.appendleft(object)
         self._summands[object] = (1, 0)
 
-    def _init_variable(self, iterable, window_size, **kwargs):
+    def _init_variable(self):
         raise NotImplementedError("Entropy not implemented for variable windows")
 
     def _update_window(self, new):
@@ -147,11 +147,11 @@ class Entropy(RollingObject):
         return len(self._buffer)
 
     # Required, but unused as variable windows not supported
-    def _add_new(self, new):
+    def _add_new(self):
         pass
 
     def _remove_old(self):
         pass
 
-    def _init_indexed(self, *args, **kwargs):
+    def _init_indexed(self):
         raise NotImplementedError("window_type='indexed'")

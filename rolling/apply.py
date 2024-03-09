@@ -49,15 +49,18 @@ class Apply(RollingObject):
      [5, 6, 3, 1]]
 
     """
+    def __init__(self, iterable, window_size, window_type="fixed", operation=sum):
+        super().__init__(iterable, window_size, window_type)
+        self._operation = operation
 
-    def _init_fixed(self, iterable, window_size, operation=sum, **kwargs):
+    def _init_fixed(self):
         self._buffer = deque([None])
-        self._buffer.extend(islice(self._iterator, window_size - 1))
-        self._operation = operation
+        self._buffer.extend(islice(self._iterator, self.window_size - 1))
 
-    def _init_variable(self, iterable, window_size, operation=sum, **kwargs):
+    def _init_variable(self):
         self._buffer = deque()
-        self._operation = operation
+
+    _init_indexed = _init_variable
 
     @property
     def current_value(self):
